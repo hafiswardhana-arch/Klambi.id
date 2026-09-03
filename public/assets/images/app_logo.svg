@@ -1,0 +1,16 @@
+<svg width="240" height="60" viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="infinityGradientLogo" x1="5" y1="10" x2="55" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E3A8A" />
+      <stop offset="50%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+  </defs>
+  <path d="M19 21C13.4772 21 9 25.0294 9 30C9 34.9706 13.4772 39 19 39C25 39 29 33 30 30C31 27 35 21 41 21C46.5228 21 51 25.0294 51 30C51 34.9706 46.5228 39 41 39C35 39 31 33 30 30C29 27 25 21 19 21Z" 
+        stroke="url(#infinityGradientLogo)" 
+        stroke-width="6" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+  <text x="62" y="38" font-family="Plus Jakarta Sans, System-UI, sans-serif" font-size="26" font-weight="800" fill="#1A2B5C" letter-spacing="-0.5">Klámbi</text>
+  <text x="162" y="38" font-family="Plus Jakarta Sans, System-UI, sans-serif" font-size="26" font-weight="700" fill="#3B82F6" letter-spacing="-0.5">.id</text>
+</svg>

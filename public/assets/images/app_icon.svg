@@ -1,0 +1,14 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="infinityGradient" x1="10" y1="20" x2="110" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E3A8A" />
+      <stop offset="50%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+  </defs>
+  <path d="M38 42C26.9543 42 18 50.0589 18 60C18 69.9411 26.9543 78 38 78C50 78 58 66 60 60C62 54 70 42 82 42C93.0457 42 102 50.0589 102 60C102 69.9411 93.0457 78 82 78C70 78 62 66 60 60C58 54 50 42 38 42Z" 
+        stroke="url(#infinityGradient)" 
+        stroke-width="12" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+</svg>
