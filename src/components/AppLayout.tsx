@@ -27,7 +27,7 @@ export default function AppLayout({
         backHref={backHref}
         headerRight={headerRight}
       />
-      <main className="flex-1 pb-20 pt-[64px]">
+      <main className="flex-1 pb-20 pt-14 animate-fade-in">
         <div className="max-w-screen-2xl mx-auto w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-16 py-4">
           {children}
         </div>
