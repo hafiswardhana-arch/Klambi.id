@@ -126,9 +126,9 @@ export default function LoginPage() {
 
       {/* TOP SECTION: LOGO & WELCOME TEXT */}
       <div className="pt-10 pb-6 px-6 flex flex-col items-center text-center z-10 animate-fade-in">
-        {/* Klámbi Infinity Logo */}
+        {/* Klámbi Infinity Icon (Transparent without background) */}
         <div className="mb-4 transform hover:scale-105 transition-transform duration-300">
-          <KlambiLogo variant="stacked" size="lg" />
+          <KlambiLogo variant="icon-only" size="lg" />
         </div>
 
         <h1 className="text-xl sm:text-2xl font-extrabold text-[#10284D] tracking-tight">
@@ -137,7 +137,7 @@ export default function LoginPage() {
       </div>
 
       {/* BOTTOM / MAIN CARD: DARK NAVY CONTAINER (Pixel Perfect Image 2) */}
-      <div className="bg-[#10346E] rounded-t-[36px] px-6 pt-7 pb-8 shadow-modal text-white flex-1 flex flex-col justify-between z-10 animate-slide-up">
+      <div className="bg-[#0E356A] rounded-t-[36px] px-6 pt-7 pb-8 shadow-modal text-white flex-1 flex flex-col justify-between z-10 animate-slide-up">
         <div className="space-y-5">
           {/* Card Subtitle */}
           <p className="text-center text-xs sm:text-sm font-medium text-white/95 max-w-xs mx-auto leading-relaxed">

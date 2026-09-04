@@ -13,7 +13,7 @@ export default function BottomNav() {
       href: '/',
       icon: (isActive: boolean) => (
         <svg
-          className={`w-6 h-6 mb-0.5 transition-transform ${isActive ? 'text-white scale-105' : 'text-white/70'}`}
+          className={`w-5 h-5 mb-0.5 transition-transform ${isActive ? 'text-white scale-110' : 'text-white/70'}`}
           fill={isActive ? 'currentColor' : 'none'}
           stroke="currentColor"
           strokeWidth={isActive ? '0' : '2'}
@@ -32,10 +32,10 @@ export default function BottomNav() {
       href: '/menu-perawatan',
       icon: (isActive: boolean) => (
         <svg
-          className={`w-6 h-6 mb-0.5 transition-transform ${isActive ? 'text-white scale-105' : 'text-white/70'}`}
-          fill={isActive ? 'currentColor' : 'none'}
+          className={`w-5 h-5 mb-0.5 transition-transform ${isActive ? 'text-white scale-110' : 'text-white/70'}`}
+          fill="none"
           stroke="currentColor"
-          strokeWidth={isActive ? '0' : '2'}
+          strokeWidth="2"
           viewBox="0 0 24 24"
         >
           <path
@@ -56,10 +56,10 @@ export default function BottomNav() {
       href: '/trift-marketplace',
       icon: (isActive: boolean) => (
         <svg
-          className={`w-6 h-6 mb-0.5 transition-transform ${isActive ? 'text-white scale-105' : 'text-white/70'}`}
-          fill={isActive ? 'currentColor' : 'none'}
+          className={`w-5 h-5 mb-0.5 transition-transform ${isActive ? 'text-white scale-110' : 'text-white/70'}`}
+          fill="none"
           stroke="currentColor"
-          strokeWidth={isActive ? '0' : '2'}
+          strokeWidth="2"
           viewBox="0 0 24 24"
         >
           <path
@@ -75,10 +75,10 @@ export default function BottomNav() {
       href: '/rawat',
       icon: (isActive: boolean) => (
         <svg
-          className={`w-6 h-6 mb-0.5 transition-transform ${isActive ? 'text-white scale-105' : 'text-white/70'}`}
-          fill={isActive ? 'currentColor' : 'none'}
+          className={`w-5 h-5 mb-0.5 transition-transform ${isActive ? 'text-white scale-110' : 'text-white/70'}`}
+          fill="none"
           stroke="currentColor"
-          strokeWidth={isActive ? '0' : '2'}
+          strokeWidth="2"
           viewBox="0 0 24 24"
         >
           <path
@@ -94,10 +94,10 @@ export default function BottomNav() {
       href: '/notifikasi',
       icon: (isActive: boolean) => (
         <svg
-          className={`w-6 h-6 mb-0.5 transition-transform ${isActive ? 'text-white scale-105' : 'text-white/70'}`}
-          fill={isActive ? 'currentColor' : 'none'}
+          className={`w-5 h-5 mb-0.5 transition-transform ${isActive ? 'text-white scale-110' : 'text-white/70'}`}
+          fill="none"
           stroke="currentColor"
-          strokeWidth={isActive ? '0' : '2'}
+          strokeWidth="2"
           viewBox="0 0 24 24"
         >
           <path
@@ -113,7 +113,7 @@ export default function BottomNav() {
       href: '/profil',
       icon: (isActive: boolean) => (
         <svg
-          className={`w-6 h-6 mb-0.5 transition-transform ${isActive ? 'text-white scale-105' : 'text-white/70'}`}
+          className={`w-5 h-5 mb-0.5 transition-transform ${isActive ? 'text-white scale-110' : 'text-white/70'}`}
           fill={isActive ? 'currentColor' : 'none'}
           stroke="currentColor"
           strokeWidth={isActive ? '0' : '2'}
@@ -130,9 +130,9 @@ export default function BottomNav() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
-      <div className="max-w-md mx-auto pointer-events-auto">
-        <nav className="bg-[#10284D] rounded-[28px] mx-3 mb-2 flex items-center justify-between px-2 py-2 bottom-safe shadow-2xl border border-white/10">
+    <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none pb-2">
+      <div className="max-w-md mx-auto pointer-events-auto px-3">
+        <nav className="bg-[#10284D] rounded-[28px] flex items-center justify-between px-2 py-2 shadow-2xl border border-white/10">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
 
@@ -140,14 +140,14 @@ export default function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center w-[16%] h-12 transition-all ${
+                className={`flex flex-col items-center justify-center w-[16%] py-1.5 transition-all ${
                   isActive ? 'bg-white/20 rounded-2xl shadow-inner' : 'hover:bg-white/10 rounded-2xl'
                 }`}
               >
                 {item.icon(isActive)}
                 <span
-                  className={`text-[10px] font-bold ${
-                    isActive ? 'text-white font-extrabold' : 'text-white/70'
+                  className={`text-[10px] tracking-tight ${
+                    isActive ? 'text-white font-extrabold' : 'text-white/75 font-semibold'
                   }`}
                 >
                   {item.name}

@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import AppImage from './AppImage';
+import Image from 'next/image';
 
 interface KlambiLogoProps {
   variant?: 'full' | 'icon-only' | 'stacked';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   onClick?: () => void;
+  dark?: boolean;
 }
 
 export default function KlambiLogo({
@@ -15,46 +16,39 @@ export default function KlambiLogo({
   size = 'md',
   className = '',
   onClick,
+  dark = false,
 }: KlambiLogoProps) {
-  // Dimension mapping
-  const fullWidths = {
-    sm: 110,
-    md: 140,
-    lg: 180,
-    xl: 240,
+  const iconDimensions = {
+    sm: { w: 36, h: 20 },
+    md: { w: 48, h: 26 },
+    lg: { w: 90, h: 48 },
+    xl: { w: 160, h: 86 },
   };
 
-  const fullHeights = {
-    sm: 27,
-    md: 34,
-    lg: 44,
-    xl: 58,
+  const textSizes = {
+    sm: 'text-base',
+    md: 'text-lg',
+    lg: 'text-2xl',
+    xl: 'text-4xl',
   };
 
-  const iconSizes = {
-    sm: 28,
-    md: 38,
-    lg: 52,
-    xl: 76,
-  };
-
-  const w = fullWidths[size];
-  const h = fullHeights[size];
-  const iconSize = iconSizes[size];
+  const { w, h } = iconDimensions[size] || iconDimensions.md;
+  const textSize = textSizes[size] || textSizes.md;
 
   if (variant === 'icon-only') {
     return (
       <div
-        className={`inline-flex items-center justify-center ${onClick ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''} ${className}`}
+        className={`inline-flex items-center justify-center select-none ${onClick ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''} ${className}`}
         onClick={onClick}
       >
-        <AppImage
+        <Image
           src="/assets/images/app_icon.png"
-          alt="Klámbi.id Icon"
-          width={iconSize}
-          height={Math.round(iconSize * (126 / 261))}
-          className="object-contain flex-shrink-0"
+          alt="Klámbi.id Logo"
+          width={w}
+          height={h}
+          className="object-contain w-auto h-auto"
           priority
+          unoptimized
         />
       </div>
     );
@@ -63,35 +57,53 @@ export default function KlambiLogo({
   if (variant === 'stacked') {
     return (
       <div
-        className={`flex flex-col items-center justify-center gap-3 ${onClick ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''} ${className}`}
+        className={`flex flex-col items-center justify-center gap-2 select-none ${onClick ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''} ${className}`}
         onClick={onClick}
       >
-        <AppImage
-          src="/assets/images/app_logo.png"
+        <Image
+          src="/assets/images/app_icon.png"
           alt="Klámbi.id Logo"
-          width={w * 1.5}
-          height={h * 1.5}
-          className="object-contain flex-shrink-0"
+          width={w}
+          height={h}
+          className="object-contain w-auto h-auto"
           priority
+          unoptimized
         />
+        <div className="flex items-baseline tracking-tight">
+          <span className={`font-black ${dark ? 'text-white' : 'text-[#10284D]'} ${textSize}`}>
+            Klámbi
+          </span>
+          <span className={`font-medium ${dark ? 'text-cyan-300' : 'text-[#3A7BF7]'} ${textSize}`}>
+            .id
+          </span>
+        </div>
       </div>
     );
   }
 
-  // Full Logo (horizontal)
+  // Full Horizontal Lockup
   return (
     <div
-      className={`inline-flex items-center ${onClick ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''} ${className}`}
+      className={`inline-flex items-center gap-2 select-none ${onClick ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''} ${className}`}
       onClick={onClick}
     >
-      <AppImage
-        src="/assets/images/app_logo.png"
+      <Image
+        src="/assets/images/app_icon.png"
         alt="Klámbi.id Logo"
         width={w}
         height={h}
-        className="object-contain flex-shrink-0"
+        className="object-contain w-auto h-auto"
         priority
+        unoptimized
       />
+      <div className="flex items-baseline tracking-tight">
+        <span className={`font-black ${dark ? 'text-white' : 'text-[#10284D]'} ${textSize}`}>
+          Klámbi
+        </span>
+        <span className={`font-medium ${dark ? 'text-cyan-300' : 'text-[#3A7BF7]'} ${textSize}`}>
+          .id
+        </span>
+      </div>
     </div>
   );
 }
