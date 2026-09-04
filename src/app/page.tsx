@@ -463,7 +463,7 @@ export default function BerandaPage() {
 
           {/* 2. Care Plan */}
           <div
-            onClick={() => router.push('/rawat')}
+            onClick={() => router.push('/care-plan')}
             className="bg-[#FCE4EC]/60 border border-[#FCE4EC] rounded-3xl p-3.5 text-center cursor-pointer hover:shadow-md active:scale-95 transition-all shadow-xs"
           >
             <div className="w-11 h-11 rounded-2xl bg-[#FCE4EC] mx-auto mb-2 flex items-center justify-center shadow-inner">
