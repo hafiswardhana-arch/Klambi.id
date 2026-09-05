@@ -16,6 +16,11 @@ interface CartItem {
   price: number;
   originalPrice: number;
   selected: boolean;
+  emoji: string;
+  isClothing: boolean;
+  color: string;
+  size?: string;
+  brand?: string;
 }
 
 const initialItems: CartItem[] = [
@@ -28,26 +33,54 @@ const initialItems: CartItem[] = [
     price: 245000,
     originalPrice: 450000,
     selected: true,
+    emoji: '🧥',
+    isClothing: true,
+    color: '#1E3A8A',
+    size: 'L',
+    brand: "Levi's",
   },
   {
     id: 'cart-2',
-    storeName: 'CleanCare Signature Kemang',
-    category: 'Perawatan',
-    title: 'Deep Clean & Anti-Odor Textile Spa (2 Helai)',
-    condition: 'Jasa Spa',
-    price: 75000,
-    originalPrice: 100000,
+    storeName: 'Kindfoam Official',
+    category: 'Produk Perawatan',
+    title: 'Kindfoam Eco-Deterjen Lembaran 30pcs',
+    condition: 'Produk Eco',
+    price: 45000,
+    originalPrice: 65000,
     selected: true,
+    emoji: '🧼',
+    isClothing: false,
+    color: '#22C55E',
   },
   {
     id: 'cart-3',
-    storeName: 'Taylor Studio Artisan',
-    category: 'Permak',
-    title: 'Potong Panjang Celana & Hemming Chainstitch',
-    condition: 'Jasa Permak',
-    price: 45000,
-    originalPrice: 60000,
+    storeName: '@batik_solo_heritage',
+    category: 'Kemeja',
+    title: 'Kemeja Batik Tulis Parang Coklat-Krem',
+    condition: 'Sangat Baik',
+    price: 200000,
+    originalPrice: 900000,
+    selected: true,
+    emoji: '👔',
+    isClothing: true,
+    color: '#92400E',
+    size: 'L',
+    brand: 'Batik Keris',
+  },
+  {
+    id: 'cart-4',
+    storeName: 'ReworkLab ID',
+    category: 'Kaos',
+    title: 'Kaos Oversized Heavyweight Vintage Band Tee',
+    condition: 'Baik',
+    price: 85000,
+    originalPrice: 200000,
     selected: false,
+    emoji: '👕',
+    isClothing: true,
+    color: '#1C1917',
+    size: 'XL',
+    brand: 'Unknown Pleasures',
   },
 ];
 
@@ -71,6 +104,27 @@ export default function KeranjangPage() {
     toast.success('Item dihapus dari keranjang.');
   };
 
+  const handleTryMannequin = (item: CartItem) => {
+    // Save the item to localStorage so Styliss AI can read it
+    const mannequinData = {
+      id: item.id,
+      title: item.title,
+      emoji: item.emoji,
+      category: item.category,
+      color: item.color,
+      size: item.size,
+      brand: item.brand,
+      condition: item.condition,
+      price: item.price,
+    };
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('klambi_styliss_item', JSON.stringify(mannequinData));
+      localStorage.setItem('klambi_styliss_source', 'keranjang');
+    }
+    toast.success(`Membuka Styliss AI untuk ${item.title}...`);
+    router.push('/styliss-ai?source=keranjang');
+  };
+
   const selectedItems = items.filter((i) => i.selected);
   const totalSubtotal = selectedItems.reduce((acc, curr) => acc + curr.price, 0);
 
@@ -84,7 +138,19 @@ export default function KeranjangPage() {
 
   return (
     <AppLayout title="Keranjang Saya" showBack backHref="/">
-      <div className="max-w-2xl mx-auto space-y-4 pb-20">
+      <div className="max-w-2xl mx-auto space-y-4 pb-32 animate-fade-in">
+
+        {/* Styliss AI Banner */}
+        <div className="bg-gradient-to-r from-[#D1FAE5] to-[#A7F3D0] border border-emerald-200 rounded-2xl p-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white text-lg flex-shrink-0">
+            🧍
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-extrabold text-emerald-900">Coba Dulu Sebelum Beli!</div>
+            <div className="text-[10px] text-emerald-800 mt-0.5">Tekan tombol <strong>Coba di Manekin 3D</strong> di tiap item pakaian untuk visualisasi sebelum checkout.</div>
+          </div>
+        </div>
+
         {/* Select All Row */}
         <div className="bg-card rounded-2xl p-4 border border-border shadow-sm flex items-center justify-between">
           <label className="flex items-center gap-3 cursor-pointer select-none">
@@ -120,7 +186,7 @@ export default function KeranjangPage() {
           items.map((item) => (
             <div
               key={item.id}
-              className="bg-card rounded-2xl p-4 border border-border shadow-sm space-y-3"
+              className="bg-card rounded-2xl p-4 border border-border shadow-sm space-y-3 animate-slide-up"
             >
               {/* Store Header */}
               <div className="flex items-center justify-between border-b border-border pb-2.5">
@@ -145,53 +211,89 @@ export default function KeranjangPage() {
 
               {/* Item Content */}
               <div className="flex items-start gap-3">
-                <div className="w-16 h-16 rounded-xl bg-secondary flex items-center justify-center text-primary flex-shrink-0">
-                  <Icon name="ShirtIcon" size={28} />
+                {/* Emoji product thumbnail */}
+                <div
+                  className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl flex-shrink-0 border border-border shadow-inner"
+                  style={{ background: `${item.color}18` }}
+                >
+                  {item.emoji}
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-[10px] text-muted-foreground font-semibold uppercase">
-                    {item.category}
+                    {item.category}{item.size ? ` • Size ${item.size}` : ''}
                   </span>
-                  <h4 className="text-xs font-bold text-foreground truncate">{item.title}</h4>
+                  <h4 className="text-xs font-bold text-foreground leading-snug">{item.title}</h4>
+                  {item.brand && (
+                    <span className="text-[10px] text-muted-foreground">by {item.brand}</span>
+                  )}
                   <span className="inline-block mt-1 bg-[#D1FAE5] text-[#166534] text-[10px] font-bold px-2 py-0.5 rounded-md">
                     {item.condition}
                   </span>
-                  <div className="flex items-baseline gap-2 mt-2">
+                  <div className="flex items-baseline gap-2 mt-1.5">
                     <span className="text-xs font-extrabold text-[#E86D50]">
                       Rp {item.price.toLocaleString('id-ID')}
                     </span>
                     <span className="text-[10px] text-muted-foreground line-through">
                       Rp {item.originalPrice.toLocaleString('id-ID')}
                     </span>
+                    <span className="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
+                      -{Math.round((1 - item.price / item.originalPrice) * 100)}%
+                    </span>
                   </div>
                 </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 pt-1 border-t border-border">
+                {item.isClothing ? (
+                  <button
+                    onClick={() => handleTryMannequin(item)}
+                    className="flex items-center gap-1.5 bg-gradient-to-r from-[#10284D] to-[#1A3A6B] text-white px-4 py-2 rounded-xl text-[11px] font-extrabold shadow-sm hover:shadow-md active:scale-95 transition-all"
+                  >
+                    <span>🧍</span>
+                    <span>Coba di Manekin 3D</span>
+                  </button>
+                ) : (
+                  <span className="text-[10px] text-muted-foreground italic px-2">
+                    (Produk non-pakaian)
+                  </span>
+                )}
+                <button
+                  onClick={() => {
+                    toast.info(`${item.title} disimpan ke wishlist`);
+                  }}
+                  className="flex items-center gap-1 px-3 py-2 rounded-xl text-[11px] font-semibold text-muted-foreground border border-border hover:border-[#10284D]/40 hover:text-[#10284D] transition-all"
+                >
+                  <Icon name="HeartIcon" size={12} />
+                  Wishlist
+                </button>
               </div>
             </div>
           ))
         )}
-
-        {/* Bottom Checkout Sticky Bar */}
-        {items.length > 0 && (
-          <div className="fixed bottom-16 left-0 right-0 z-40 bg-card border-t border-border p-4 shadow-modal">
-            <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
-              <div>
-                <span className="text-[10px] text-muted-foreground font-semibold block">
-                  Total Subtotal ({selectedItems.length} item)
-                </span>
-                <span className="text-base font-extrabold text-[#E86D50]">
-                  Rp {totalSubtotal.toLocaleString('id-ID')}
-                </span>
-              </div>
-              <button
-                onClick={handleCheckout}
-                className="bg-[#10284D] text-white px-6 py-3 rounded-2xl text-xs font-bold shadow-md hover:bg-[#152248] active:scale-95 transition-all"
-              >
-                Lanjut ke Checkout ({selectedItems.length})
-              </button>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Bottom Checkout Sticky Bar */}
+      {items.length > 0 && (
+        <div className="fixed bottom-16 left-0 right-0 z-40 bg-card border-t border-border p-4 shadow-modal">
+          <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
+            <div>
+              <span className="text-[10px] text-muted-foreground font-semibold block">
+                Total Subtotal ({selectedItems.length} item)
+              </span>
+              <span className="text-base font-extrabold text-[#E86D50]">
+                Rp {totalSubtotal.toLocaleString('id-ID')}
+              </span>
+            </div>
+            <button
+              onClick={handleCheckout}
+              className="bg-[#10284D] text-white px-6 py-3 rounded-2xl text-xs font-bold shadow-md hover:bg-[#152248] active:scale-95 transition-all"
+            >
+              Checkout ({selectedItems.length})
+            </button>
+          </div>
+        </div>
+      )}
     </AppLayout>
   );
 }
