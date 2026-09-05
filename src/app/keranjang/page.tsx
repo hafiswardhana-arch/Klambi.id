@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -17,6 +18,7 @@ interface CartItem {
   originalPrice: number;
   selected: boolean;
   emoji: string;
+  imageUrl: string;
   isClothing: boolean;
   color: string;
   size?: string;
@@ -34,6 +36,7 @@ const initialItems: CartItem[] = [
     originalPrice: 450000,
     selected: true,
     emoji: '🧥',
+    imageUrl: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=600&auto=format&fit=crop&q=80',
     isClothing: true,
     color: '#1E3A8A',
     size: 'L',
@@ -49,6 +52,7 @@ const initialItems: CartItem[] = [
     originalPrice: 65000,
     selected: true,
     emoji: '🧼',
+    imageUrl: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=600&auto=format&fit=crop&q=80',
     isClothing: false,
     color: '#22C55E',
   },
@@ -62,6 +66,7 @@ const initialItems: CartItem[] = [
     originalPrice: 900000,
     selected: true,
     emoji: '👔',
+    imageUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80',
     isClothing: true,
     color: '#92400E',
     size: 'L',
@@ -77,6 +82,7 @@ const initialItems: CartItem[] = [
     originalPrice: 200000,
     selected: false,
     emoji: '👕',
+    imageUrl: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&auto=format&fit=crop&q=80',
     isClothing: true,
     color: '#1C1917',
     size: 'XL',
@@ -211,12 +217,18 @@ export default function KeranjangPage() {
 
               {/* Item Content */}
               <div className="flex items-start gap-3">
-                {/* Emoji product thumbnail */}
-                <div
-                  className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl flex-shrink-0 border border-border shadow-inner"
-                  style={{ background: `${item.color}18` }}
-                >
-                  {item.emoji}
+                {/* Real product photo thumbnail */}
+                <div className="relative w-18 h-18 rounded-xl overflow-hidden flex-shrink-0 border border-border shadow-inner bg-slate-100">
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.title}
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                  <span className="absolute bottom-1 right-1 text-xs bg-black/50 text-white px-1 py-0.5 rounded backdrop-blur-xs">
+                    {item.emoji}
+                  </span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-[10px] text-muted-foreground font-semibold uppercase">

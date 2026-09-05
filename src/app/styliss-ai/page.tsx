@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import { toast } from 'sonner';
@@ -20,6 +21,7 @@ interface CartItemData {
   brand?: string;
   condition: string;
   price: number;
+  imageUrl?: string;
 }
 
 interface BodyMeasure {
@@ -31,11 +33,11 @@ interface BodyMeasure {
 // Wardrobe mock items (shown when no cart item)
 // ─────────────────────────────────────────────
 const wardrobeMock: CartItemData[] = [
-  { id: 'w-1', title: "Jaket Denim Vintage Levi's 501", emoji: '🧥', category: 'Jaket', color: '#1E3A8A', size: 'L', brand: "Levi's", condition: 'Sangat Baik', price: 245000 },
-  { id: 'w-2', title: 'Kemeja Batik Parang Coklat', emoji: '👔', category: 'Kemeja', color: '#92400E', size: 'L', brand: 'Batik Keris', condition: 'Sangat Baik', price: 200000 },
-  { id: 'w-3', title: 'Kaos Oversized Vintage Band Tee', emoji: '👕', category: 'Kaos', color: '#1C1917', size: 'XL', brand: 'Unknown', condition: 'Baik', price: 85000 },
-  { id: 'w-4', title: 'Dress Midi Batik Kontemporer', emoji: '👗', category: 'Dress', color: '#78350F', size: 'S', brand: 'Danar Hadi', condition: 'Sangat Baik', price: 95000 },
-  { id: 'w-5', title: 'Celana Jeans Slim Fit Navy', emoji: '👖', category: 'Celana', color: '#1E3A5F', size: '30', brand: "Levi's", condition: 'Cukup Baik', price: 120000 },
+  { id: 'w-1', title: "Jaket Denim Vintage Levi's 501", emoji: '🧥', category: 'Jaket', color: '#1E3A8A', size: 'L', brand: "Levi's", condition: 'Sangat Baik', price: 245000, imageUrl: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=600&auto=format&fit=crop&q=80' },
+  { id: 'w-2', title: 'Kemeja Batik Parang Coklat', emoji: '👔', category: 'Kemeja', color: '#92400E', size: 'L', brand: 'Batik Keris', condition: 'Sangat Baik', price: 200000, imageUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80' },
+  { id: 'w-3', title: 'Kaos Oversized Vintage Band Tee', emoji: '👕', category: 'Kaos', color: '#1C1917', size: 'XL', brand: 'Unknown', condition: 'Baik', price: 85000, imageUrl: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&auto=format&fit=crop&q=80' },
+  { id: 'w-4', title: 'Dress Midi Batik Kontemporer', emoji: '👗', category: 'Dress', color: '#78350F', size: 'S', brand: 'Danar Hadi', condition: 'Sangat Baik', price: 95000, imageUrl: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&auto=format&fit=crop&q=80' },
+  { id: 'w-5', title: 'Celana Jeans Slim Fit Navy', emoji: '👖', category: 'Celana', color: '#1E3A5F', size: '30', brand: "Levi's", condition: 'Cukup Baik', price: 120000, imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&auto=format&fit=crop&q=80' },
 ];
 
 // ─────────────────────────────────────────────
@@ -653,11 +655,26 @@ function StylissAIContent() {
                         <span className="text-[8px] text-white font-black">✓</span>
                       </div>
                     )}
-                    <div
-                      className="w-full h-20 rounded-xl flex items-center justify-center text-5xl"
-                      style={{ background: `${item.color}18` }}
-                    >
-                      {item.emoji}
+                    <div className="relative w-full h-24 rounded-xl overflow-hidden bg-slate-100 border border-border/70">
+                      {item.imageUrl ? (
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.title}
+                          fill
+                          unoptimized
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full flex items-center justify-center text-4xl"
+                          style={{ background: `${item.color}18` }}
+                        >
+                          {item.emoji}
+                        </div>
+                      )}
+                      <span className="absolute bottom-1 right-1 text-xs bg-black/50 text-white px-1.5 py-0.5 rounded backdrop-blur-xs">
+                        {item.emoji}
+                      </span>
                     </div>
                     <div className="w-full">
                       <div className="text-[10px] font-extrabold text-foreground leading-tight">{item.title}</div>

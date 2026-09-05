@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
@@ -18,6 +19,7 @@ interface ProductItem {
   fabric: string;
   colorScheme: string;
   iconText: string;
+  imageUrl: string;
   description: string;
   seller: string;
   location: string;
@@ -73,6 +75,7 @@ const productsData: ProductItem[] = [
     fabric: 'Heavy Denim 14oz & Katun Patchwork',
     colorScheme: 'from-blue-400 via-emerald-400 to-amber-300',
     iconText: '🧥',
+    imageUrl: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=600&auto=format&fit=crop&q=80',
     description: 'Jaket upcycle artisan dengan teknik patchwork warna-warni cerah. Kondisi serat kain sangat kuat dan kancing logam kokoh.',
     seller: 'Sirkular Studio Kemang',
     location: 'Jakarta Selatan',
@@ -89,6 +92,7 @@ const productsData: ProductItem[] = [
     fabric: '100% Combed Cotton 24s',
     colorScheme: 'from-cyan-500 to-blue-600',
     iconText: '👕',
+    imageUrl: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80',
     description: 'Kaos lengan panjang motif grafis biru elektrik. Sablon rubber elastis tanpa pecah dan kerah leher tetap kencang.',
     seller: 'Vintage Vault Senopati',
     location: 'Jakarta Selatan',
@@ -105,6 +109,7 @@ const productsData: ProductItem[] = [
     fabric: 'Polyester Twill Breathable',
     colorScheme: 'from-slate-700 via-gray-400 to-slate-200',
     iconText: '👗',
+    imageUrl: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=600&auto=format&fit=crop&q=80',
     description: 'Rok mini motif retro monokrom print. Jahitan samping rapi dengan resleting tersembunyi YKK.',
     seller: 'Thriftique Tebet',
     location: 'Jakarta Selatan',
@@ -121,6 +126,7 @@ const productsData: ProductItem[] = [
     fabric: 'Nylon Taslan Water-repellent',
     colorScheme: 'from-teal-500 via-purple-500 to-pink-500',
     iconText: '🎽',
+    imageUrl: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?w=600&auto=format&fit=crop&q=80',
     description: 'Jaket parasut colorblock khas era 90-an. Tahan angin, ringan, dan warna masih sangat pekat.',
     seller: 'Archive Retro ID',
     location: 'Bandung',
@@ -137,6 +143,7 @@ const productsData: ProductItem[] = [
     fabric: '100% Katun Flanel Organik',
     colorScheme: 'from-emerald-600 to-teal-700',
     iconText: '👔',
+    imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80',
     description: 'Kemeja flanel lembut warna sage green natural. Bebas noda dan serat kain terawat.',
     seller: 'EcoWardrobe BSD',
     location: 'Tangerang',
@@ -153,6 +160,7 @@ const productsData: ProductItem[] = [
     fabric: 'Cotton Stretch Twill',
     colorScheme: 'from-amber-200 to-amber-400',
     iconText: '👖',
+    imageUrl: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&auto=format&fit=crop&q=80',
     description: 'Celana chino warna khaki hangat. Nyaman untuk aktivitas harian dengan potongan slim fit modern.',
     seller: 'Urban Re-style',
     location: 'Jakarta Pusat',
@@ -527,14 +535,20 @@ export default function BerandaPage() {
                 className="w-[165px] flex-shrink-0 bg-card rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-md active:scale-95 transition-all cursor-pointer flex flex-col justify-between"
               >
                 {/* Visual Image Representation */}
-                <div
-                  className={`w-full h-[130px] bg-gradient-to-br ${product.colorScheme} flex flex-col items-center justify-center p-3 relative`}
-                >
-                  <span className="text-4xl filter drop-shadow-md transform hover:scale-110 transition-transform">
-                    {product.iconText}
-                  </span>
-                  <span className="absolute top-2 right-2 bg-black/40 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-xs">
+                <div className="w-full h-[135px] relative overflow-hidden bg-slate-100 group">
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    fill
+                    unoptimized
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
+                  <span className="absolute top-2 right-2 bg-black/60 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-sm shadow-sm">
                     ⭐ {product.score}
+                  </span>
+                  <span className="absolute bottom-2 left-2 text-xs font-bold text-white bg-[#10284D]/80 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                    {product.iconText} {product.category}
                   </span>
                 </div>
 
@@ -570,33 +584,39 @@ export default function BerandaPage() {
         {/* ========================================================================= */}
         {selectedProduct && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl p-6 w-full max-w-md text-gray-800 space-y-4 max-h-[85vh] overflow-y-auto animate-scale-in shadow-2xl">
-              {/* Header */}
-              <div className="flex items-start justify-between border-b border-gray-100 pb-3">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${selectedProduct.colorScheme} flex items-center justify-center text-3xl shadow-sm`}
-                  >
-                    {selectedProduct.iconText}
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-gray-500 font-semibold block">
-                      {selectedProduct.categoryTitle}
-                    </span>
-                    <h3 className="font-extrabold text-base text-[#10284D] leading-tight">
-                      {selectedProduct.name}
-                    </h3>
-                    <span className="text-[10px] text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-bold mt-1 inline-block">
-                      Kondisi: {selectedProduct.condition} (Skor {selectedProduct.score}/100)
-                    </span>
-                  </div>
+            <div className="bg-white rounded-3xl p-5 w-full max-w-md text-gray-800 space-y-3.5 max-h-[90vh] overflow-y-auto animate-scale-in shadow-2xl">
+              {/* Product Hero Image in Modal */}
+              <div className="relative w-full h-48 rounded-2xl overflow-hidden shadow-inner bg-slate-100">
+                <Image
+                  src={selectedProduct.imageUrl}
+                  alt={selectedProduct.name}
+                  fill
+                  unoptimized
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                <div className="absolute top-3 left-3">
+                  <span className="text-[10px] font-extrabold text-white bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20">
+                    {selectedProduct.category}
+                  </span>
                 </div>
                 <button
                   onClick={() => setSelectedProduct(null)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 backdrop-blur-md transition-colors"
                 >
-                  <Icon name="XMarkIcon" size={20} />
+                  <Icon name="XMarkIcon" size={18} />
                 </button>
+                <div className="absolute bottom-3 left-3 right-3 text-white">
+                  <span className="text-[10px] text-white/80 block">{selectedProduct.categoryTitle}</span>
+                  <h3 className="font-extrabold text-base text-white leading-tight drop-shadow">
+                    {selectedProduct.name}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[10px] text-emerald-300 bg-emerald-950/70 border border-emerald-500/40 px-2 py-0.5 rounded font-bold backdrop-blur-xs">
+                      {selectedProduct.condition} • Skor {selectedProduct.score}/100
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* Price & Seller */}

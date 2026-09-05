@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useMemo } from 'react';
+import Image from 'next/image';
 import Icon from '@/components/ui/AppIcon';
 import TriftListingGrid from './TriftListingGrid';
 import TriftListingModal from './TriftListingModal';
@@ -33,18 +34,89 @@ interface CareProduct {
   originalPrice: number;
   category: string;
   emoji: string;
+  imageUrl: string;
   badge?: string;
   rating: number;
   sold: number;
 }
 
 const careProducts: CareProduct[] = [
-  { id: 'cp-1', name: 'Kindfoam Eco-Deterjen Lembaran 30pcs', brand: 'Kindfoam', price: 45000, originalPrice: 65000, category: 'Deterjen', emoji: '🧼', badge: 'Best Seller', rating: 4.9, sold: 1240 },
-  { id: 'cp-2', name: 'Cedar Wood Anti-Ngengat Pack (6pcs)', brand: 'EcoGuard', price: 28000, originalPrice: 40000, category: 'Penyimpanan', emoji: '🪵', badge: 'Eco-Friendly', rating: 4.7, sold: 856 },
-  { id: 'cp-3', name: 'Lerak Sachet Cuci Natural 250ml', brand: 'HijauCare', price: 22000, originalPrice: 32000, category: 'Deterjen', emoji: '🌿', rating: 4.8, sold: 624 },
-  { id: 'cp-4', name: 'Silica Gel Premium Lemari (4 pak)', brand: 'DryFresh', price: 18000, originalPrice: 25000, category: 'Penyimpanan', emoji: '🫙', rating: 4.5, sold: 432 },
-  { id: 'cp-5', name: 'Eco Fabric Softener Sheet Rose 20pcs', brand: 'Kindfoam', price: 35000, originalPrice: 50000, category: 'Softener', emoji: '🌹', badge: 'New!', rating: 4.6, sold: 198 },
-  { id: 'cp-6', name: 'Micro-Fiber Washing Bag Anti-Plastik', brand: 'CleanLoop', price: 55000, originalPrice: 75000, category: 'Aksesoris', emoji: '🛍️', badge: 'Eco-Friendly', rating: 4.8, sold: 377 },
+  {
+    id: 'cp-1',
+    name: 'Kindfoam Eco-Deterjen Lembaran 30pcs',
+    brand: 'Kindfoam',
+    price: 45000,
+    originalPrice: 65000,
+    category: 'Deterjen',
+    emoji: '🧼',
+    imageUrl: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=600&auto=format&fit=crop&q=80',
+    badge: 'Best Seller',
+    rating: 4.9,
+    sold: 1240,
+  },
+  {
+    id: 'cp-2',
+    name: 'Cedar Wood Anti-Ngengat Pack (6pcs)',
+    brand: 'EcoGuard',
+    price: 28000,
+    originalPrice: 40000,
+    category: 'Penyimpanan',
+    emoji: '🪵',
+    imageUrl: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&auto=format&fit=crop&q=80',
+    badge: 'Eco-Friendly',
+    rating: 4.7,
+    sold: 856,
+  },
+  {
+    id: 'cp-3',
+    name: 'Lerak Sachet Cuci Natural 250ml',
+    brand: 'HijauCare',
+    price: 22000,
+    originalPrice: 32000,
+    category: 'Deterjen',
+    emoji: '🌿',
+    imageUrl: 'https://images.unsplash.com/photo-1608248597359-0a566580f142?w=600&auto=format&fit=crop&q=80',
+    rating: 4.8,
+    sold: 624,
+  },
+  {
+    id: 'cp-4',
+    name: 'Silica Gel Premium Lemari (4 pak)',
+    brand: 'DryFresh',
+    price: 18000,
+    originalPrice: 25000,
+    category: 'Penyimpanan',
+    emoji: '🫙',
+    imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80',
+    rating: 4.5,
+    sold: 432,
+  },
+  {
+    id: 'cp-5',
+    name: 'Eco Fabric Softener Sheet Rose 20pcs',
+    brand: 'Kindfoam',
+    price: 35000,
+    originalPrice: 50000,
+    category: 'Softener',
+    emoji: '🌹',
+    imageUrl: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&auto=format&fit=crop&q=80',
+    badge: 'New!',
+    rating: 4.6,
+    sold: 198,
+  },
+  {
+    id: 'cp-6',
+    name: 'Micro-Fiber Washing Bag Anti-Plastik',
+    brand: 'CleanLoop',
+    price: 55000,
+    originalPrice: 75000,
+    category: 'Aksesoris',
+    emoji: '🛍️',
+    imageUrl: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&auto=format&fit=crop&q=80',
+    badge: 'Eco-Friendly',
+    rating: 4.8,
+    sold: 377,
+  },
 ];
 
 interface UmkmProduct {
@@ -54,18 +126,83 @@ interface UmkmProduct {
   price: number;
   originalMaterial: string;
   emoji: string;
+  imageUrl: string;
   badge?: string;
   rating: number;
   location: string;
 }
 
 const umkmProducts: UmkmProduct[] = [
-  { id: 'um-1', name: 'Tote Bag Patchwork Denim', artisan: 'Karya Sirkular Studio', price: 125000, originalMaterial: 'Denim bekas', emoji: '👜', badge: '♻️ Dari Limbah', rating: 4.9, location: 'Jakarta' },
-  { id: 'um-2', name: 'Bucket Hat Upcycled Flannel', artisan: 'ReworkLab ID', price: 85000, originalMaterial: 'Kemeja flanel lama', emoji: '🪣', rating: 4.7, location: 'Bandung' },
-  { id: 'um-3', name: 'Pouch Kain Perca Batik Mix', artisan: 'Batik Nusantara Sirkular', price: 65000, originalMaterial: 'Perca batik', emoji: '🎒', badge: 'Handmade', rating: 4.8, location: 'Solo' },
-  { id: 'um-4', name: 'Vest Rework Denim Vintage', artisan: 'Sirkular Upcycle Lab', price: 220000, originalMaterial: 'Jaket denim vintage', emoji: '🦺', badge: '🔥 Hot', rating: 5.0, location: 'Yogyakarta' },
-  { id: 'um-5', name: 'Scrunchie Set Satin Upcycled (5pcs)', artisan: 'ReThreads Co.', price: 45000, originalMaterial: 'Kain satin bekas', emoji: '💍', rating: 4.6, location: 'Surabaya' },
-  { id: 'um-6', name: 'Tas Belanja Anyaman Kain Tenun', artisan: 'Tenun Nusantara Eco', price: 150000, originalMaterial: 'Tenun tradisional', emoji: '🧺', badge: 'Budaya', rating: 4.9, location: 'Bali' },
+  {
+    id: 'um-1',
+    name: 'Tote Bag Patchwork Denim',
+    artisan: 'Karya Sirkular Studio',
+    price: 125000,
+    originalMaterial: 'Denim bekas',
+    emoji: '👜',
+    imageUrl: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&auto=format&fit=crop&q=80',
+    badge: '♻️ Dari Limbah',
+    rating: 4.9,
+    location: 'Jakarta',
+  },
+  {
+    id: 'um-2',
+    name: 'Bucket Hat Upcycled Flannel',
+    artisan: 'ReworkLab ID',
+    price: 85000,
+    originalMaterial: 'Kemeja flanel lama',
+    emoji: '🪣',
+    imageUrl: 'https://images.unsplash.com/photo-1575428652377-a2d80e2277fc?w=600&auto=format&fit=crop&q=80',
+    rating: 4.7,
+    location: 'Bandung',
+  },
+  {
+    id: 'um-3',
+    name: 'Pouch Kain Perca Batik Mix',
+    artisan: 'Batik Nusantara Sirkular',
+    price: 65000,
+    originalMaterial: 'Perca batik',
+    emoji: '🎒',
+    imageUrl: 'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=600&auto=format&fit=crop&q=80',
+    badge: 'Handmade',
+    rating: 4.8,
+    location: 'Solo',
+  },
+  {
+    id: 'um-4',
+    name: 'Vest Rework Denim Vintage',
+    artisan: 'Sirkular Upcycle Lab',
+    price: 220000,
+    originalMaterial: 'Jaket denim vintage',
+    emoji: '🦺',
+    imageUrl: 'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=600&auto=format&fit=crop&q=80',
+    badge: '🔥 Hot',
+    rating: 5.0,
+    location: 'Yogyakarta',
+  },
+  {
+    id: 'um-5',
+    name: 'Scrunchie Set Satin Upcycled (5pcs)',
+    artisan: 'ReThreads Co.',
+    price: 45000,
+    originalMaterial: 'Kain satin bekas',
+    emoji: '💍',
+    imageUrl: 'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=600&auto=format&fit=crop&q=80',
+    rating: 4.6,
+    location: 'Surabaya',
+  },
+  {
+    id: 'um-6',
+    name: 'Tas Belanja Anyaman Kain Tenun',
+    artisan: 'Tenun Nusantara Eco',
+    price: 150000,
+    originalMaterial: 'Tenun tradisional',
+    emoji: '🧺',
+    imageUrl: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=600&auto=format&fit=crop&q=80',
+    badge: 'Budaya',
+    rating: 4.9,
+    location: 'Bali',
+  },
 ];
 
 const heroBanners = [
@@ -265,8 +402,14 @@ export default function TriftMarketplaceContent() {
               <span className="text-xs font-extrabold text-emerald-800">Pilihan Utama Klámbi</span>
             </div>
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-2xl bg-white border border-emerald-200 flex items-center justify-center text-4xl flex-shrink-0 shadow-sm">
-                🧼
+              <div className="relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 shadow-sm bg-white border border-emerald-200">
+                <Image
+                  src={careProducts[0].imageUrl}
+                  alt={careProducts[0].name}
+                  fill
+                  unoptimized
+                  className="object-cover"
+                />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-extrabold text-[#10284D]">Kindfoam Eco-Deterjen Lembaran 30pcs</div>
@@ -295,20 +438,27 @@ export default function TriftMarketplaceContent() {
             {careProducts.slice(1).map((p, idx) => (
               <div
                 key={p.id}
-                className={`bg-card border border-border rounded-2xl p-3 space-y-2 animate-slide-up stagger-${Math.min(idx + 1, 6)}`}
+                className={`bg-card border border-border rounded-2xl p-3 space-y-2 animate-slide-up stagger-${Math.min(idx + 1, 6)} overflow-hidden`}
               >
-                <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-2xl border border-border">
-                    {p.emoji}
-                  </div>
+                <div className="relative w-full h-28 rounded-xl overflow-hidden bg-slate-100 border border-border/80">
+                  <Image
+                    src={p.imageUrl}
+                    alt={p.name}
+                    fill
+                    unoptimized
+                    className="object-cover hover:scale-105 transition-transform duration-300"
+                  />
                   {p.badge && (
-                    <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                    <span className="absolute top-2 left-2 text-[9px] bg-emerald-600/90 text-white font-bold px-2 py-0.5 rounded-full backdrop-blur-xs shadow-xs">
                       {p.badge}
                     </span>
                   )}
+                  <span className="absolute bottom-1.5 right-1.5 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded-md backdrop-blur-xs">
+                    {p.emoji}
+                  </span>
                 </div>
                 <div>
-                  <div className="text-[11px] font-extrabold text-foreground leading-tight">{p.name}</div>
+                  <div className="text-[11px] font-extrabold text-foreground leading-tight truncate">{p.name}</div>
                   <div className="text-[10px] text-muted-foreground mt-0.5">{p.brand} • ⭐ {p.rating}</div>
                 </div>
                 <div className="flex items-center gap-1 flex-wrap">
@@ -348,22 +498,32 @@ export default function TriftMarketplaceContent() {
             {umkmProducts.map((p, idx) => (
               <div
                 key={p.id}
-                className={`bg-card border border-border rounded-2xl overflow-hidden animate-slide-up stagger-${Math.min(idx + 1, 6)}`}
+                className={`bg-card border border-border rounded-2xl overflow-hidden animate-slide-up stagger-${Math.min(idx + 1, 6)} shadow-xs hover:shadow-md transition-shadow`}
               >
-                {/* Product image placeholder */}
-                <div className="relative bg-gradient-to-br from-purple-50 to-indigo-100 h-32 flex items-center justify-center">
-                  <span className="text-5xl">{p.emoji}</span>
+                {/* Product image */}
+                <div className="relative w-full h-36 overflow-hidden bg-slate-100">
+                  <Image
+                    src={p.imageUrl}
+                    alt={p.name}
+                    fill
+                    unoptimized
+                    className="object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
                   {p.badge && (
-                    <span className="absolute top-2 left-2 text-[9px] bg-white/90 text-purple-800 font-bold px-2 py-0.5 rounded-full shadow-xs">
+                    <span className="absolute top-2 left-2 text-[9px] bg-purple-700/90 text-white font-bold px-2 py-0.5 rounded-full shadow-xs backdrop-blur-xs">
                       {p.badge}
                     </span>
                   )}
+                  <span className="absolute bottom-2 left-2 text-white text-[10px] font-bold bg-black/40 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                    {p.emoji}
+                  </span>
                 </div>
                 <div className="p-3 space-y-1.5">
-                  <div className="text-[11px] font-extrabold text-foreground leading-tight">{p.name}</div>
-                  <div className="text-[10px] text-muted-foreground">{p.artisan}</div>
-                  <div className="text-[10px] text-emerald-700 font-semibold">♻️ {p.originalMaterial}</div>
-                  <div className="flex items-center justify-between">
+                  <div className="text-[11px] font-extrabold text-foreground leading-tight truncate">{p.name}</div>
+                  <div className="text-[10px] text-muted-foreground truncate">{p.artisan}</div>
+                  <div className="text-[10px] text-emerald-700 font-semibold truncate">♻️ {p.originalMaterial}</div>
+                  <div className="flex items-center justify-between pt-0.5">
                     <span className="text-xs font-black text-[#E86D50]">Rp {p.price.toLocaleString('id-ID')}</span>
                     <span className="text-[9px] text-muted-foreground">📍 {p.location}</span>
                   </div>

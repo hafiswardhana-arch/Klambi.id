@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -17,6 +18,7 @@ interface ProductRecommendation {
   rating: number;
   soldCount: number;
   imageBg: string;
+  imageUrl: string;
   category: string;
 }
 
@@ -33,6 +35,7 @@ const mockRecommendations: ProductRecommendation[] = [
     rating: 4.9,
     soldCount: 42,
     imageBg: 'from-blue-700 to-indigo-900',
+    imageUrl: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=600&auto=format&fit=crop&q=80',
     category: 'Thrift Preloved',
   },
   {
@@ -47,6 +50,7 @@ const mockRecommendations: ProductRecommendation[] = [
     rating: 5.0,
     soldCount: 19,
     imageBg: 'from-emerald-700 to-teal-900',
+    imageUrl: 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=600&auto=format&fit=crop&q=80',
     category: 'Upcycle Tekstil',
   },
   {
@@ -61,6 +65,7 @@ const mockRecommendations: ProductRecommendation[] = [
     rating: 4.8,
     soldCount: 68,
     imageBg: 'from-amber-700 to-stone-900',
+    imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80',
     category: 'Thrift Preloved',
   },
   {
@@ -75,6 +80,7 @@ const mockRecommendations: ProductRecommendation[] = [
     rating: 4.9,
     soldCount: 31,
     imageBg: 'from-yellow-800 to-stone-900',
+    imageUrl: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&auto=format&fit=crop&q=80',
     category: 'Thrift Preloved',
   },
 ];
@@ -745,11 +751,17 @@ export default function ProfileContent() {
                 className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group"
               >
                 {/* Product Image Area with Category & Discount badge */}
-                <div
-                  className={`h-36 bg-gradient-to-br ${product.imageBg} relative p-2.5 flex flex-col justify-between text-white overflow-hidden`}
-                >
-                  <div className="flex items-start justify-between">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md border border-white/20">
+                <div className="h-40 relative p-2.5 flex flex-col justify-between text-white overflow-hidden bg-slate-100">
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.title}
+                    fill
+                    unoptimized
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+                  <div className="flex items-start justify-between relative z-10">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20">
                       {product.category}
                     </span>
                     <button
@@ -757,7 +769,7 @@ export default function ProfileContent() {
                       className={`p-1.5 rounded-full backdrop-blur-md transition-all ${
                         isFav
                           ? 'bg-rose-500 text-white'
-                          : 'bg-black/30 text-white/80 hover:text-white'
+                          : 'bg-black/40 text-white/80 hover:text-white'
                       }`}
                     >
                       <Icon name="HeartIcon" size={14} />
@@ -765,8 +777,8 @@ export default function ProfileContent() {
                   </div>
 
                   {/* Escrow protection tag */}
-                  <div>
-                    <span className="inline-flex items-center gap-1 text-[9px] font-semibold bg-emerald-500/90 text-white px-1.5 py-0.5 rounded backdrop-blur-sm">
+                  <div className="relative z-10">
+                    <span className="inline-flex items-center gap-1 text-[9px] font-semibold bg-emerald-600/90 text-white px-1.5 py-0.5 rounded backdrop-blur-sm shadow-xs">
                       🛡️ Escrow Protected
                     </span>
                   </div>
@@ -1727,18 +1739,26 @@ export default function ProfileContent() {
               </button>
             </div>
 
-            <div className={`h-44 rounded-xl bg-gradient-to-br ${selectedProduct.imageBg} p-4 flex flex-col justify-between text-white shadow-inner`}>
-              <div className="flex justify-between items-start">
-                <span className="text-xs bg-black/40 px-2 py-0.5 rounded backdrop-blur-md">
+            <div className="relative h-48 rounded-2xl overflow-hidden p-4 flex flex-col justify-between text-white shadow-inner bg-slate-900">
+              <Image
+                src={selectedProduct.imageUrl}
+                alt={selectedProduct.title}
+                fill
+                unoptimized
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/40" />
+              <div className="relative z-10 flex justify-between items-start">
+                <span className="text-xs bg-black/60 px-2.5 py-1 rounded-full backdrop-blur-md border border-white/20">
                   Kondisi: {selectedProduct.condition}
                 </span>
-                <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded font-bold">
+                <span className="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold shadow-sm">
                   🛡️ Rekber Escrow
                 </span>
               </div>
-              <div>
-                <p className="text-xs opacity-90">Penjual: {selectedProduct.seller} ({selectedProduct.city})</p>
-                <h3 className="text-sm font-bold mt-0.5">{selectedProduct.title}</h3>
+              <div className="relative z-10">
+                <p className="text-xs text-white/80">Penjual: {selectedProduct.seller} ({selectedProduct.city})</p>
+                <h3 className="text-sm font-extrabold text-white mt-0.5 leading-snug drop-shadow">{selectedProduct.title}</h3>
               </div>
             </div>
 
