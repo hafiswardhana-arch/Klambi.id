@@ -117,6 +117,7 @@ export default function ProfileContent() {
     | 'tukar_poin'
     | 'voucher_list'
     | 'garansi_escrow_info'
+    | 'detail_garansi_modal'
     | 'riwayat_scan'
     | 'favorit_saya'
     | 'referral_program'
@@ -140,6 +141,29 @@ export default function ProfileContent() {
 
   // Wishlist state for interactive like
   const [wishlist, setWishlist] = useState<string[]>(['rec-1', 'rec-3']);
+
+  // Voucher claim tracking state
+  const [claimedVouchers, setClaimedVouchers] = useState<string[]>([]);
+
+  // Interactive review state (Gambar 5)
+  const [selectedStars, setSelectedStars] = useState<number>(5);
+  const [selectedReviewTags, setSelectedReviewTags] = useState<string[]>(['Jahitan Rapi & Kuat', 'Pengerjaan Cepat']);
+  const [reviewComment, setReviewComment] = useState<string>('');
+  const [reviewedOrders, setReviewedOrders] = useState<string[]>([]);
+
+  // Listen for settings open from header or URL parameter
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('modal') === 'settings') {
+        setActiveModal('settings');
+      }
+    }
+
+    const handleOpenSettings = () => setActiveModal('settings');
+    window.addEventListener('klambi-open-settings', handleOpenSettings);
+    return () => window.removeEventListener('klambi-open-settings', handleOpenSettings);
+  }, []);
 
   const toggleWishlist = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -178,52 +202,57 @@ export default function ProfileContent() {
   };
 
   const handleClaimVoucher = (code: string) => {
+    if (claimedVouchers.includes(code)) {
+      toast.warning(`Voucher "${code}" sudah pernah Anda klaim sebelumnya! Cek di menu Voucher Saya.`);
+      return;
+    }
+    setClaimedVouchers((prev) => [...prev, code]);
     setVoucherCount((c) => c + 1);
     toast.success(`Voucher "${code}" berhasil diklaim ke Dompet Saya! 🎉`);
+  };
+
+  const handleRedeemReward = (cost: number, name: string, type: 'voucher' | 'tree') => {
+    if (poinEco < cost) {
+      toast.error(`Poin Eco tidak cukup! Butuh ${cost.toLocaleString('id-ID')} Poin (Poin Anda: ${poinEco.toLocaleString('id-ID')}).`);
+      return;
+    }
+    setPoinEco((p) => p - cost);
+    if (type === 'voucher') {
+      setVoucherCount((v) => v + 1);
+      toast.success(`${name} berhasil ditukar! Sisa poin Eco: ${(poinEco - cost).toLocaleString('id-ID')}`);
+    } else {
+      toast.success(`1 Bibit Mangrove berhasil ditanam atas nama Anda! 🌱 Sisa poin: ${(poinEco - cost).toLocaleString('id-ID')}`);
+    }
+  };
+
+  const handleSendReview = (orderId: string) => {
+    if (reviewedOrders.includes(orderId)) {
+      toast.info('Pesanan ini sudah pernah Anda beri penilaian.');
+      return;
+    }
+    setReviewedOrders((prev) => [...prev, orderId]);
+    setPoinEco((p) => p + 25);
+    toast.success(`Penilaian ${selectedStars} ⭐ terkirim! +25 Poin Eco berhasil ditambahkan.`);
   };
 
   return (
     <div className="space-y-4 pb-20 text-slate-800">
       {/* ========================================================================= */}
-      {/* 1. HEADER PROFIL (Shopee Style with Dark Navy Accent & Quick Icons)      */}
+      {/* 1. HEADER PROFIL (Shopee Style with Dark Navy Accent & Clean Verified Bar) */}
       {/* ========================================================================= */}
       <div className="bg-gradient-to-br from-[#10284D] via-[#163766] to-[#0D1F3C] text-white p-5 rounded-2xl shadow-lg relative overflow-hidden">
         {/* Background decorative circles */}
         <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/5 rounded-full blur-xl pointer-events-none" />
         <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
 
-        {/* Top bar quick action buttons */}
+        {/* Top bar verified badge & member ID (Removed redundant duplicate icon buttons) */}
         <div className="flex items-center justify-between mb-4">
-          <span className="text-xs font-semibold tracking-wider uppercase text-emerald-300 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+          <span className="text-xs font-semibold tracking-wider uppercase text-emerald-300 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-500/30 shadow-xs">
             Akun Terverifikasi 🛡️
           </span>
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setActiveModal('settings')}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-white backdrop-blur-sm"
-              title="Pengaturan Akun"
-            >
-              <Icon name="Cog6ToothIcon" size={19} />
-            </button>
-            <button
-              onClick={() => router.push('/keranjang')}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-white backdrop-blur-sm relative"
-              title="Keranjang Belanja"
-            >
-              <Icon name="ShoppingCartIcon" size={19} />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-[10px] font-bold rounded-full flex items-center justify-center text-white border border-[#10284D]">
-                2
-              </span>
-            </button>
-            <button
-              onClick={() => setActiveModal('customer_service')}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-white backdrop-blur-sm relative"
-              title="Pesan & Bantuan"
-            >
-              <Icon name="ChatBubbleLeftRightIcon" size={19} />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-[#10284D]" />
-            </button>
-          </div>
+          <span className="text-[11px] text-slate-300 font-mono bg-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-xs border border-white/10">
+            ID: KLM-98421
+          </span>
         </div>
 
         {/* Avatar + Main Info */}
@@ -444,9 +473,13 @@ export default function ProfileContent() {
             </div>
             <button
               onClick={() => handleClaimVoucher('KLM-DISKON50')}
-              className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[11px] font-bold shadow-xs active:scale-95 transition-all"
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs transition-all ${
+                claimedVouchers.includes('KLM-DISKON50')
+                  ? 'bg-slate-200 text-slate-500 cursor-default border border-slate-300'
+                  : 'bg-rose-600 hover:bg-rose-700 text-white active:scale-95'
+              }`}
             >
-              Klaim
+              {claimedVouchers.includes('KLM-DISKON50') ? '✓ Sudah Diklaim' : 'Klaim'}
             </button>
           </div>
 
@@ -460,9 +493,13 @@ export default function ProfileContent() {
             </div>
             <button
               onClick={() => handleClaimVoucher('KLM-ONGKIRFREE')}
-              className="px-2.5 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-[11px] font-bold shadow-xs active:scale-95 transition-all"
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs transition-all ${
+                claimedVouchers.includes('KLM-ONGKIRFREE')
+                  ? 'bg-slate-200 text-slate-500 cursor-default border border-slate-300'
+                  : 'bg-teal-600 hover:bg-teal-700 text-white active:scale-95'
+              }`}
             >
-              Pakai
+              {claimedVouchers.includes('KLM-ONGKIRFREE') ? '✓ Sudah Diklaim' : 'Pakai'}
             </button>
           </div>
         </div>
@@ -1041,8 +1078,8 @@ export default function ProfileContent() {
                 <div className="pt-2 border-t border-emerald-200 flex items-center justify-between text-[11px]">
                   <span className="text-emerald-800">Tahap: Penjual mengemas barang</span>
                   <button
-                    onClick={() => toast.info('Status escrow terverifikasi aman & aktif.')}
-                    className="font-bold text-emerald-700 underline"
+                    onClick={() => setActiveModal('detail_garansi_modal')}
+                    className="font-bold text-emerald-700 underline hover:text-emerald-900"
                   >
                     Detail Garansi
                   </button>
@@ -1064,8 +1101,8 @@ export default function ProfileContent() {
                 <div className="pt-2 border-t border-emerald-200 flex items-center justify-between text-[11px]">
                   <span className="text-emerald-800">Tahap: Treatment spa sedang berjalan</span>
                   <button
-                    onClick={() => toast.info('Status escrow terverifikasi aman & aktif.')}
-                    className="font-bold text-emerald-700 underline"
+                    onClick={() => setActiveModal('detail_garansi_modal')}
+                    className="font-bold text-emerald-700 underline hover:text-emerald-900"
                   >
                     Detail Garansi
                   </button>
@@ -1079,6 +1116,92 @@ export default function ProfileContent() {
             >
               Tutup
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Detail Garansi & Rekber Escrow Klambi (Gambar 4 Solved) */}
+      {activeModal === 'detail_garansi_modal' && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-xl shadow-xs">
+                  🛡️
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">Detail Garansi & Escrow Safe</h3>
+                  <p className="text-[11px] text-emerald-600 font-bold">100% Proteksi Transaksi Sirkular</p>
+                </div>
+              </div>
+              <button onClick={() => setActiveModal('order_diproses_escrow')} className="text-slate-400 hover:text-slate-700 p-1">
+                <Icon name="XMarkIcon" size={20} />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200/80 space-y-1">
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block">
+                  Status Rekening Kustodian
+                </span>
+                <p className="font-extrabold text-emerald-950 text-sm">Dana Tertahan Aman di Rekber Resmi</p>
+                <p className="text-slate-600 leading-relaxed text-[11px]">
+                  Uang pembayaran Anda tidak langsung dikirim ke penjual atau workshop mitra, melainkan tersimpan di rekening kustodian escrow Klambi.id hingga Anda menerima dan memeriksa kondisi fisik pakaian.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="text-xs font-black text-[#10284D] uppercase tracking-wider">Cakupan Jaminan Garansi:</h4>
+
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-start gap-2.5">
+                  <span className="text-base">📦</span>
+                  <div>
+                    <span className="font-bold text-slate-800 block">1. Garansi Kesesuaian Fisik (2x24 Jam)</span>
+                    <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                      Jika pakaian robek, salah ukuran, atau ada noda berat yang tidak tercantum dalam deskripsi, Anda berhak retur atau klaim 100% uang kembali.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-start gap-2.5">
+                  <span className="text-base">✨</span>
+                  <div>
+                    <span className="font-bold text-slate-800 block">2. Garansi Mutu Perawatan & Spa Tekstil</span>
+                    <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                      Jika hasil pencucian, pewarnaan ulang, atau jahitan hemming tidak rapi, kami menyediakan gratis pengerjaan ulang (re-treatment).
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-start gap-2.5">
+                  <span className="text-base">⚖️</span>
+                  <div>
+                    <span className="font-bold text-slate-800 block">3. Mediasi Sengketa Cepat 1x24 Jam</span>
+                    <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                      Tim resolusi Klambi.id bertindak sebagai pihak netral untuk memeriksa bukti foto/video dan menyelesaikan kendala secara adil.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setActiveModal(null);
+                  router.push('/chat');
+                }}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-[#10284D] text-white text-xs font-extrabold shadow-sm hover:bg-[#152248] transition-all text-center"
+              >
+                💬 Hubungi CS / Bantuan
+              </button>
+              <button
+                onClick={() => setActiveModal('order_diproses_escrow')}
+                className="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
+              >
+                Kembali
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -1129,24 +1252,113 @@ export default function ProfileContent() {
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <span className="text-xl">⭐</span>
-                <h3 className="text-base font-bold text-slate-900">Beri Penilaian (3 Selesai)</h3>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">Beri Penilaian Pesanan</h3>
+                  <p className="text-[11px] text-slate-500">Pilih bintang 1 - 5 sesuai kepuasan Anda</p>
+                </div>
               </div>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-700">
                 <Icon name="XMarkIcon" size={20} />
               </button>
             </div>
 
-            <div className="space-y-2.5 text-xs">
-              <div className="p-3 bg-slate-50 border rounded-xl space-y-2">
-                <p className="font-bold text-slate-800">Potong Panjang Celana & Hemming Chainstitch</p>
-                <p className="text-slate-500 text-[11px]">Taylor Studio Artisan Fatmawati</p>
+            <div className="space-y-3 text-xs">
+              <div className="p-3 bg-slate-50 border rounded-xl space-y-3">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <p className="font-bold text-slate-800">Potong Panjang Celana & Hemming Chainstitch</p>
+                    {reviewedOrders.includes('order-hemming-1') && (
+                      <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">
+                        Dinilai ✓
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-slate-500 text-[11px]">Taylor Studio Artisan Fatmawati • Selesai</p>
+                </div>
+
+                {/* Interactive Star Rating Selector */}
+                <div className="bg-white p-3 rounded-xl border border-slate-200/80 space-y-2 text-center">
+                  <p className="text-[11px] text-slate-600 font-medium">Berapa bintang untuk kualitas layanan ini?</p>
+                  <div className="flex items-center justify-center gap-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setSelectedStars(star)}
+                        className={`text-2xl transition-all duration-150 hover:scale-125 active:scale-95 ${
+                          star <= selectedStars ? 'text-amber-400 drop-shadow-xs' : 'text-slate-200 hover:text-amber-200'
+                        }`}
+                        title={`${star} Bintang`}
+                      >
+                        ★
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-xs font-bold text-amber-600">
+                    {selectedStars === 1 && '⭐ (1/5) Sangat Kecewa'}
+                    {selectedStars === 2 && '⭐⭐ (2/5) Kurang Puas'}
+                    {selectedStars === 3 && '⭐⭐⭐ (3/5) Cukup Baik'}
+                    {selectedStars === 4 && '⭐⭐⭐⭐ (4/5) Sangat Puas'}
+                    {selectedStars === 5 && '⭐⭐⭐⭐⭐ (5/5) Luar Biasa Sempurna!'}
+                  </div>
+                </div>
+
+                {/* Review feedback tags */}
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-semibold text-slate-700">Apa yang paling Anda suka / kritisi?</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Jahitan Rapi', 'Tepat Waktu', 'Bahan Terjaga', 'Kemasan Bagus', 'Komunikasi Ramah', 'Jahitan Miring'].map((tag) => {
+                      const active = selectedReviewTags.includes(tag);
+                      return (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => {
+                            setSelectedReviewTags((prev) =>
+                              active ? prev.filter((t) => t !== tag) : [...prev, tag]
+                            );
+                          }}
+                          className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-all ${
+                            active
+                              ? 'bg-emerald-600 text-white border-emerald-600'
+                              : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
+                          }`}
+                        >
+                          {tag}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Review text field */}
+                <div>
+                  <textarea
+                    rows={2}
+                    value={reviewComment}
+                    onChange={(e) => setReviewComment(e.target.value)}
+                    placeholder="Tulis ulasan tambahan (opsional)..."
+                    className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  />
+                </div>
+
                 <div className="flex items-center justify-between pt-2 border-t">
-                  <div className="flex text-amber-400 text-base">★★★★★</div>
+                  <span className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+                    <span>🎁</span> Bonus +25 Poin Eco
+                  </span>
                   <button
-                    onClick={() => toast.success('Penilaian terkirim! +25 Poin Eco diberikan.')}
-                    className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-xs"
+                    onClick={() => {
+                      handleSendReview('order-hemming-1');
+                      setTimeout(() => setActiveModal(null), 1000);
+                    }}
+                    disabled={reviewedOrders.includes('order-hemming-1')}
+                    className={`px-4 py-1.5 rounded-lg text-xs font-bold shadow-xs transition-all ${
+                      reviewedOrders.includes('order-hemming-1')
+                        ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                        : 'bg-amber-500 hover:bg-amber-600 text-white active:scale-95'
+                    }`}
                   >
-                    Kirim Ulasan (+25 Poin)
+                    {reviewedOrders.includes('order-hemming-1') ? 'Sudah Diulas' : 'Kirim Ulasan'}
                   </button>
                 </div>
               </div>
@@ -1249,16 +1461,14 @@ export default function ProfileContent() {
                   <p className="text-[10px] text-slate-500">Biaya: 500 Poin Eco</p>
                 </div>
                 <button
-                  onClick={() => {
-                    if (poinEco >= 500) {
-                      setPoinEco((p) => p - 500);
-                      setVoucherCount((v) => v + 1);
-                      toast.success('Voucher berhasil ditukar!');
-                    }
-                  }}
-                  className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-xs"
+                  onClick={() => handleRedeemReward(500, 'Voucher Diskon Servis Rp 25.000', 'voucher')}
+                  className={`px-3.5 py-1.5 rounded-lg font-bold text-xs shadow-xs transition-all ${
+                    poinEco >= 500
+                      ? 'bg-amber-500 hover:bg-amber-600 text-white active:scale-95'
+                      : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
+                  }`}
                 >
-                  Tukar
+                  {poinEco >= 500 ? 'Tukar' : 'Kurang Poin'}
                 </button>
               </div>
 
@@ -1268,15 +1478,14 @@ export default function ProfileContent() {
                   <p className="text-[10px] text-slate-500">Biaya: 1.000 Poin Eco (Tanam 1 Bibit)</p>
                 </div>
                 <button
-                  onClick={() => {
-                    if (poinEco >= 1000) {
-                      setPoinEco((p) => p - 1000);
-                      toast.success('1 Bibit Mangrove berhasil ditanam atas nama Anda! 🌱');
-                    }
-                  }}
-                  className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs"
+                  onClick={() => handleRedeemReward(1000, 'Pohon Donasi Mangrove Sirkular', 'tree')}
+                  className={`px-3.5 py-1.5 rounded-lg font-bold text-xs shadow-xs transition-all ${
+                    poinEco >= 1000
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white active:scale-95'
+                      : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
+                  }`}
                 >
-                  Tanam
+                  {poinEco >= 1000 ? 'Tanam' : 'Kurang Poin'}
                 </button>
               </div>
             </div>

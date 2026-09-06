@@ -107,7 +107,7 @@ function PembayaranContent() {
 
 export default function PembayaranPage() {
   return (
-    <AppLayout title="Pembayaran (Escrow)" showBack backHref="/">
+    <AppLayout title="Pembayaran (Escrow)" showBack backHref="/" hideBottomNav>
       <Suspense
         fallback={
           <div className="flex items-center justify-center min-h-[300px]">

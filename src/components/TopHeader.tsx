@@ -37,7 +37,7 @@ export default function TopHeader({
             </Link>
           )}
 
-          {title && (
+          {showBack && title && (
             <h1 className="text-sm font-extrabold text-[#10284D] truncate">
               {title}
             </h1>
@@ -57,12 +57,21 @@ export default function TopHeader({
                 <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#E86D50] border-2 border-white" />
               </Link>
               <Link
-                href="/profil"
+                href="/chat"
                 className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#10284D] border border-slate-100 transition-colors"
                 aria-label="Pesan & Bantuan"
+                title="Pesan & Bantuan"
               >
                 <Icon name="ChatBubbleLeftRightIcon" size={18} className="text-[#10284D]" />
                 <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-emerald-500 border-2 border-white" />
+              </Link>
+              <Link
+                href="/profil?modal=settings"
+                className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#10284D] border border-slate-100 transition-colors"
+                aria-label="Pengaturan"
+                title="Pengaturan Akun"
+              >
+                <Icon name="Cog6ToothIcon" size={18} className="text-[#10284D]" />
               </Link>
             </>
           )}

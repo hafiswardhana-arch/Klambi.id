@@ -388,7 +388,7 @@ function StylissAIContent() {
     'Tampak Depan-Kanan';
 
   return (
-    <AppLayout title="Styliss AI — Manekin 3D" showBack backHref={fromCart ? '/keranjang' : '/'}>
+    <AppLayout title="Styliss AI — Manekin 3D" showBack backHref={fromCart ? '/keranjang' : '/'} hideBottomNav>
       <div className="max-w-2xl mx-auto space-y-4 pb-20 animate-fade-in">
 
         {/* From Cart Banner */}

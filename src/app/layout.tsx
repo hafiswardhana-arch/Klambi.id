@@ -38,7 +38,7 @@ export default function RootLayout({
       <body className={plusJakartaSans.className}>
         {children}
         <Toaster
-          position="bottom-center"
+          position="top-center"
           toastOptions={{
             style: {
               background: 'var(--card)',

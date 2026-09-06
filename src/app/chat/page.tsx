@@ -116,7 +116,7 @@ export default function ChatPage() {
   };
 
   return (
-    <AppLayout title={activeConv ? activeConv.sellerName : 'Pesan & Chat'} showBack backHref="/">
+    <AppLayout title={activeConv ? activeConv.sellerName : 'Pesan & Chat'} showBack backHref="/" hideBottomNav>
       <div className="max-w-2xl mx-auto space-y-4 pb-20">
         {!activeConv ? (
           /* Conversation List */

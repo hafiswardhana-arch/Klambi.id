@@ -298,6 +298,7 @@ export default function WearwiseAIPage() {
       }
       showBack
       backHref="/"
+      hideBottomNav
     >
       {/* Hidden canvas for capturing frame */}
       <canvas ref={canvasRef} className="hidden" />

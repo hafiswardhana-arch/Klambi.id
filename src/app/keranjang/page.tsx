@@ -143,7 +143,7 @@ export default function KeranjangPage() {
   };
 
   return (
-    <AppLayout title="Keranjang Saya" showBack backHref="/">
+    <AppLayout title="Keranjang Saya" showBack backHref="/" hideBottomNav>
       <div className="max-w-2xl mx-auto space-y-4 pb-32 animate-fade-in">
 
         {/* Styliss AI Banner */}
