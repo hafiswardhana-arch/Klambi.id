@@ -64,6 +64,9 @@ export default function WearwiseAIPage() {
     },
   });
 
+  const [availableCameras, setAvailableCameras] = useState<MediaDeviceInfo[]>([]);
+  const [activeDeviceId, setActiveDeviceId] = useState<string | null>(null);
+
   // Stop camera tracks helper
   const stopCameraTracks = useCallback(() => {
     if (streamRef.current) {
@@ -72,9 +75,9 @@ export default function WearwiseAIPage() {
     }
   }, []);
 
-  // Initialize and start live camera hardware
+  // Initialize and start live camera hardware with multi-level fallback for Android & iOS
   const startCamera = useCallback(
-    async (mode: 'user' | 'environment') => {
+    async (mode: 'user' | 'environment', targetDeviceId?: string | null) => {
       stopCameraTracks();
       setCameraStatus('requesting');
       setCameraError(null);
@@ -87,10 +90,50 @@ export default function WearwiseAIPage() {
         return;
       }
 
-      try {
-        let stream: MediaStream;
+      let stream: MediaStream | null = null;
 
-        // Try ideal facingMode first (mobile front/back, or laptop default)
+      // Strategy 1: Specific deviceId (very reliable on mobile devices when enumerated)
+      if (targetDeviceId) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              deviceId: { exact: targetDeviceId },
+              width: { ideal: 1920, max: 1920 },
+              height: { ideal: 1080, max: 1080 },
+            },
+            audio: false,
+          });
+        } catch {
+          // fallback to ideal deviceId
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: { deviceId: targetDeviceId },
+              audio: false,
+            });
+          } catch {
+            stream = null;
+          }
+        }
+      }
+
+      // Strategy 2: Exact facingMode (Android Chrome & iOS Safari standard)
+      if (!stream) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: { exact: mode },
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+            },
+            audio: false,
+          });
+        } catch {
+          // Continue to ideal facingMode
+        }
+      }
+
+      // Strategy 3: Ideal facingMode
+      if (!stream) {
         try {
           stream = await navigator.mediaDevices.getUserMedia({
             video: {
@@ -101,83 +144,131 @@ export default function WearwiseAIPage() {
             audio: false,
           });
         } catch {
-          // Fallback to basic video constraint (common on laptop webcams)
+          // Continue to device search or general fallback
+        }
+      }
+
+      // Strategy 4: Fallback to basic video constraint (laptop webcams & unlabelled mobile cameras)
+      if (!stream) {
+        try {
           stream = await navigator.mediaDevices.getUserMedia({
             video: true,
             audio: false,
           });
-        }
-
-        streamRef.current = stream;
-
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          try {
-            await videoRef.current.play();
-          } catch {
-            // In case autoplay is briefly blocked
+        } catch (err: unknown) {
+          console.error('Camera access error:', err);
+          setCameraStatus('error');
+          const errorObj = err as { name?: string; message?: string };
+          if (
+            errorObj.name === 'NotAllowedError' ||
+            errorObj.name === 'PermissionDeniedError'
+          ) {
+            setCameraError(
+              'Izin akses kamera belum diberikan. Mohon klik "Izinkan" pada pop-up browser atau gunakan Galeri.'
+            );
+          } else if (
+            errorObj.name === 'NotFoundError' ||
+            errorObj.name === 'DevicesNotFoundError'
+          ) {
+            setCameraError(
+              'Tidak ada sensor kamera yang terdeteksi di HP/Laptop Anda. Silakan unggah foto dari galeri.'
+            );
+          } else {
+            setCameraError(
+              errorObj.message || 'Gagal menghubungkan ke sensor kamera.'
+            );
           }
+          return;
         }
+      }
 
-        setCameraStatus('active');
+      streamRef.current = stream;
 
-        // Check if multiple camera devices exist
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
         try {
-          const devices = await navigator.mediaDevices.enumerateDevices();
-          const videoDevices = devices.filter((d) => d.kind === 'videoinput');
-          setHasMultipleCameras(videoDevices.length > 1);
+          await videoRef.current.play();
         } catch {
-          // ignore device enumeration errors
+          // In case autoplay needs another trigger
+        }
+      }
+
+      setCameraStatus('active');
+
+      // Refresh camera devices list and determine current active track details
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter((d) => d.kind === 'videoinput');
+        setAvailableCameras(videoDevices);
+        setHasMultipleCameras(videoDevices.length > 1);
+
+        const currentTrack = stream.getVideoTracks()[0];
+        const currentTrackSettings = currentTrack.getSettings ? currentTrack.getSettings() : {};
+        if (currentTrackSettings.deviceId) {
+          setActiveDeviceId(currentTrackSettings.deviceId);
         }
 
         // Check hardware torch support
-        try {
-          const track = stream.getVideoTracks()[0];
-          const capabilities = track.getCapabilities ? (track.getCapabilities() as Record<string, unknown>) : null;
-          if (capabilities && 'torch' in capabilities) {
-            setTorchSupported(true);
-          } else {
-            setTorchSupported(false);
-          }
-        } catch {
+        const capabilities = currentTrack.getCapabilities
+          ? (currentTrack.getCapabilities() as Record<string, unknown>)
+          : null;
+        if (capabilities && 'torch' in capabilities) {
+          setTorchSupported(true);
+        } else {
           setTorchSupported(false);
         }
-      } catch (err: unknown) {
-        console.error('Camera access error:', err);
-        setCameraStatus('error');
-        const errorObj = err as { name?: string; message?: string };
-        if (
-          errorObj.name === 'NotAllowedError' ||
-          errorObj.name === 'PermissionDeniedError'
-        ) {
-          setCameraError(
-            'Izin akses kamera belum diberikan. Mohon klik "Izinkan" pada pop-up browser atau gunakan Unggah Galeri.'
-          );
-        } else if (
-          errorObj.name === 'NotFoundError' ||
-          errorObj.name === 'DevicesNotFoundError'
-        ) {
-          setCameraError(
-            'Tidak ada perangkat kamera yang terdeteksi di laptop/HP Anda. Silakan unggah foto dari galeri.'
-          );
-        } else {
-          setCameraError(
-            errorObj.message || 'Gagal menghubungkan ke sensor kamera.'
-          );
-        }
+      } catch {
+        // ignore device enumeration errors
       }
     },
     [stopCameraTracks]
   );
 
-  // Switch between front and back camera
+  // Switch between front and back camera (with smart deviceId search for Android & iOS)
   const handleSwitchCamera = () => {
     const nextMode = facingMode === 'environment' ? 'user' : 'environment';
     setFacingMode(nextMode);
-    startCamera(nextMode);
+
+    // Search for a matching device in available cameras if possible
+    let targetDeviceId: string | null = null;
+    if (availableCameras.length > 1) {
+      if (nextMode === 'environment') {
+        const backCam = availableCameras.find(
+          (c) =>
+            c.label.toLowerCase().includes('back') ||
+            c.label.toLowerCase().includes('rear') ||
+            c.label.toLowerCase().includes('belakang') ||
+            c.label.toLowerCase().includes('environment') ||
+            c.label.toLowerCase().includes('0')
+        );
+        if (backCam && backCam.deviceId !== activeDeviceId) {
+          targetDeviceId = backCam.deviceId;
+        } else {
+          // Pick any camera that is not currently active
+          const altCam = availableCameras.find((c) => c.deviceId !== activeDeviceId);
+          if (altCam) targetDeviceId = altCam.deviceId;
+        }
+      } else {
+        const frontCam = availableCameras.find(
+          (c) =>
+            c.label.toLowerCase().includes('front') ||
+            c.label.toLowerCase().includes('user') ||
+            c.label.toLowerCase().includes('depan') ||
+            c.label.toLowerCase().includes('selfie')
+        );
+        if (frontCam && frontCam.deviceId !== activeDeviceId) {
+          targetDeviceId = frontCam.deviceId;
+        } else {
+          const altCam = availableCameras.find((c) => c.deviceId !== activeDeviceId);
+          if (altCam) targetDeviceId = altCam.deviceId;
+        }
+      }
+    }
+
+    startCamera(nextMode, targetDeviceId);
     toast.info(
       nextMode === 'environment'
-        ? 'Beralih ke Kamera Belakang'
+        ? 'Beralih ke Kamera Belakang (Pakaian)'
         : 'Beralih ke Kamera Depan'
     );
   };
@@ -216,7 +307,8 @@ export default function WearwiseAIPage() {
     return () => {
       stopCameraTracks();
     };
-  }, [stage, facingMode, startCamera, stopCameraTracks]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage]);
 
   // Capture frame from live video feed
   const handleCapture = () => {
@@ -384,27 +476,41 @@ export default function WearwiseAIPage() {
                   <span>Flash: {flash ? 'ON' : 'OFF'}</span>
                 </button>
 
-                {/* Camera Mode Indicator Badge */}
-                <div className="bg-black/60 text-white/90 px-3 py-1 rounded-full text-[11px] font-bold backdrop-blur-md border border-white/15 flex items-center gap-1.5">
-                  <span
-                    className={`w-2 h-2 rounded-full ${
-                      cameraStatus === 'active'
-                        ? 'bg-emerald-400 animate-pulse'
-                        : 'bg-amber-400'
+                {/* Camera Mode Toggle Pill (Mobile & Laptop) */}
+                <div className="flex items-center bg-black/60 p-0.5 rounded-full backdrop-blur-md border border-white/20">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (facingMode !== 'environment') handleSwitchCamera();
+                    }}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
+                      facingMode === 'environment'
+                        ? 'bg-emerald-500 text-white shadow-xs'
+                        : 'text-white/70 hover:text-white'
                     }`}
-                  />
-                  <span>
-                    {facingMode === 'environment'
-                      ? 'Kamera Belakang'
-                      : 'Kamera Depan'}
-                  </span>
+                  >
+                    Belakang 👕
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (facingMode !== 'user') handleSwitchCamera();
+                    }}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
+                      facingMode === 'user'
+                        ? 'bg-emerald-500 text-white shadow-xs'
+                        : 'text-white/70 hover:text-white'
+                    }`}
+                  >
+                    Depan 🤳
+                  </button>
                 </div>
 
-                {/* Flip Camera Button (HP & Laptop) */}
+                {/* Flip Camera Button (Quick Tap) */}
                 <button
                   onClick={handleSwitchCamera}
-                  title="Putar Kamera (Depan/Belakang)"
-                  className="w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 active:scale-95 transition-all backdrop-blur-md border border-white/20"
+                  title="Putar Kamera (Depan / Belakang)"
+                  className="w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 active:scale-90 transition-all backdrop-blur-md border border-white/20 shadow-md"
                 >
                   <Icon name="ArrowPathIcon" size={18} />
                 </button>
@@ -471,12 +577,13 @@ export default function WearwiseAIPage() {
             </div>
 
             <div className="flex items-center justify-between px-1 text-[11px] text-muted-foreground">
-              <span>
-                {hasMultipleCameras
-                  ? 'Gunakan tombol putar kamera di atas untuk beralih kamera HP/Laptop'
-                  : 'Kamera aktif: Siap mendeteksi kondisi kain'}
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                {facingMode === 'environment'
+                  ? 'Kamera Belakang Aktif (Normal / Non-Mirror)'
+                  : 'Kamera Depan Aktif (Mirror Preview)'}
               </span>
-              <span className="font-bold text-[#10284D]">HD Vision Ready</span>
+              <span className="font-bold text-[#10284D]">HD AI Vision</span>
             </div>
           </div>
         )}
