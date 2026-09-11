@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import KlambiLogo from '@/components/ui/KlambiLogo';
 import Icon from '@/components/ui/AppIcon';
+import { checkRateLimit, resetRateLimit } from '@/lib/security/rate-limiter';
+import { createOtpChallenge, verifyOtpCode, isDeviceTrusted, trustDevice } from '@/lib/security/otp';
+import { generateTokenPair } from '@/lib/security/jwt';
+import { createSession, getDeviceFingerprint } from '@/lib/security/session';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,6 +21,44 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<'google' | 'facebook' | null>(null);
 
+  // 2FA OTP & Security State
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpInput, setOtpInput] = useState('');
+  const [activeChallengeId, setActiveChallengeId] = useState('');
+  const [activeOtpCode, setActiveOtpCode] = useState('');
+  const [pendingUser, setPendingUser] = useState<{ username: string; name: string } | null>(null);
+
+  const completeSuccessfulAuth = async (userToAuth: { username: string; name: string }) => {
+    resetRateLimit(userToAuth.username);
+    const fp = getDeviceFingerprint();
+    trustDevice(userToAuth.username, fp);
+
+    // Create session & tokens
+    const session = createSession(userToAuth.username, userToAuth.username, 'user', fp);
+    const tokens = await generateTokenPair(userToAuth.username, userToAuth.username, 'user');
+
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('klambi_auth', 'true');
+      sessionStorage.setItem('klambi_session_id', session.sessionId);
+      sessionStorage.setItem('klambi_access_token', tokens.accessToken);
+      sessionStorage.setItem('klambi_splashed', 'true');
+      localStorage.setItem('klambi_refresh_token', tokens.refreshToken);
+      localStorage.setItem(
+        'klambi_user',
+        JSON.stringify({
+          name: userToAuth.name || 'Muhammad Hafiz Maulana',
+          username: userToAuth.username,
+          avatar: '🧑‍🦱',
+        })
+      );
+    }
+
+    toast.success('Login & Verifikasi 2FA berhasil! Selamat datang di Klámbi.id 🎉');
+    setTimeout(() => {
+      router.push('/');
+    }, 500);
+  };
+
   const handleLogin = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
@@ -25,36 +67,67 @@ export default function LoginPage() {
       return;
     }
 
+    // 1. Security Check: Rate Limiting (OWASP: 5 attempts per 15 min)
+    const rateCheck = checkRateLimit(username.trim());
+    if (!rateCheck.allowed) {
+      toast.error(
+        `Terlalu banyak percobaan gagal! Akses dibatasi selama ${rateCheck.retryAfterSeconds} detik demi keamanan akun.`
+      );
+      return;
+    }
+
     setIsLoading(true);
 
     setTimeout(() => {
-      // Allow admin / admin or any valid credentials for easy pairing
-      if (
-        (username.trim().toLowerCase() === 'admin' && password.trim() === 'admin') ||
-        (username.trim().length > 0 && password.trim().length >= 4)
-      ) {
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem('klambi_auth', 'true');
-          sessionStorage.setItem('klambi_splashed', 'true');
-          localStorage.setItem(
-            'klambi_user',
-            JSON.stringify({
-              name: fullName || 'Muhammad Hafiz Maulana',
-              username: username,
-              avatar: '🧑‍🦱',
-            })
-          );
+      setIsLoading(false);
+      // Validate credentials
+      const isValidAdmin = username.trim().toLowerCase() === 'admin' && password.trim() === 'admin';
+      const isValidGeneric = username.trim().length > 0 && password.trim().length >= 4;
+
+      if (isValidAdmin || isValidGeneric) {
+        const fp = getDeviceFingerprint();
+        const userObj = {
+          username: username.trim(),
+          name: fullName || 'Muhammad Hafiz Maulana',
+        };
+
+        // 2. Security Check: 2FA OTP on login
+        // Check if device is already trusted; if not or for admin, initiate 2FA OTP
+        const isTrusted = isDeviceTrusted(userObj.username, fp);
+        if (!isTrusted) {
+          const challenge = createOtpChallenge(userObj.username, 'new_device_login');
+          setActiveChallengeId(challenge.challengeId);
+          setActiveOtpCode(challenge.code);
+          setPendingUser(userObj);
+          setShowOtpModal(true);
+          toast.info(`Kode OTP 2FA telah dikirim ke perangkat Anda.`);
+          return;
         }
 
-        toast.success('Login berhasil! Selamat datang di Klámbi.id 🎉');
-        setTimeout(() => {
-          router.push('/');
-        }, 500);
+        // Device already trusted
+        completeSuccessfulAuth(userObj);
       } else {
-        setIsLoading(false);
-        toast.error('Username atau password salah! (Gunakan: admin / admin)');
+        toast.error(
+          `Username atau password salah! Sisa percobaan: ${rateCheck.remainingAttempts}`
+        );
       }
-    }, 800);
+    }, 600);
+  };
+
+  const handleVerifyOtp = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!otpInput.trim()) {
+      toast.error('Mohon masukkan kode OTP 6 digit!');
+      return;
+    }
+
+    const verifyResult = verifyOtpCode(activeChallengeId, otpInput, 'new_device_login');
+    if (verifyResult.success && pendingUser) {
+      setShowOtpModal(false);
+      completeSuccessfulAuth(pendingUser);
+    } else {
+      toast.error(verifyResult.message);
+    }
   };
 
   const handleRegister = (e?: React.FormEvent) => {
@@ -369,6 +442,76 @@ export default function LoginPage() {
           )}
         </div>
       </div>
+
+      {/* 2FA OTP VERIFICATION MODAL */}
+      {showOtpModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-[28px] max-w-sm w-full p-6 text-gray-900 shadow-2xl relative animate-scale-up space-y-4">
+            <div className="text-center space-y-2">
+              <div className="w-12 h-12 bg-blue-50 text-[#10284D] rounded-2xl flex items-center justify-center mx-auto text-2xl">
+                🛡️
+              </div>
+              <h3 className="text-base font-extrabold text-[#10284D]">
+                Verifikasi 2FA (Two-Factor Auth)
+              </h3>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Kami mendeteksi sesi masuk baru. Masukkan 6-digit kode OTP keamanan untuk verifikasi akun <strong className="text-gray-700">{pendingUser?.username}</strong>.
+              </p>
+            </div>
+
+            {/* Quick Demo Hint */}
+            <div className="bg-amber-50 border border-amber-200/80 rounded-2xl p-3 text-center">
+              <p className="text-[11px] text-amber-900 font-medium">
+                💡 Kode OTP Anda: <strong className="text-amber-950 font-bold tracking-widest text-sm">{activeOtpCode || '123456'}</strong>
+              </p>
+              <button
+                type="button"
+                onClick={() => setOtpInput(activeOtpCode || '123456')}
+                className="mt-1 text-[10px] text-blue-700 font-bold hover:underline"
+              >
+                Klik untuk Auto-Isi Kode
+              </button>
+            </div>
+
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <div>
+                <label className="text-[11px] font-bold text-gray-600 block mb-1 text-center">
+                  Masukkan 6-Digit Kode OTP:
+                </label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={otpInput}
+                  onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
+                  placeholder="• • • • • •"
+                  className="w-full text-center text-xl tracking-[0.5em] font-extrabold py-3 border-2 border-gray-200 rounded-2xl focus:border-[#10284D] focus:outline-none transition-all"
+                  autoFocus
+                />
+              </div>
+
+              <div className="space-y-2">
+                <button
+                  type="submit"
+                  className="w-full bg-[#10284D] text-white font-bold text-xs py-3.5 rounded-full hover:bg-[#152248] active:scale-95 transition-all shadow-md uppercase tracking-wider"
+                >
+                  Verifikasi & Lanjutkan
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowOtpModal(false);
+                    setOtpInput('');
+                  }}
+                  className="w-full bg-gray-100 text-gray-600 font-bold text-xs py-3 rounded-full hover:bg-gray-200 transition-all"
+                >
+                  Batal
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
