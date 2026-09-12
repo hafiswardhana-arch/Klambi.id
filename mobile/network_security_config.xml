@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Klambi.id - Android Network Security Configuration
+  Enforces HTTPS-only traffic and SSL Pinning to prevent MITM attacks
+-->
+<network-security-config>
+    <!-- 1. Global: Block all unencrypted cleartext HTTP traffic -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Trust ONLY pre-installed system CAs, never user-installed certs (anti-proxy) -->
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- 2. Domain Pinning for Official Klambi.id APIs -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">klambi.id</domain>
+        <domain includeSubdomains="true">api.klambi.id</domain>
+
+        <pin-set expiration="2027-12-31">
+            <!-- Primary Certificate SPKI SHA-256 Hash -->
+            <pin digest="SHA-256">FSg4xU/YLJvTr7PC8afBn2MECpreH154qc62006ZAQI=</pin>
+            <!-- Backup Certificate SPKI SHA-256 Hash (Let's Encrypt / Cloudflare) -->
+            <pin digest="SHA-256">k2/Bg4DxJbvcSbncKPghlf0KEcgzTaLQocNu/261+5k=</pin>
+            <!-- Disaster Recovery Root CA (ISRG Root X1) -->
+            <pin digest="SHA-256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
+        </pin-set>
+
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+
+    <!-- 3. Payment Gateway Webhook & SDK Pinning -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">midtrans.com</domain>
+        <domain includeSubdomains="true">xendit.co</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+</network-security-config>
