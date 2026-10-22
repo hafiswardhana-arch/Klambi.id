@@ -73,6 +73,20 @@ module.exports = {
         'listing': '0 6px 20px rgba(26,43,92,0.12)',
         'modal': '0 20px 60px rgba(26,29,59,0.2)',
       },
+      transitionDuration: {
+        'xs': '150ms',   // Motion/XS (100–180 ms)
+        'sm': '250ms',   // Motion/SM (180–300 ms)
+        'md': '380ms',   // Motion/MD (300–450 ms)
+        'lg': '600ms',   // Motion/LG (450–700 ms)
+        'xl': '1200ms',  // Motion/XL (800–1500 ms)
+        'ai': '6000ms',  // Motion/AI (5–7 s)
+      },
+      transitionTimingFunction: {
+        'ease-out-soft': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'ease-in-soft': 'cubic-bezier(0.7, 0, 0.84, 0)',
+        'ease-in-out-soft': 'cubic-bezier(0.65, 0, 0.35, 1)',
+        'spring-subtle': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+      },
     },
   },
   plugins: [require('@tailwindcss/typography')],

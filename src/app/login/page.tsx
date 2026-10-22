@@ -20,6 +20,14 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<'google' | 'facebook' | null>(null);
+  const [isShaking, setIsShaking] = useState(false);
+
+  // Trigger AN-14 micro-shake on error
+  const triggerErrorShake = (message: string) => {
+    setIsShaking(true);
+    toast.error(message);
+    setTimeout(() => setIsShaking(false), 350);
+  };
 
   // 2FA OTP & Security State
   const [showOtpModal, setShowOtpModal] = useState(false);
@@ -63,14 +71,14 @@ export default function LoginPage() {
     if (e) e.preventDefault();
 
     if (!username.trim() || !password.trim()) {
-      toast.error('Mohon isi username dan password!');
+      triggerErrorShake('Mohon isi username dan password!');
       return;
     }
 
     // 1. Security Check: Rate Limiting (OWASP: 5 attempts per 15 min)
     const rateCheck = checkRateLimit(username.trim());
     if (!rateCheck.allowed) {
-      toast.error(
+      triggerErrorShake(
         `Terlalu banyak percobaan gagal! Akses dibatasi selama ${rateCheck.retryAfterSeconds} detik demi keamanan akun.`
       );
       return;
@@ -107,7 +115,7 @@ export default function LoginPage() {
         // Device already trusted
         completeSuccessfulAuth(userObj);
       } else {
-        toast.error(
+        triggerErrorShake(
           `Username atau password salah! Sisa percobaan: ${rateCheck.remainingAttempts}`
         );
       }
@@ -197,23 +205,23 @@ export default function LoginPage() {
       <div className="absolute -top-12 -left-12 w-48 h-48 bg-blue-100/60 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-10 -right-10 w-40 h-40 bg-emerald-100/50 rounded-full blur-2xl pointer-events-none" />
 
-      {/* TOP SECTION: LOGO & WELCOME TEXT */}
+      {/* TOP SECTION: LOGO & WELCOME TEXT (PRD AN-01 Entrance Sequence) */}
       <div className="pt-10 pb-6 px-6 flex flex-col items-center text-center z-10 animate-fade-in">
-        {/* Klámbi Infinity Icon (Transparent without background) */}
+        {/* Klámbi Infinity Icon */}
         <div className="mb-4 transform hover:scale-105 transition-transform duration-300">
           <KlambiLogo variant="icon-only" size="lg" />
         </div>
 
-        <h1 className="text-xl sm:text-2xl font-extrabold text-[#10284D] tracking-tight">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-[#10284D] tracking-tight animate-slide-up">
           Welcome to <span className="text-[#10284D]">Klámbi.id</span>
         </h1>
       </div>
 
-      {/* BOTTOM / MAIN CARD: DARK NAVY CONTAINER (Pixel Perfect Image 2) */}
+      {/* BOTTOM / MAIN CARD: DARK NAVY CONTAINER (PRD AN-01 + Pixel Perfect Image 1) */}
       <div className="bg-[#0E356A] rounded-t-[36px] px-6 pt-7 pb-8 shadow-modal text-white flex-1 flex flex-col justify-between z-10 animate-slide-up">
         <div className="space-y-5">
           {/* Card Subtitle */}
-          <p className="text-center text-xs sm:text-sm font-medium text-white/95 max-w-xs mx-auto leading-relaxed">
+          <p className="text-center text-xs sm:text-sm font-medium text-white/95 max-w-xs mx-auto leading-relaxed animate-slide-up stagger-1">
             {isRegisterMode ? (
               <>
                 Daftar akun <span className="font-extrabold text-[#E8C547]">Klámbi.id</span> baru
@@ -227,14 +235,16 @@ export default function LoginPage() {
             )}
           </p>
 
-          {/* Form Container */}
+          {/* Form Container (Supports AN-14 Micro-shake on error) */}
           <form
             onSubmit={isRegisterMode ? handleRegister : handleLogin}
-            className="space-y-3.5 max-w-sm mx-auto w-full"
+            className={`space-y-3.5 max-w-sm mx-auto w-full transition-transform duration-200 ${
+              isShaking ? 'animate-shake' : 'animate-slide-up stagger-2'
+            }`}
           >
             {/* REGISTER ONLY: Full Name Field */}
             {isRegisterMode && (
-              <div className="relative flex items-center bg-white rounded-full px-4 py-3 shadow-inner">
+              <div className="relative flex items-center bg-white rounded-full px-4 py-3 shadow-inner focus-within:ring-2 focus-within:ring-[#E8C547] transition-all duration-200">
                 <span className="text-gray-400 mr-3 flex-shrink-0 text-base">👤</span>
                 <input
                   type="text"
@@ -248,7 +258,7 @@ export default function LoginPage() {
             )}
 
             {/* Input 1: Username / Email */}
-            <div className="relative flex items-center bg-white rounded-full px-4 py-3 shadow-inner">
+            <div className="relative flex items-center bg-white rounded-full px-4 py-3 shadow-inner focus-within:ring-2 focus-within:ring-[#E8C547] transition-all duration-200">
               <span className="text-gray-400 mr-3 flex-shrink-0">
                 <Icon name="EnvelopeIcon" size={18} className="text-gray-400" />
               </span>
@@ -263,7 +273,7 @@ export default function LoginPage() {
             </div>
 
             {/* Input 2: Password */}
-            <div className="relative flex items-center bg-white rounded-full px-4 py-3 shadow-inner">
+            <div className="relative flex items-center bg-white rounded-full px-4 py-3 shadow-inner focus-within:ring-2 focus-within:ring-[#E8C547] transition-all duration-200">
               <span className="text-gray-400 mr-3 flex-shrink-0">
                 <Icon name="LockClosedIcon" size={18} className="text-gray-400" />
               </span>
@@ -278,7 +288,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-gray-400 hover:text-gray-600 focus:outline-none ml-2"
+                className="text-gray-400 hover:text-gray-600 focus:outline-none ml-2 transition-colors active:scale-90"
                 tabIndex={-1}
               >
                 <Icon name={showPassword ? 'EyeSlashIcon' : 'EyeIcon'} size={18} />
@@ -287,7 +297,7 @@ export default function LoginPage() {
 
             {/* REGISTER ONLY: Confirm Password */}
             {isRegisterMode && (
-              <div className="relative flex items-center bg-white rounded-full px-4 py-3 shadow-inner">
+              <div className="relative flex items-center bg-white rounded-full px-4 py-3 shadow-inner focus-within:ring-2 focus-within:ring-[#E8C547] transition-all duration-200">
                 <span className="text-gray-400 mr-3 flex-shrink-0">
                   <Icon name="LockClosedIcon" size={18} className="text-gray-400" />
                 </span>
@@ -312,19 +322,19 @@ export default function LoginPage() {
                       'Untuk demo akun admin, gunakan username "admin" dan password "admin"'
                     )
                   }
-                  className="text-[11px] font-bold text-[#E8C547] hover:underline"
+                  className="text-[11px] font-bold text-[#E8C547] hover:underline active:opacity-75 transition-opacity"
                 >
                   Forgot Password?
                 </button>
               </div>
             )}
 
-            {/* SUBMIT BUTTON: LOGIN / DAFTAR */}
+            {/* SUBMIT BUTTON: LOGIN / DAFTAR (PRD AN-02: Compress scale 0.97, 100-180ms) */}
             <div className="pt-1.5">
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-white text-[#10284D] font-black text-sm tracking-wider py-3.5 rounded-full shadow-lg hover:bg-gray-50 active:scale-95 transition-all uppercase flex items-center justify-center gap-2"
+                className="w-full bg-white text-[#10284D] font-black text-sm tracking-wider py-3.5 rounded-full shadow-lg hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 ease-out uppercase flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
@@ -364,12 +374,12 @@ export default function LoginPage() {
 
           {/* SOCIAL LOGIN: GOOGLE & FACEBOOK (Pixel Perfect 2-column pills) */}
           <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
-            {/* Google Button */}
+            {/* Google Button (PRD AN-02: 100-180ms press feedback) */}
             <button
               type="button"
               onClick={() => handleSocialLogin('google')}
               disabled={socialLoading !== null}
-              className="bg-white text-gray-800 font-bold text-xs py-2.5 px-3 rounded-full flex items-center justify-center gap-2 shadow-sm hover:bg-gray-50 active:scale-95 transition-all"
+              className="bg-white text-gray-800 font-bold text-xs py-2.5 px-3 rounded-full flex items-center justify-center gap-2 shadow-sm hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150"
             >
               {socialLoading === 'google' ? (
                 <span className="w-3.5 h-3.5 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
@@ -396,12 +406,12 @@ export default function LoginPage() {
               <span>Google</span>
             </button>
 
-            {/* Facebook Button */}
+            {/* Facebook Button (PRD AN-02: 100-180ms press feedback) */}
             <button
               type="button"
               onClick={() => handleSocialLogin('facebook')}
               disabled={socialLoading !== null}
-              className="bg-white text-gray-800 font-bold text-xs py-2.5 px-3 rounded-full flex items-center justify-center gap-2 shadow-sm hover:bg-gray-50 active:scale-95 transition-all"
+              className="bg-white text-gray-800 font-bold text-xs py-2.5 px-3 rounded-full flex items-center justify-center gap-2 shadow-sm hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150"
             >
               {socialLoading === 'facebook' ? (
                 <span className="w-3.5 h-3.5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />

@@ -140,14 +140,20 @@ export default function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center w-[16%] py-1.5 transition-all ${
-                  isActive ? 'bg-white/20 rounded-2xl shadow-inner' : 'hover:bg-white/10 rounded-2xl'
+                className={`relative flex flex-col items-center justify-center w-[16%] py-1.5 transition-all duration-200 ease-in-out ${
+                  isActive
+                    ? 'bg-white/20 rounded-2xl shadow-inner -translate-y-0.5 scale-105 opacity-100'
+                    : 'hover:bg-white/10 rounded-2xl opacity-75 hover:opacity-100 active:scale-95'
                 }`}
               >
+                {/* Active Indicator Top Pill */}
+                {isActive && (
+                  <span className="absolute -top-1 w-3 h-0.5 rounded-full bg-[#E8C547] shadow-sm animate-scale-in" />
+                )}
                 {item.icon(isActive)}
                 <span
-                  className={`text-[10px] tracking-tight ${
-                    isActive ? 'text-white font-extrabold' : 'text-white/75 font-semibold'
+                  className={`text-[10px] tracking-tight transition-all duration-200 ${
+                    isActive ? 'text-white font-extrabold scale-105' : 'text-white/80 font-semibold'
                   }`}
                 >
                   {item.name}

@@ -219,21 +219,23 @@ export default function BerandaPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Count-up animation for impact metrics on page load
+  // Count-up animation for impact metrics on page load (PRD AN-04: 0.8–1.5s, Ease Out)
   useEffect(() => {
     const duration = 1200; // ms
-    const steps = 30;
+    const steps = 36;
     const intervalTime = duration / steps;
     let currentStep = 0;
 
     const countInterval = setInterval(() => {
       currentStep++;
-      const factor = currentStep / steps;
+      const linearFactor = currentStep / steps;
+      // Ease Out Cubic curve: fast start, soft settle
+      const easeFactor = 1 - Math.pow(1 - linearFactor, 3);
 
-      setCountProgress(Math.round(32 * factor));
-      setCountKg(Number((12.5 * factor).toFixed(1)));
-      setCountRank(Math.max(8, Math.round(50 - 42 * factor)));
-      setCountScan(Math.round(12 * factor));
+      setCountProgress(Math.round(32 * easeFactor));
+      setCountKg(Number((12.5 * easeFactor).toFixed(1)));
+      setCountRank(Math.max(8, Math.round(50 - 42 * easeFactor)));
+      setCountScan(Math.round(12 * easeFactor));
 
       if (currentStep >= steps) {
         clearInterval(countInterval);
@@ -266,10 +268,10 @@ export default function BerandaPage() {
     <AppLayout
       headerRight={
         <div className="flex items-center gap-2">
-          {/* Icon Keranjang -> /keranjang */}
+          {/* Icon Keranjang -> /keranjang (PRD AN-02: 100-180ms press feedback) */}
           <button
             onClick={() => router.push('/keranjang')}
-            className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-muted hover:bg-secondary transition-colors active:scale-95 shadow-xs"
+            className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-muted hover:bg-secondary transition-all active:scale-[0.97] duration-150 shadow-xs"
             aria-label="Keranjang"
           >
             <Icon name="ShoppingCartIcon" size={20} className="text-[#10284D]" />
@@ -280,10 +282,10 @@ export default function BerandaPage() {
             )}
           </button>
 
-          {/* Icon Chat -> /chat */}
+          {/* Icon Chat -> /chat (PRD AN-02: 100-180ms press feedback) */}
           <button
             onClick={() => router.push('/chat')}
-            className="flex items-center justify-center w-9 h-9 rounded-xl bg-muted hover:bg-secondary transition-colors active:scale-95 shadow-xs"
+            className="flex items-center justify-center w-9 h-9 rounded-xl bg-muted hover:bg-secondary transition-all active:scale-[0.97] duration-150 shadow-xs"
             aria-label="Chat"
           >
             <Icon name="ChatBubbleLeftRightIcon" size={20} className="text-[#10284D]" />
@@ -293,11 +295,11 @@ export default function BerandaPage() {
     >
       <div className="max-w-2xl mx-auto space-y-4 pb-24 select-none">
         {/* ========================================================================= */}
-        {/* 1. KARTU SAPAAN USER (Pixel Perfect Image 3) */}
+        {/* 1. KARTU SAPAAN USER (PRD AN-03: Entrance Animation) */}
         {/* ========================================================================= */}
         <div
           onClick={() => setShowProfileModal(true)}
-          className="bg-card rounded-2xl shadow-sm border border-border p-4 flex items-center gap-3.5 cursor-pointer hover:shadow-md active:scale-[0.99] transition-all"
+          className="bg-card rounded-2xl shadow-sm border border-border p-4 flex items-center gap-3.5 cursor-pointer hover:shadow-md active:scale-[0.97] transition-all duration-150 animate-fade-in"
         >
           {/* Avatar Illustration (Young man with wavy dark hair in amber circle) */}
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-base flex-shrink-0 shadow-inner overflow-hidden border-2 border-white ring-2 ring-amber-200">
@@ -315,9 +317,9 @@ export default function BerandaPage() {
         </div>
 
         {/* ========================================================================= */}
-        {/* 2. PROMO BANNER CAROUSEL (KINDFOAM - Pixel Perfect Image 3) */}
+        {/* 2. PROMO BANNER CAROUSEL (PRD AN-03: Stagger 1) */}
         {/* ========================================================================= */}
-        <div>
+        <div className="animate-card-reveal stagger-1">
           <div className="relative overflow-hidden rounded-3xl shadow-sm border border-blue-900/10">
             <div
               className="flex transition-transform duration-500 ease-in-out"
@@ -394,11 +396,11 @@ export default function BerandaPage() {
         </div>
 
         {/* ========================================================================= */}
-        {/* 3. KARTU IMPACT TRACKER (Pixel Perfect Image 3) */}
+        {/* 3. KARTU IMPACT TRACKER (PRD AN-03 & AN-04: Animated Counter) */}
         {/* ========================================================================= */}
         <div
           onClick={() => setShowImpactModal(true)}
-          className="bg-card rounded-2xl shadow-sm border border-border p-4 cursor-pointer hover:shadow-md active:scale-[0.99] transition-all"
+          className="bg-card rounded-2xl shadow-sm border border-border p-4 cursor-pointer hover:shadow-md active:scale-[0.97] transition-all duration-150 animate-card-reveal stagger-2"
         >
           <div className="grid grid-cols-4 gap-0 divide-x divide-border">
             {/* Donut Chart Target */}
@@ -416,6 +418,7 @@ export default function BerandaPage() {
                   strokeDashoffset={113.1 * (1 - countProgress / 100)}
                   strokeLinecap="round"
                   transform="rotate(-90 22 22)"
+                  className="transition-all duration-300 ease-out"
                 />
                 <text
                   x="22"
@@ -454,13 +457,13 @@ export default function BerandaPage() {
         </div>
 
         {/* ========================================================================= */}
-        {/* 4. 3 KARTU FITUR UTAMA (Pixel Perfect Image 3) */}
+        {/* 4. 3 KARTU FITUR UTAMA (PRD AN-03: Stagger 3 + AN-02: Press Feedback) */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3 animate-card-reveal stagger-3">
           {/* 1. Styliss AI */}
           <div
             onClick={() => router.push('/styliss-ai')}
-            className="bg-[#D1FAE5]/60 border border-[#D1FAE5] rounded-3xl p-3.5 text-center cursor-pointer hover:shadow-md active:scale-95 transition-all shadow-xs"
+            className="bg-[#D1FAE5]/60 border border-[#D1FAE5] rounded-3xl p-3.5 text-center cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-150 shadow-xs"
           >
             <div className="w-11 h-11 rounded-2xl bg-[#D1FAE5] mx-auto mb-2 flex items-center justify-center shadow-inner">
               <span className="text-xl">🧍</span>
@@ -472,7 +475,7 @@ export default function BerandaPage() {
           {/* 2. Care Plan */}
           <div
             onClick={() => router.push('/care-plan')}
-            className="bg-[#FCE4EC]/60 border border-[#FCE4EC] rounded-3xl p-3.5 text-center cursor-pointer hover:shadow-md active:scale-95 transition-all shadow-xs"
+            className="bg-[#FCE4EC]/60 border border-[#FCE4EC] rounded-3xl p-3.5 text-center cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-150 shadow-xs"
           >
             <div className="w-11 h-11 rounded-2xl bg-[#FCE4EC] mx-auto mb-2 flex items-center justify-center shadow-inner">
               <span className="text-xl">❤️</span>
@@ -484,7 +487,7 @@ export default function BerandaPage() {
           {/* 3. Wearwise AI */}
           <div
             onClick={() => router.push('/wearwise-ai')}
-            className="bg-[#FFF3E0]/60 border border-[#FFF3E0] rounded-3xl p-3.5 text-center cursor-pointer hover:shadow-md active:scale-95 transition-all shadow-xs"
+            className="bg-[#FFF3E0]/60 border border-[#FFF3E0] rounded-3xl p-3.5 text-center cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-150 shadow-xs ring-1 ring-amber-300/40"
           >
             <div className="w-11 h-11 rounded-2xl bg-[#FFF3E0] mx-auto mb-2 flex items-center justify-center shadow-inner">
               <Icon name="QrCodeIcon" size={22} className="text-amber-800" />
@@ -495,17 +498,17 @@ export default function BerandaPage() {
         </div>
 
         {/* ========================================================================= */}
-        {/* 5. FILTER KATEGORI PILLS (Pixel Perfect Image 3) */}
+        {/* 5. FILTER KATEGORI PILLS (PRD AN-05: Category Selection Fill + Scale) */}
         {/* ========================================================================= */}
         <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+              className={`px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 ease-in-out ${
                 selectedCategory === cat
-                  ? 'bg-[#10284D] text-white shadow-sm'
-                  : 'bg-white text-gray-700 border border-gray-200 hover:border-[#10284D]/40'
+                  ? 'bg-[#10284D] text-white shadow-md scale-105'
+                  : 'bg-white text-gray-700 border border-gray-200 hover:border-[#10284D]/40 active:scale-95'
               }`}
             >
               {cat}
@@ -514,14 +517,14 @@ export default function BerandaPage() {
         </div>
 
         {/* ========================================================================= */}
-        {/* 6. FEATURED DROPS SECTION (Pixel Perfect Image 3) */}
+        {/* 6. FEATURED DROPS SECTION (PRD AN-06: Product Card Motion) */}
         {/* ========================================================================= */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-base font-extrabold text-[#10284D]">Featured Drops</h3>
             <button
               onClick={() => router.push('/trift-marketplace')}
-              className="text-[#E86D50] text-xs font-bold hover:underline"
+              className="text-[#E86D50] text-xs font-bold hover:underline active:opacity-75 transition-opacity"
             >
               Lihat lainnya
             </button>
@@ -532,7 +535,7 @@ export default function BerandaPage() {
               <div
                 key={product.id}
                 onClick={() => setSelectedProduct(product)}
-                className="w-[165px] flex-shrink-0 bg-card rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-md active:scale-95 transition-all cursor-pointer flex flex-col justify-between"
+                className="w-[165px] flex-shrink-0 bg-card rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200 cursor-pointer flex flex-col justify-between"
               >
                 {/* Visual Image Representation */}
                 <div className="w-full h-[135px] relative overflow-hidden bg-slate-100 group">
