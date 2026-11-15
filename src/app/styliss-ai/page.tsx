@@ -7,6 +7,7 @@ import { Suspense } from 'react';
 import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
+import { ScaleIn, FadeIn, SlideUp } from '@/components/motion';
 
 // ─────────────────────────────────────────────
 // Types
@@ -436,75 +437,77 @@ function StylissAIContent() {
         {activeTab === 'mannequin' && (
           <div className="space-y-3 animate-fade-in">
             {/* Viewer Canvas */}
-            <div
-              ref={viewerRef}
-              className={`relative bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 rounded-3xl border border-border shadow-inner overflow-hidden select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-              style={{ height: '420px' }}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerLeave={handlePointerUp}
-              onWheel={handleWheel}
-            >
-              {/* Background grid */}
+            <ScaleIn duration={320}>
               <div
-                className="absolute inset-0 opacity-30"
-                style={{
-                  backgroundImage: 'radial-gradient(circle, #CBD5E1 1px, transparent 1px)',
-                  backgroundSize: '24px 24px',
-                }}
-              />
-              {/* 3D Perspective container */}
-              <div
-                className="absolute inset-0 flex items-center justify-center"
-                style={{
-                  perspective: '800px',
-                }}
+                ref={viewerRef}
+                className={`relative bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 rounded-3xl border border-border shadow-inner overflow-hidden select-none transition-transform duration-200 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                style={{ height: '420px' }}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerLeave={handlePointerUp}
+                onWheel={handleWheel}
               >
+                {/* Background grid */}
                 <div
-                  className="transition-none"
+                  className="absolute inset-0 opacity-30"
                   style={{
-                    transform: `scale(${zoom}) rotateY(${rotation}deg)`,
-                    transformStyle: 'preserve-3d',
-                    width: '160px',
-                    height: '360px',
+                    backgroundImage: 'radial-gradient(circle, #CBD5E1 1px, transparent 1px)',
+                    backgroundSize: '24px 24px',
+                  }}
+                />
+                {/* 3D Perspective container */}
+                <div
+                  className="absolute inset-0 flex items-center justify-center"
+                  style={{
+                    perspective: '800px',
                   }}
                 >
-                  <MannequinSVG
-                    height={body.height}
-                    weight={body.weight}
-                    item={selectedItem}
-                    rotation={rotation}
-                  />
+                  <div
+                    className="transition-none"
+                    style={{
+                      transform: `scale(${zoom}) rotateY(${rotation}deg)`,
+                      transformStyle: 'preserve-3d',
+                      width: '160px',
+                      height: '360px',
+                    }}
+                  >
+                    <MannequinSVG
+                      height={body.height}
+                      weight={body.weight}
+                      item={selectedItem}
+                      rotation={rotation}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* HUD overlays */}
-              {/* Top-left: view label */}
-              <div className="absolute top-3 left-3 bg-black/40 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1.5 rounded-full">
-                {viewLabel}
-              </div>
-              {/* Top-right: zoom */}
-              <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1.5 rounded-full">
-                🔍 {Math.round(zoom * 100)}%
-              </div>
-              {/* Bottom: drag hint */}
-              <div className="absolute bottom-3 left-0 right-0 flex justify-center">
-                <div className="bg-black/30 backdrop-blur-sm text-white text-[10px] font-semibold px-4 py-1.5 rounded-full flex items-center gap-2">
-                  <span>↔ Seret untuk rotasi</span>
-                  <span className="opacity-60">|</span>
-                  <span>⬡ Scroll untuk zoom</span>
+                {/* HUD overlays */}
+                {/* Top-left: view label */}
+                <div className="absolute top-3 left-3 bg-black/40 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1.5 rounded-full">
+                  {viewLabel}
                 </div>
-              </div>
-              {/* Outfit label badge */}
-              {selectedItem && (
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm border border-border text-[#10284D] text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm">
-                  <span>{selectedItem.emoji}</span>
-                  <span>{selectedItem.category}</span>
-                  {selectedItem.size && <span className="text-[#E86D50]">• {selectedItem.size}</span>}
+                {/* Top-right: zoom */}
+                <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1.5 rounded-full">
+                  🔍 {Math.round(zoom * 100)}%
                 </div>
-              )}
-            </div>
+                {/* Bottom: drag hint */}
+                <div className="absolute bottom-3 left-0 right-0 flex justify-center">
+                  <div className="bg-black/30 backdrop-blur-sm text-white text-[10px] font-semibold px-4 py-1.5 rounded-full flex items-center gap-2">
+                    <span>↔ Seret untuk rotasi</span>
+                    <span className="opacity-60">|</span>
+                    <span>⬡ Scroll untuk zoom</span>
+                  </div>
+                </div>
+                {/* Outfit label badge */}
+                {selectedItem && (
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm border border-border text-[#10284D] text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm">
+                    <span>{selectedItem.emoji}</span>
+                    <span>{selectedItem.category}</span>
+                    {selectedItem.size && <span className="text-[#E86D50]">• {selectedItem.size}</span>}
+                  </div>
+                )}
+              </div>
+            </ScaleIn>
 
             {/* Controls row */}
             <div className="grid grid-cols-4 gap-2">

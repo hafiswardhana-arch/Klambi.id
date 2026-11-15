@@ -1,9 +1,10 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
+import { FadeIn, SlideUp, StaggerContainer, StaggerItem } from '@/components/motion';
 
 export default function CarePlanPage() {
   const router = useRouter();
@@ -47,17 +48,19 @@ export default function CarePlanPage() {
     <AppLayout title="Diagnosis & Care Plan" showBack backHref="/keputusan">
       <div className="max-w-2xl mx-auto space-y-4 pb-24 select-none">
         {/* Banner Hero */}
-        <div className="bg-gradient-to-r from-[#10284D] via-[#163768] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
-          <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-            Alur 5.6.1: Care Plan
-          </span>
-          <h2 className="text-base sm:text-lg font-black tracking-tight">
-            Panduan & Diagnosis Perawatan Pakaian
-          </h2>
-          <p className="text-xs text-white/85">
-            Langkah tepat untuk merawat serat kain dan memperpanjang masa pakai pakaianmu.
-          </p>
-        </div>
+        <FadeIn>
+          <div className="bg-gradient-to-r from-[#10284D] via-[#163768] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
+            <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+              Alur 5.6.1: Care Plan
+            </span>
+            <h2 className="text-base sm:text-lg font-black tracking-tight">
+              Panduan & Diagnosis Perawatan Pakaian
+            </h2>
+            <p className="text-xs text-white/85">
+              Langkah tepat untuk merawat serat kain dan memperpanjang masa pakai pakaianmu.
+            </p>
+          </div>
+        </FadeIn>
 
         {/* 1. Header Ringkasan Pakaian & Tingkat Kesulitan */}
         <div className="bg-card rounded-3xl p-5 border border-border shadow-sm flex items-center justify-between">
@@ -109,20 +112,21 @@ export default function CarePlanPage() {
             <span>📋 3. Care Plan: Langkah Perawatan Mandiri</span>
           </h4>
 
-          <div className="space-y-2.5">
+          <StaggerContainer className="space-y-2.5" staggerDelay={50}>
             {garmentData.carePlanTips.map((tip, idx) => (
-              <div
-                key={idx}
-                className="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-100 flex items-start gap-3"
-              >
-                <span className="text-2xl mt-0.5">{tip.icon}</span>
-                <div className="space-y-0.5">
-                  <h5 className="text-xs font-extrabold text-[#10284D]">{tip.title}</h5>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">{tip.desc}</p>
+              <StaggerItem key={idx}>
+                <div
+                  className="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-100 flex items-start gap-3 hover:bg-slate-100/80 transition-colors"
+                >
+                  <span className="text-2xl mt-0.5">{tip.icon}</span>
+                  <div className="space-y-0.5">
+                    <h5 className="text-xs font-extrabold text-[#10284D]">{tip.title}</h5>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">{tip.desc}</p>
+                  </div>
                 </div>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
 
         {/* 5. Card Actionable Instruction di Paling Bawah (Section 5.6.1 Specification) */}

@@ -179,10 +179,10 @@ export default function ChatPage() {
                   }`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-xs font-medium ${
+                    className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-xs font-medium transition-all duration-200 ${
                       msg.sender === 'user'
-                        ? 'bg-[#10284D] text-white rounded-br-none'
-                        : 'bg-muted text-foreground border border-border rounded-bl-none'
+                        ? 'bg-[#10284D] text-white rounded-br-none animate-slide-in-right'
+                        : 'bg-muted text-foreground border border-border rounded-bl-none animate-slide-in-left'
                     }`}
                   >
                     {msg.text}
@@ -200,7 +200,7 @@ export default function ChatPage() {
                 <button
                   key={chip}
                   onClick={() => handleSendMessage(chip)}
-                  className="px-3 py-1.5 rounded-full bg-secondary border border-border text-[#10284D] text-[11px] font-bold whitespace-nowrap hover:bg-[#10284D] hover:text-white transition-all shadow-sm"
+                  className="px-3 py-1.5 rounded-full bg-secondary border border-border text-[#10284D] text-[11px] font-bold whitespace-nowrap hover:bg-[#10284D] hover:text-white active:scale-95 transition-all shadow-sm"
                 >
                   ⚡ {chip}
                 </button>
@@ -211,7 +211,7 @@ export default function ChatPage() {
             <div className="flex items-center gap-2 pt-2 border-t border-border">
               <button
                 onClick={() => toast.info('Kirim gambar/foto produk')}
-                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground active:scale-90 transition-all"
               >
                 <Icon name="PhotoIcon" size={20} />
               </button>
@@ -221,11 +221,11 @@ export default function ChatPage() {
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Tulis pesan..."
-                className="flex-1 bg-card border border-border rounded-full px-4 py-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-[#10284D]"
+                className="flex-1 bg-card border border-border rounded-full px-4 py-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-[#10284D] transition-all"
               />
               <button
                 onClick={() => handleSendMessage()}
-                className="w-10 h-10 rounded-full bg-[#10284D] text-white flex items-center justify-center hover:bg-[#152248] transition-colors shadow-md"
+                className="w-10 h-10 rounded-full bg-[#10284D] text-white flex items-center justify-center hover:bg-[#152248] active:scale-90 transition-all shadow-md"
               >
                 <Icon name="PaperAirplaneIcon" size={18} />
               </button>

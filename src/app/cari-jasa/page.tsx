@@ -1,9 +1,10 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
+import { StaggerContainer, StaggerItem } from '@/components/motion';
 
 interface ServiceProvider {
   id: string;
@@ -265,83 +266,84 @@ export default function CariJasaPage() {
         {/* ========================================================================= */}
         {/* 4. DAFTAR MITRA PENYEDIA JASA */}
         {/* ========================================================================= */}
-        <div className="space-y-3">
+        <StaggerContainer className="space-y-3" staggerDelay={60}>
           {filteredProviders.map((provider) => (
-            <div
-              key={provider.id}
-              className="bg-card rounded-3xl p-5 border border-border shadow-sm hover:shadow-md transition-all space-y-3"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-2xl shadow-inner flex-shrink-0">
-                    {provider.serviceCategory === 'permak'
-                      ? '🧵'
-                      : provider.serviceCategory === 'binatu'
-                      ? '🧼'
-                      : '🎨'}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <h4 className="text-xs sm:text-sm font-extrabold text-[#10284D]">
-                        {provider.name}
-                      </h4>
-                      {provider.isVerified && (
-                        <span className="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.2 rounded">
-                          ✓ Terverifikasi
-                        </span>
-                      )}
+            <StaggerItem key={provider.id}>
+              <div
+                className="bg-card rounded-3xl p-5 border border-border shadow-sm hover:shadow-md transition-all space-y-3 active:scale-[0.99]"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-2xl shadow-inner flex-shrink-0">
+                      {provider.serviceCategory === 'permak'
+                        ? '🧵'
+                        : provider.serviceCategory === 'binatu'
+                        ? '🧼'
+                        : '🎨'}
                     </div>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">{provider.address}</p>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <h4 className="text-xs sm:text-sm font-extrabold text-[#10284D]">
+                          {provider.name}
+                        </h4>
+                        {provider.isVerified && (
+                          <span className="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.2 rounded">
+                            ✓ Terverifikasi
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{provider.address}</p>
+                    </div>
                   </div>
-                </div>
 
-                <span className="text-[10px] bg-blue-50 text-blue-800 font-bold px-2 py-0.5 rounded-full flex-shrink-0">
-                  {provider.statusAvailability}
-                </span>
-              </div>
-
-              {/* Tag Layanan yang Disediakan */}
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {provider.servicesList.map((srv, idx) => (
-                  <span
-                    key={idx}
-                    className="text-[10px] bg-muted text-muted-foreground font-semibold px-2 py-0.5 rounded-lg"
-                  >
-                    • {srv}
+                  <span className="text-[10px] bg-blue-50 text-blue-800 font-bold px-2 py-0.5 rounded-full flex-shrink-0">
+                    {provider.statusAvailability}
                   </span>
-                ))}
-              </div>
-
-              {/* Price & Action Row */}
-              <div className="flex items-center justify-between pt-3 border-t border-border text-xs">
-                <div className="flex items-center gap-3 text-muted-foreground font-semibold">
-                  <span>📍 {provider.distanceKm} km</span>
-                  <span>⭐ {provider.rating} ({provider.reviewsCount})</span>
                 </div>
 
-                <div className="flex items-center gap-2.5">
-                  <div className="text-right">
-                    <span className="text-[10px] text-muted-foreground block">Mulai Dari:</span>
-                    <span className="font-black text-[#E86D50]">
-                      Rp {provider.estimatedPrice.toLocaleString('id-ID')}
+                {/* Tag Layanan yang Disediakan */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {provider.servicesList.map((srv, idx) => (
+                    <span
+                      key={idx}
+                      className="text-[10px] bg-muted text-muted-foreground font-semibold px-2 py-0.5 rounded-lg"
+                    >
+                      • {srv}
                     </span>
+                  ))}
+                </div>
+
+                {/* Price & Action Row */}
+                <div className="flex items-center justify-between pt-3 border-t border-border text-xs">
+                  <div className="flex items-center gap-3 text-muted-foreground font-semibold">
+                    <span>📍 {provider.distanceKm} km</span>
+                    <span>⭐ {provider.rating} ({provider.reviewsCount})</span>
                   </div>
 
-                  <button
-                    onClick={() =>
-                      router.push(
-                        `/pemesanan-jasa?provider=${encodeURIComponent(provider.name)}`
-                      )
-                    }
-                    className="bg-[#10284D] text-white px-4 py-2.5 rounded-2xl text-xs font-black shadow-md hover:bg-[#163768] active:scale-95 transition-all"
-                  >
-                    Pesan Jasa
-                  </button>
+                  <div className="flex items-center gap-2.5">
+                    <div className="text-right">
+                      <span className="text-[10px] text-muted-foreground block">Mulai Dari:</span>
+                      <span className="font-black text-[#E86D50]">
+                        Rp {provider.estimatedPrice.toLocaleString('id-ID')}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() =>
+                        router.push(
+                          `/pemesanan-jasa?provider=${encodeURIComponent(provider.name)}`
+                        )
+                      }
+                      className="bg-[#10284D] text-white px-4 py-2.5 rounded-2xl text-xs font-black shadow-md hover:bg-[#163768] active:scale-95 transition-all"
+                    >
+                      Pesan Jasa
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
     </AppLayout>
   );
