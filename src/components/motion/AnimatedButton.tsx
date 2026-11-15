@@ -10,7 +10,7 @@ interface AnimatedButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   className?: string;
 }
 
-export default function AnimatedButton({
+export function AnimatedButton({
   children,
   variant = 'primary',
   size = 'md',
@@ -58,3 +58,5 @@ export default function AnimatedButton({
     </button>
   );
 }
+
+export default AnimatedButton;

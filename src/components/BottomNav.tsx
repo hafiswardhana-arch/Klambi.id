@@ -140,7 +140,7 @@ export default function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative flex flex-col items-center justify-center w-[16%] py-1.5 transition-all duration-200 ease-in-out ${
+                className={`relative flex flex-col items-center justify-center w-[16%] py-1.5 transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-[#10284D] ${
                   isActive
                     ? 'bg-white/20 rounded-2xl shadow-inner -translate-y-0.5 scale-105 opacity-100'
                     : 'hover:bg-white/10 rounded-2xl opacity-75 hover:opacity-100 active:scale-95'

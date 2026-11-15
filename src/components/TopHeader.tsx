@@ -25,7 +25,7 @@ export default function TopHeader({
           {showBack ? (
             <Link
               href={backHref}
-              className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-50 hover:bg-slate-100 text-[#10284D] border border-slate-100 shadow-xs transition-colors flex-shrink-0"
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-50 hover:bg-slate-100 text-[#10284D] border border-slate-100 shadow-xs active:scale-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10284D] focus-visible:ring-offset-1 flex-shrink-0"
               aria-label="Kembali"
             >
               <Icon name="ArrowLeftIcon" size={18} className="text-[#10284D]" />
@@ -50,24 +50,24 @@ export default function TopHeader({
             <>
               <Link
                 href="/keranjang"
-                className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#10284D] border border-slate-100 transition-colors"
+                className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#10284D] border border-slate-100 active:scale-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10284D] focus-visible:ring-offset-1"
                 aria-label="Keranjang"
               >
                 <Icon name="ShoppingCartIcon" size={18} className="text-[#10284D]" />
-                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#E86D50] border-2 border-white" />
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#E86D50] border-2 border-white animate-pulse" />
               </Link>
               <Link
                 href="/chat"
-                className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#10284D] border border-slate-100 transition-colors"
+                className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#10284D] border border-slate-100 active:scale-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10284D] focus-visible:ring-offset-1"
                 aria-label="Pesan & Bantuan"
                 title="Pesan & Bantuan"
               >
                 <Icon name="ChatBubbleLeftRightIcon" size={18} className="text-[#10284D]" />
-                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-emerald-500 border-2 border-white" />
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-emerald-500 border-2 border-white animate-pulse" />
               </Link>
               <Link
                 href="/profil?modal=settings"
-                className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#10284D] border border-slate-100 transition-colors"
+                className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#10284D] border border-slate-100 active:scale-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10284D] focus-visible:ring-offset-1"
                 aria-label="Pengaturan"
                 title="Pengaturan Akun"
               >

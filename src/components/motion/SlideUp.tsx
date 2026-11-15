@@ -11,7 +11,7 @@ interface SlideUpProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-export default function SlideUp({
+export function SlideUp({
   children,
   duration = 380,
   delay = 0,
@@ -45,3 +45,5 @@ export default function SlideUp({
     </div>
   );
 }
+
+export default SlideUp;

@@ -8,7 +8,7 @@ interface StaggerItemProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-export default function StaggerItem({
+export function StaggerItem({
   children,
   animation = 'slide',
   className = '',
@@ -26,3 +26,5 @@ export default function StaggerItem({
     </div>
   );
 }
+
+export default StaggerItem;

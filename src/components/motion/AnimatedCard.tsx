@@ -8,7 +8,7 @@ interface AnimatedCardProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-export default function AnimatedCard({
+export function AnimatedCard({
   children,
   isInteractive = true,
   className = '',
@@ -27,3 +27,5 @@ export default function AnimatedCard({
     </div>
   );
 }
+
+export default AnimatedCard;

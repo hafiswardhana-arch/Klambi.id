@@ -10,7 +10,7 @@ interface FadeInProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-export default function FadeIn({
+export function FadeIn({
   children,
   duration = 350,
   delay = 0,
@@ -43,3 +43,5 @@ export default function FadeIn({
     </div>
   );
 }
+
+export default FadeIn;

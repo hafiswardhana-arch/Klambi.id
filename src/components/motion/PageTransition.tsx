@@ -8,7 +8,7 @@ interface PageTransitionProps {
   className?: string;
 }
 
-export default function PageTransition({
+export function PageTransition({
   children,
   className = '',
 }: PageTransitionProps) {
@@ -24,3 +24,5 @@ export default function PageTransition({
     </div>
   );
 }
+
+export default PageTransition;

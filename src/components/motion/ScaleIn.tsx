@@ -10,7 +10,7 @@ interface ScaleInProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-export default function ScaleIn({
+export function ScaleIn({
   children,
   duration = 280,
   delay = 0,
@@ -43,3 +43,5 @@ export default function ScaleIn({
     </div>
   );
 }
+
+export default ScaleIn;

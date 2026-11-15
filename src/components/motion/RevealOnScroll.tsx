@@ -12,7 +12,7 @@ interface RevealOnScrollProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-export default function RevealOnScroll({
+export function RevealOnScroll({
   children,
   animation = 'slide-up',
   threshold = 0.15,
@@ -48,3 +48,5 @@ export default function RevealOnScroll({
     </div>
   );
 }
+
+export default RevealOnScroll;

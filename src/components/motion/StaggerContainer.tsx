@@ -9,7 +9,7 @@ interface StaggerContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-export default function StaggerContainer({
+export function StaggerContainer({
   children,
   staggerDelay = 60,
   className = '',
@@ -42,3 +42,5 @@ export default function StaggerContainer({
     </div>
   );
 }
+
+export default StaggerContainer;
