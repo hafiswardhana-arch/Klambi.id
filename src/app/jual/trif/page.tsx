@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
 import DecisionButtonPair from '@/components/ui/DecisionButtonPair';
+import { FadeIn, SlideUp } from '@/components/motion';
 
 export default function TrifSellPage() {
   const router = useRouter();
@@ -37,20 +38,22 @@ export default function TrifSellPage() {
     <AppLayout title="Jual Satuan (Trif Marketplace)" showBack backHref="/jual">
       <div className="max-w-2xl mx-auto space-y-4 pb-24 select-none">
         {/* Banner */}
-        <div className="bg-gradient-to-r from-[#10284D] via-[#163768] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
-          <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-            Alur 5.5.1a: Thrift Satuan
-          </span>
-          <h2 className="text-base sm:text-lg font-black tracking-tight">
-            Listing Pakaian ke Marketplace Klámbi
-          </h2>
-          <p className="text-xs text-white/85">
-            Deskripsi & estimasi harga dibuat otomatis oleh Wearwise AI berdasarkan hasil diagnosis.
-          </p>
-        </div>
+        <FadeIn>
+          <div className="bg-gradient-to-r from-[#10284D] via-[#163768] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
+            <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+              Alur 5.5.1a: Thrift Satuan
+            </span>
+            <h2 className="text-base sm:text-lg font-black tracking-tight">
+              Listing Pakaian ke Marketplace Klámbi
+            </h2>
+            <p className="text-xs text-white/85">
+              Deskripsi & estimasi harga dibuat otomatis oleh Wearwise AI berdasarkan hasil diagnosis.
+            </p>
+          </div>
+        </FadeIn>
 
         {/* Listing Form Card */}
-        <div className="bg-card rounded-3xl p-5 border border-border shadow-sm space-y-4">
+        <SlideUp className="bg-card rounded-3xl p-5 border border-border shadow-sm space-y-4">
           <h3 className="text-xs font-black uppercase tracking-wider text-[#10284D] border-b border-border pb-2">
             📝 Detail Informasi Listing
           </h3>
@@ -126,7 +129,7 @@ export default function TrifSellPage() {
               Buka Chat
             </button>
           </div>
-        </div>
+        </SlideUp>
 
         {/* Alur Transaksi Escrow (Section 5.5.1a 5 Steps) */}
         <div className="bg-card rounded-3xl p-5 border border-border shadow-sm space-y-3">
@@ -160,13 +163,13 @@ export default function TrifSellPage() {
           <div className="grid grid-cols-2 gap-3 pt-2">
             <button
               onClick={() => router.push('/jual')}
-              className="border-2 border-[#10284D] text-[#10284D] py-3.5 rounded-2xl text-xs font-bold hover:bg-slate-50 transition-all text-center"
+              className="border-2 border-[#10284D] text-[#10284D] py-3.5 rounded-2xl text-xs font-bold hover:bg-slate-50 active:scale-95 transition-all text-center"
             >
               ← Batal / Kembali
             </button>
             <button
               onClick={handlePublish}
-              className="bg-[#10284D] text-white py-3.5 rounded-2xl text-xs font-extrabold shadow-md hover:bg-[#163768] transition-all text-center"
+              className="bg-[#10284D] text-white py-3.5 rounded-2xl text-xs font-extrabold shadow-md hover:bg-[#163768] active:scale-95 transition-all text-center"
             >
               🚀 Publikasikan ke Market
             </button>

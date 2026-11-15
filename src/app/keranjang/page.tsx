@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
+import { StaggerContainer, StaggerItem } from '@/components/motion';
 
 interface CartItem {
   id: string;
@@ -93,6 +94,7 @@ const initialItems: CartItem[] = [
 export default function KeranjangPage() {
   const router = useRouter();
   const [items, setItems] = useState<CartItem[]>(initialItems);
+  const [removingId, setRemovingId] = useState<string | null>(null);
 
   const toggleSelect = (id: string) => {
     setItems((prev) =>
@@ -106,8 +108,12 @@ export default function KeranjangPage() {
   };
 
   const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-    toast.success('Item dihapus dari keranjang.');
+    setRemovingId(id);
+    setTimeout(() => {
+      setItems((prev) => prev.filter((item) => item.id !== id));
+      setRemovingId(null);
+      toast.success('Item dihapus dari keranjang.');
+    }, 200);
   };
 
   const handleTryMannequin = (item: CartItem) => {
@@ -189,99 +195,105 @@ export default function KeranjangPage() {
             </Link>
           </div>
         ) : (
-          items.map((item) => (
-            <div
-              key={item.id}
-              className="bg-card rounded-2xl p-4 border border-border shadow-sm space-y-3 animate-slide-up"
-            >
-              {/* Store Header */}
-              <div className="flex items-center justify-between border-b border-border pb-2.5">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={item.selected}
-                    onChange={() => toggleSelect(item.id)}
-                    className="w-4 h-4 accent-[#10284D] rounded cursor-pointer"
-                  />
-                  <span className="text-xs font-extrabold text-[#10284D]">
-                    {item.storeName}
-                  </span>
-                </div>
-                <button
-                  onClick={() => removeItem(item.id)}
-                  className="text-muted-foreground hover:text-red-500 transition-colors"
+          <StaggerContainer className="space-y-3" staggerDelay={50}>
+            {items.map((item) => (
+              <StaggerItem key={item.id}>
+                <div
+                  className={`bg-card rounded-2xl p-4 border border-border shadow-sm space-y-3 transition-all duration-200 ${
+                    removingId === item.id ? 'opacity-0 -translate-x-6 scale-95 pointer-events-none' : 'opacity-100 translate-x-0'
+                  }`}
                 >
-                  <Icon name="TrashIcon" size={16} />
-                </button>
-              </div>
+                  {/* Store Header */}
+                  <div className="flex items-center justify-between border-b border-border pb-2.5">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={item.selected}
+                        onChange={() => toggleSelect(item.id)}
+                        className="w-4 h-4 accent-[#10284D] rounded cursor-pointer active:scale-90 transition-transform"
+                      />
+                      <span className="text-xs font-extrabold text-[#10284D]">
+                        {item.storeName}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => removeItem(item.id)}
+                      className="text-muted-foreground hover:text-red-500 active:scale-90 p-1 rounded-lg transition-all"
+                      aria-label="Hapus item"
+                    >
+                      <Icon name="TrashIcon" size={16} />
+                    </button>
+                  </div>
 
-              {/* Item Content */}
-              <div className="flex items-start gap-3">
-                {/* Real product photo thumbnail */}
-                <div className="relative w-18 h-18 rounded-xl overflow-hidden flex-shrink-0 border border-border shadow-inner bg-slate-100">
-                  <Image
-                    src={item.imageUrl}
-                    alt={item.title}
-                    fill
-                    unoptimized
-                    className="object-cover"
-                  />
-                  <span className="absolute bottom-1 right-1 text-xs bg-black/50 text-white px-1 py-0.5 rounded backdrop-blur-xs">
-                    {item.emoji}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="text-[10px] text-muted-foreground font-semibold uppercase">
-                    {item.category}{item.size ? ` • Size ${item.size}` : ''}
-                  </span>
-                  <h4 className="text-xs font-bold text-foreground leading-snug">{item.title}</h4>
-                  {item.brand && (
-                    <span className="text-[10px] text-muted-foreground">by {item.brand}</span>
-                  )}
-                  <span className="inline-block mt-1 bg-[#D1FAE5] text-[#166534] text-[10px] font-bold px-2 py-0.5 rounded-md">
-                    {item.condition}
-                  </span>
-                  <div className="flex items-baseline gap-2 mt-1.5">
-                    <span className="text-xs font-extrabold text-[#E86D50]">
-                      Rp {item.price.toLocaleString('id-ID')}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground line-through">
-                      Rp {item.originalPrice.toLocaleString('id-ID')}
-                    </span>
-                    <span className="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
-                      -{Math.round((1 - item.price / item.originalPrice) * 100)}%
-                    </span>
+                  {/* Item Content */}
+                  <div className="flex items-start gap-3">
+                    {/* Real product photo thumbnail */}
+                    <div className="relative w-18 h-18 rounded-xl overflow-hidden flex-shrink-0 border border-border shadow-inner bg-slate-100">
+                      <Image
+                        src={item.imageUrl}
+                        alt={item.title}
+                        fill
+                        unoptimized
+                        className="object-cover"
+                      />
+                      <span className="absolute bottom-1 right-1 text-xs bg-black/50 text-white px-1 py-0.5 rounded backdrop-blur-xs">
+                        {item.emoji}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[10px] text-muted-foreground font-semibold uppercase">
+                        {item.category}{item.size ? ` • Size ${item.size}` : ''}
+                      </span>
+                      <h4 className="text-xs font-bold text-foreground leading-snug">{item.title}</h4>
+                      {item.brand && (
+                        <span className="text-[10px] text-muted-foreground">by {item.brand}</span>
+                      )}
+                      <span className="inline-block mt-1 bg-[#D1FAE5] text-[#166534] text-[10px] font-bold px-2 py-0.5 rounded-md">
+                        {item.condition}
+                      </span>
+                      <div className="flex items-baseline gap-2 mt-1.5">
+                        <span className="text-xs font-extrabold text-[#E86D50]">
+                          Rp {item.price.toLocaleString('id-ID')}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground line-through">
+                          Rp {item.originalPrice.toLocaleString('id-ID')}
+                        </span>
+                        <span className="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
+                          -{Math.round((1 - item.price / item.originalPrice) * 100)}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-2 pt-1 border-t border-border">
+                    {item.isClothing ? (
+                      <button
+                        onClick={() => handleTryMannequin(item)}
+                        className="flex items-center gap-1.5 bg-gradient-to-r from-[#10284D] to-[#1A3A6B] text-white px-4 py-2 rounded-xl text-[11px] font-extrabold shadow-sm hover:shadow-md active:scale-95 transition-all"
+                      >
+                        <span>🧍</span>
+                        <span>Coba di Manekin 3D</span>
+                      </button>
+                    ) : (
+                      <span className="text-[10px] text-muted-foreground italic px-2">
+                        (Produk non-pakaian)
+                      </span>
+                    )}
+                    <button
+                      onClick={() => {
+                        toast.info(`${item.title} disimpan ke wishlist`);
+                      }}
+                      className="flex items-center gap-1 px-3 py-2 rounded-xl text-[11px] font-semibold text-muted-foreground border border-border hover:border-[#10284D]/40 hover:text-[#10284D] active:scale-95 transition-all"
+                    >
+                      <Icon name="HeartIcon" size={12} />
+                      Wishlist
+                    </button>
                   </div>
                 </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2 pt-1 border-t border-border">
-                {item.isClothing ? (
-                  <button
-                    onClick={() => handleTryMannequin(item)}
-                    className="flex items-center gap-1.5 bg-gradient-to-r from-[#10284D] to-[#1A3A6B] text-white px-4 py-2 rounded-xl text-[11px] font-extrabold shadow-sm hover:shadow-md active:scale-95 transition-all"
-                  >
-                    <span>🧍</span>
-                    <span>Coba di Manekin 3D</span>
-                  </button>
-                ) : (
-                  <span className="text-[10px] text-muted-foreground italic px-2">
-                    (Produk non-pakaian)
-                  </span>
-                )}
-                <button
-                  onClick={() => {
-                    toast.info(`${item.title} disimpan ke wishlist`);
-                  }}
-                  className="flex items-center gap-1 px-3 py-2 rounded-xl text-[11px] font-semibold text-muted-foreground border border-border hover:border-[#10284D]/40 hover:text-[#10284D] transition-all"
-                >
-                  <Icon name="HeartIcon" size={12} />
-                  Wishlist
-                </button>
-              </div>
-            </div>
-          ))
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
         )}
       </div>
 

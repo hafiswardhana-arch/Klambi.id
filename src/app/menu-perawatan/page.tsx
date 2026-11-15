@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
+import { StaggerContainer, StaggerItem } from '@/components/motion';
 
 interface ServicePartner {
   id: string;
@@ -299,75 +300,76 @@ export default function MenuPerawatanPage() {
         </div>
 
         {/* List Mitra Jasa */}
-        <div className="space-y-3">
-          {filteredPartners.map((partner, idx) => (
-            <div
-              key={partner.id}
-              className={`bg-card rounded-2xl p-4 border border-border shadow-sm hover:shadow-md transition-all space-y-3 cursor-pointer active:scale-[0.99] animate-slide-up stagger-${Math.min(idx + 1, 6)}`}
-              onClick={() => setSelectedPartner(partner)}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-primary font-bold flex-shrink-0 text-xl">
-                    {partner.category === 'permak' ? '🧵' :
-                     partner.category === 'cuci' ? '🫧' :
-                     partner.category === 'recolor' ? '🎨' : '♻️'}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-extrabold text-foreground">{partner.name}</h4>
-                      {partner.isVerified && (
-                        <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">
-                          ✓ Terpercaya
-                        </span>
+        <StaggerContainer className="space-y-3" staggerDelay={50}>
+          {filteredPartners.map((partner) => (
+            <StaggerItem key={partner.id}>
+              <div
+                className="bg-card rounded-2xl p-4 border border-border shadow-sm hover:shadow-md transition-all space-y-3 cursor-pointer active:scale-[0.99]"
+                onClick={() => setSelectedPartner(partner)}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-primary font-bold flex-shrink-0 text-xl">
+                      {partner.category === 'permak' ? '🧵' :
+                       partner.category === 'cuci' ? '🫧' :
+                       partner.category === 'recolor' ? '🎨' : '♻️'}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <h4 className="text-xs font-extrabold text-foreground">{partner.name}</h4>
+                        {partner.isVerified && (
+                          <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">
+                            ✓ Terpercaya
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[10px] text-muted-foreground block mt-0.5">
+                        {partner.categoryLabel} • {partner.address}
+                      </span>
+                      {partner.badge && (
+                        <span className="text-[9px] font-bold text-[#E86D50] mt-0.5 block">{partner.badge}</span>
                       )}
                     </div>
-                    <span className="text-[10px] text-muted-foreground block mt-0.5">
-                      {partner.categoryLabel} • {partner.address}
+                  </div>
+                </div>
+
+                {/* Service tags */}
+                <div className="flex flex-wrap gap-1.5">
+                  {partner.services.map((srv, i) => (
+                    <span
+                      key={i}
+                      className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${categoryColors[partner.category] ?? 'bg-muted text-foreground/80'}`}
+                    >
+                      {srv}
                     </span>
-                    {partner.badge && (
-                      <span className="text-[9px] font-bold text-[#E86D50] mt-0.5 block">{partner.badge}</span>
-                    )}
+                  ))}
+                </div>
+
+                {/* Footer row */}
+                <div className="flex items-center justify-between text-xs pt-2 border-t border-border">
+                  <div className="flex items-center gap-3 text-muted-foreground font-semibold text-[11px]">
+                    <span>📍 {partner.distanceKm} km</span>
+                    <span>⭐ {partner.rating} ({partner.reviewsCount})</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-[#E86D50]">
+                      Mulai Rp {partner.estimatedPrice.toLocaleString('id-ID')}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/pemesanan-jasa?provider=${encodeURIComponent(partner.name)}`);
+                      }}
+                      className="bg-[#10284D] text-white px-4 py-2 rounded-xl text-xs font-extrabold shadow-sm hover:bg-[#152248] active:scale-95 transition-all"
+                    >
+                      Pesan
+                    </button>
                   </div>
                 </div>
               </div>
-
-              {/* Service tags */}
-              <div className="flex flex-wrap gap-1.5">
-                {partner.services.map((srv, i) => (
-                  <span
-                    key={i}
-                    className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${categoryColors[partner.category] ?? 'bg-muted text-foreground/80'}`}
-                  >
-                    {srv}
-                  </span>
-                ))}
-              </div>
-
-              {/* Footer row */}
-              <div className="flex items-center justify-between text-xs pt-2 border-t border-border">
-                <div className="flex items-center gap-3 text-muted-foreground font-semibold text-[11px]">
-                  <span>📍 {partner.distanceKm} km</span>
-                  <span>⭐ {partner.rating} ({partner.reviewsCount})</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-[#E86D50]">
-                    Mulai Rp {partner.estimatedPrice.toLocaleString('id-ID')}
-                  </span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/pemesanan-jasa?provider=${encodeURIComponent(partner.name)}`);
-                    }}
-                    className="bg-[#10284D] text-white px-4 py-2 rounded-xl text-xs font-extrabold shadow-sm hover:bg-[#152248] active:scale-95 transition-all"
-                  >
-                    Pesan
-                  </button>
-                </div>
-              </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
 
       {/* Detail Modal */}

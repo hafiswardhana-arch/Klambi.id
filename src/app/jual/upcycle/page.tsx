@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
 import DecisionButtonPair from '@/components/ui/DecisionButtonPair';
+import { FadeIn, SlideUp } from '@/components/motion';
 
 interface CollectionPartner {
   id: string;
@@ -78,23 +79,25 @@ export default function UpcycleSellPage() {
     <AppLayout title="Jual Kiloan (Upcycle Pengepul)" showBack backHref="/jual">
       <div className="max-w-2xl mx-auto space-y-4 pb-24 select-none">
         {/* Banner */}
-        <div className="bg-gradient-to-r from-[#10284D] via-[#163768] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
-          <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-            Alur 5.5.1b: Upcycle Kiloan
-          </span>
-          <h2 className="text-base sm:text-lg font-black tracking-tight">
-            Jual Borongan Tekstil ke Mitra Pengepul
-          </h2>
-          <p className="text-xs text-white/85">
-            Pakaian Anda akan dipilah dan didistribusikan ke UMKM pengrajin & industri daur ulang kain.
-          </p>
-        </div>
+        <FadeIn>
+          <div className="bg-gradient-to-r from-[#10284D] via-[#163768] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
+            <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+              Alur 5.5.1b: Upcycle Kiloan
+            </span>
+            <h2 className="text-base sm:text-lg font-black tracking-tight">
+              Jual Borongan Tekstil ke Mitra Pengepul
+            </h2>
+            <p className="text-xs text-white/85">
+              Pakaian Anda akan dipilah dan didistribusikan ke UMKM pengrajin & industri daur ulang kain.
+            </p>
+          </div>
+        </FadeIn>
 
         {/* Tab Toggle: Alur User vs Sub-Alur Ekosistem Mitra */}
         <div className="flex bg-muted p-1 rounded-2xl border border-border text-xs font-bold">
           <button
             onClick={() => setActiveSubTab('user_flow')}
-            className={`flex-1 py-2 rounded-xl transition-all ${
+            className={`flex-1 py-2 rounded-xl active:scale-95 transition-all ${
               activeSubTab === 'user_flow'
                 ? 'bg-white text-[#10284D] shadow-xs'
                 : 'text-muted-foreground hover:text-foreground'
@@ -104,7 +107,7 @@ export default function UpcycleSellPage() {
           </button>
           <button
             onClick={() => setActiveSubTab('mitra_ecosystem')}
-            className={`flex-1 py-2 rounded-xl transition-all ${
+            className={`flex-1 py-2 rounded-xl active:scale-95 transition-all ${
               activeSubTab === 'mitra_ecosystem'
                 ? 'bg-white text-[#10284D] shadow-xs'
                 : 'text-muted-foreground hover:text-foreground'

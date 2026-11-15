@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
+import { StaggerContainer, StaggerItem } from '@/components/motion';
 
 export interface NotificationItem {
   id: string;
@@ -385,82 +386,83 @@ export default function NotifikasiPage() {
             )}
           </div>
         ) : (
-          <div className="bg-card rounded-3xl border border-border divide-y divide-border shadow-xs overflow-hidden">
+          <StaggerContainer className="bg-card rounded-3xl border border-border divide-y divide-border shadow-xs overflow-hidden" staggerDelay={40}>
             {filteredNotifications.map((n) => (
-              <div
-                key={n.id}
-                onClick={() => handleNotificationClick(n)}
-                className={`p-4 flex items-start gap-3.5 transition-colors cursor-pointer hover:bg-slate-50 relative group ${
-                  n.unread ? 'bg-blue-50/40' : 'bg-transparent'
-                }`}
-              >
-                {/* Unread indicator dot */}
-                {n.unread && (
-                  <span className="absolute top-4 right-4 w-2.5 h-2.5 rounded-full bg-[#E86D50] ring-4 ring-orange-100 animate-pulse" />
-                )}
-
-                {/* Icon Box */}
+              <StaggerItem key={n.id}>
                 <div
-                  className={`w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 text-xl shadow-xs ${
-                    n.type === 'order'
-                      ? 'bg-blue-100 text-blue-700'
-                      : n.type === 'care'
-                      ? 'bg-emerald-100 text-emerald-700'
-                      : n.type === 'ai'
-                      ? 'bg-amber-100 text-amber-700'
-                      : n.type === 'promo'
-                      ? 'bg-rose-100 text-rose-700'
-                      : 'bg-teal-100 text-teal-700'
+                  onClick={() => handleNotificationClick(n)}
+                  className={`p-4 flex items-start gap-3.5 transition-all active:scale-[0.99] cursor-pointer hover:bg-slate-50 relative group ${
+                    n.unread ? 'bg-blue-50/40' : 'bg-transparent'
                   }`}
                 >
-                  <span>{n.icon}</span>
-                </div>
+                  {/* Unread indicator dot */}
+                  {n.unread && (
+                    <span className="absolute top-4 right-4 w-2.5 h-2.5 rounded-full bg-[#E86D50] ring-4 ring-orange-100 animate-pulse" />
+                  )}
 
-                {/* Content */}
-                <div className="flex-1 min-w-0 pr-6 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded ${n.badgeColor || 'bg-secondary text-primary'}`}>
-                      {n.categoryLabel}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground">{n.time}</span>
+                  {/* Icon Box */}
+                  <div
+                    className={`w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 text-xl shadow-xs ${
+                      n.type === 'order'
+                        ? 'bg-blue-100 text-blue-700'
+                        : n.type === 'care'
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : n.type === 'ai'
+                        ? 'bg-amber-100 text-amber-700'
+                        : n.type === 'promo'
+                        ? 'bg-rose-100 text-rose-700'
+                        : 'bg-teal-100 text-teal-700'
+                    }`}
+                  >
+                    <span>{n.icon}</span>
                   </div>
 
-                  <h4 className="text-xs sm:text-sm font-extrabold text-[#10284D] leading-snug">
-                    {n.title}
-                  </h4>
+                  {/* Content */}
+                  <div className="flex-1 min-w-0 pr-6 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded ${n.badgeColor || 'bg-secondary text-primary'}`}>
+                        {n.categoryLabel}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">{n.time}</span>
+                    </div>
 
-                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                    {n.desc}
-                  </p>
+                    <h4 className="text-xs sm:text-sm font-extrabold text-[#10284D] leading-snug">
+                      {n.title}
+                    </h4>
 
-                  {/* Inline quick action buttons */}
-                  <div className="pt-2 flex items-center justify-between">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setNotifications((prev) =>
-                          prev.map((item) => (item.id === n.id ? { ...item, unread: false } : item))
-                        );
-                        router.push(n.targetHref);
-                      }}
-                      className="text-[11px] font-extrabold text-[#10284D] hover:text-[#1E4D8C] bg-secondary hover:bg-muted px-3 py-1 rounded-xl transition-all flex items-center gap-1 active:scale-95"
-                    >
-                      <span>{n.actionText}</span>
-                      <span>→</span>
-                    </button>
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      {n.desc}
+                    </p>
 
-                    <button
-                      onClick={(e) => handleDeleteItem(n.id, e)}
-                      className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 p-1 rounded-lg transition-opacity"
-                      title="Hapus notifikasi"
-                    >
-                      <Icon name="TrashIcon" size={14} />
-                    </button>
+                    {/* Inline quick action buttons */}
+                    <div className="pt-2 flex items-center justify-between">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setNotifications((prev) =>
+                            prev.map((item) => (item.id === n.id ? { ...item, unread: false } : item))
+                          );
+                          router.push(n.targetHref);
+                        }}
+                        className="text-[11px] font-extrabold text-[#10284D] hover:text-[#1E4D8C] bg-secondary hover:bg-muted px-3 py-1 rounded-xl transition-all flex items-center gap-1 active:scale-95"
+                      >
+                        <span>{n.actionText}</span>
+                        <span>→</span>
+                      </button>
+
+                      <button
+                        onClick={(e) => handleDeleteItem(n.id, e)}
+                        className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 p-1 rounded-lg transition-opacity"
+                        title="Hapus notifikasi"
+                      >
+                        <Icon name="TrashIcon" size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         )}
 
         {/* ========================================================================= */}

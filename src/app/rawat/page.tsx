@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
+import { StaggerContainer, StaggerItem, RevealOnScroll, FadeIn } from '@/components/motion';
 
 interface ScannedGarment {
   id: string;
@@ -623,75 +624,78 @@ export default function RawatPage() {
             )}
 
             {/* List Cards */}
-            {filteredGarments.map((garment) => {
-              const completedCount = garment.careSteps.filter((s) => s.done).length;
-              const totalCount = garment.careSteps.length;
-              const percentDone = Math.round((completedCount / totalCount) * 100);
+            <StaggerContainer className="space-y-3" staggerDelay={60}>
+              {filteredGarments.map((garment) => {
+                const completedCount = garment.careSteps.filter((s) => s.done).length;
+                const totalCount = garment.careSteps.length;
+                const percentDone = Math.round((completedCount / totalCount) * 100);
 
-              return (
-                <div
-                  key={garment.id}
-                  onClick={() => setSelectedGarment(garment)}
-                  className="bg-card rounded-2xl p-4 border border-border shadow-sm hover:shadow-md transition-all cursor-pointer space-y-3"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-2xl flex-shrink-0 shadow-inner">
-                        <span>{garment.iconText}</span>
-                      </div>
-                      <div>
-                        <h3 className="text-xs font-extrabold text-foreground">{garment.title}</h3>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">
-                          {garment.category} • Scanned: {garment.scanDate}
-                        </p>
-                      </div>
-                    </div>
-
-                    <span
-                      className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${
-                        garment.statusBadge === 'Baik'
-                          ? 'bg-[#D1FAE5] text-[#166534]'
-                          : garment.statusBadge === 'Perlu Perawatan'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-red-100 text-red-700'
-                      }`}
+                return (
+                  <StaggerItem key={garment.id}>
+                    <div
+                      onClick={() => setSelectedGarment(garment)}
+                      className="bg-card rounded-2xl p-4 border border-border shadow-sm hover:shadow-md active:scale-[0.98] transition-all cursor-pointer space-y-3"
                     >
-                      {garment.statusBadge} ({garment.score}/100)
-                    </span>
-                  </div>
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-2xl flex-shrink-0 shadow-inner">
+                            <span>{garment.iconText}</span>
+                          </div>
+                          <div>
+                            <h3 className="text-xs font-extrabold text-foreground">{garment.title}</h3>
+                            <p className="text-[10px] text-muted-foreground mt-0.5">
+                              {garment.category} • Scanned: {garment.scanDate}
+                            </p>
+                          </div>
+                        </div>
 
-                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                    {garment.summary}
-                  </p>
+                        <span
+                          className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${
+                            garment.statusBadge === 'Baik'
+                              ? 'bg-[#D1FAE5] text-[#166534]'
+                              : garment.statusBadge === 'Perlu Perawatan'
+                              ? 'bg-amber-100 text-amber-800'
+                              : 'bg-red-100 text-red-700'
+                          }`}
+                        >
+                          {garment.statusBadge} ({garment.score}/100)
+                        </span>
+                      </div>
 
-                  {/* Progress Checklist Bar */}
-                  <div className="space-y-1.5 bg-muted/40 p-2.5 rounded-xl border border-border/60">
-                    <div className="flex items-center justify-between text-[10px] font-bold">
-                      <span className="text-foreground/80">
-                        Checklist Perawatan ({completedCount}/{totalCount} Selesai)
-                      </span>
-                      <span className="text-emerald-600 font-extrabold">{percentDone}%</span>
+                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                        {garment.summary}
+                      </p>
+
+                      {/* Progress Checklist Bar */}
+                      <div className="space-y-1.5 bg-muted/40 p-2.5 rounded-xl border border-border/60">
+                        <div className="flex items-center justify-between text-[10px] font-bold">
+                          <span className="text-foreground/80">
+                            Checklist Perawatan ({completedCount}/{totalCount} Selesai)
+                          </span>
+                          <span className="text-emerald-600 font-extrabold">{percentDone}%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+                            style={{ width: `${percentDone}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Footer Row */}
+                      <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground pt-1 border-t border-border">
+                        <span className="text-[10px] text-muted-foreground">
+                          Bahan: <strong className="text-foreground">{garment.fabric}</strong>
+                        </span>
+                        <span className="text-primary font-bold hover:underline flex items-center gap-1">
+                          Buka Detail <Icon name="ChevronRightIcon" size={12} />
+                        </span>
+                      </div>
                     </div>
-                    <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-emerald-500 rounded-full transition-all duration-300"
-                        style={{ width: `${percentDone}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Footer Row */}
-                  <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground pt-1 border-t border-border">
-                    <span className="text-[10px] text-muted-foreground">
-                      Bahan: <strong className="text-foreground">{garment.fabric}</strong>
-                    </span>
-                    <span className="text-primary font-bold hover:underline flex items-center gap-1">
-                      Buka Detail <Icon name="ChevronRightIcon" size={12} />
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+                  </StaggerItem>
+                );
+              })}
+            </StaggerContainer>
           </div>
         )}
 

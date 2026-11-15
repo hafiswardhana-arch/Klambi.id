@@ -1,10 +1,11 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
 import DecisionButtonPair from '@/components/ui/DecisionButtonPair';
+import { FadeIn, SlideUp } from '@/components/motion';
 
 export default function JualPage() {
   const router = useRouter();
@@ -23,21 +24,23 @@ export default function JualPage() {
     <AppLayout title="Cabang Penjualan Pakaian" showBack backHref="/keputusan">
       <div className="max-w-2xl mx-auto space-y-4 pb-24 select-none">
         {/* Banner */}
-        <div className="bg-gradient-to-r from-[#10284D] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
-          <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-            Sub-Keputusan 5.5.1
-          </span>
-          <h2 className="text-base sm:text-lg font-black tracking-tight">
-            Pilih Metode Penjualan: Trif vs Upcycle
-          </h2>
-          <p className="text-xs text-white/85">
-            Semua hasil penjualan dilindungi oleh sistem Rekening Bersama (Escrow) Klámbi.
-          </p>
-        </div>
+        <FadeIn>
+          <div className="bg-gradient-to-r from-[#10284D] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
+            <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+              Sub-Keputusan 5.5.1
+            </span>
+            <h2 className="text-base sm:text-lg font-black tracking-tight">
+              Pilih Metode Penjualan: Trif vs Upcycle
+            </h2>
+            <p className="text-xs text-white/85">
+              Semua hasil penjualan dilindungi oleh sistem Rekening Bersama (Escrow) Klámbi.
+            </p>
+          </div>
+        </FadeIn>
 
         {/* View 1: Rekomendasi AI */}
         {mode === 'recommendation' ? (
-          <div className="space-y-4 animate-scale-in">
+          <SlideUp className="space-y-4">
             <div className="bg-card rounded-3xl p-5 border border-border shadow-sm space-y-3">
               <div className="flex items-center justify-between border-b border-border pb-2.5">
                 <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full">
@@ -70,10 +73,10 @@ export default function JualPage() {
               backText="Pilih Manual (Trif / Upcycle)"
               onBack={() => setMode('manual')}
             />
-          </div>
+          </SlideUp>
         ) : (
           /* View 2: Pilihan Manual (5.5.1a vs 5.5.1b) */
-          <div className="space-y-4 animate-scale-in">
+          <SlideUp className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               {/* Card 1: TRIF */}
               <div
@@ -120,7 +123,7 @@ export default function JualPage() {
             >
               ← Kembali ke Rekomendasi AI
             </button>
-          </div>
+          </SlideUp>
         )}
       </div>
     </AppLayout>

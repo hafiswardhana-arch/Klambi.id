@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
+import { SlideUp } from '@/components/motion';
 
 function PemesananJasaContent() {
   const router = useRouter();
@@ -28,7 +29,7 @@ function PemesananJasaContent() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 pb-20">
+    <SlideUp className="max-w-2xl mx-auto space-y-4 pb-20">
       {/* Mitra Info Summary */}
       <div className="bg-card rounded-2xl p-4 border border-border shadow-sm flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-primary font-bold">
@@ -47,7 +48,7 @@ function PemesananJasaContent() {
           {/* Diantar */}
           <div
             onClick={() => setDeliveryMethod('diantar')}
-            className={`p-4 rounded-2xl border-2 cursor-pointer transition-all text-center space-y-2 ${
+            className={`p-4 rounded-2xl border-2 cursor-pointer transition-all active:scale-[0.98] text-center space-y-2 ${
               deliveryMethod === 'diantar'
                 ? 'border-[#10284D] bg-secondary/50 shadow-sm'
                 : 'border-border bg-card hover:border-gray-300'
@@ -65,7 +66,7 @@ function PemesananJasaContent() {
           {/* Dijemput */}
           <div
             onClick={() => setDeliveryMethod('dijemput')}
-            className={`p-4 rounded-2xl border-2 cursor-pointer transition-all text-center space-y-2 ${
+            className={`p-4 rounded-2xl border-2 cursor-pointer transition-all active:scale-[0.98] text-center space-y-2 ${
               deliveryMethod === 'dijemput'
                 ? 'border-[#10284D] bg-secondary/50 shadow-sm'
                 : 'border-border bg-card hover:border-gray-300'
@@ -135,7 +136,7 @@ function PemesananJasaContent() {
       >
         Lanjut ke Pembayaran Escrow (Rp {grandTotal.toLocaleString('id-ID')})
       </button>
-    </div>
+    </SlideUp>
   );
 }
 

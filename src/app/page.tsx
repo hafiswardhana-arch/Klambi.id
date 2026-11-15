@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
+import { FadeIn, SlideUp, StaggerContainer, StaggerItem } from '@/components/motion';
 
 interface ProductItem {
   id: string;
@@ -297,24 +298,26 @@ export default function BerandaPage() {
         {/* ========================================================================= */}
         {/* 1. KARTU SAPAAN USER (PRD AN-03: Entrance Animation) */}
         {/* ========================================================================= */}
-        <div
-          onClick={() => setShowProfileModal(true)}
-          className="bg-card rounded-2xl shadow-sm border border-border p-4 flex items-center gap-3.5 cursor-pointer hover:shadow-md active:scale-[0.97] transition-all duration-150 animate-fade-in"
-        >
-          {/* Avatar Illustration (Young man with wavy dark hair in amber circle) */}
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-base flex-shrink-0 shadow-inner overflow-hidden border-2 border-white ring-2 ring-amber-200">
-            <span className="text-xl">🧑‍🦱</span>
+        <FadeIn>
+          <div
+            onClick={() => setShowProfileModal(true)}
+            className="bg-card rounded-2xl shadow-sm border border-border p-4 flex items-center gap-3.5 cursor-pointer hover:shadow-md active:scale-[0.97] transition-all duration-150"
+          >
+            {/* Avatar Illustration (Young man with wavy dark hair in amber circle) */}
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-base flex-shrink-0 shadow-inner overflow-hidden border-2 border-white ring-2 ring-amber-200">
+              <span className="text-xl">🧑‍🦱</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-sm sm:text-base font-extrabold text-[#10284D] truncate">
+                {greeting}, Muhammad Hafiz Maulana
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Kenali Kondisinya, Tentukan Langkahnya!
+              </p>
+            </div>
+            <span className="text-xs text-muted-foreground">👉</span>
           </div>
-          <div className="flex-1 min-w-0">
-            <h2 className="text-sm sm:text-base font-extrabold text-[#10284D] truncate">
-              {greeting}, Muhammad Hafiz Maulana
-            </h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Kenali Kondisinya, Tentukan Langkahnya!
-            </p>
-          </div>
-          <span className="text-xs text-muted-foreground">👉</span>
-        </div>
+        </FadeIn>
 
         {/* ========================================================================= */}
         {/* 2. PROMO BANNER CAROUSEL (PRD AN-03: Stagger 1) */}
@@ -530,56 +533,57 @@ export default function BerandaPage() {
             </button>
           </div>
 
-          <div className="flex gap-3.5 overflow-x-auto scrollbar-hide pb-2">
+          <StaggerContainer className="flex gap-3.5 overflow-x-auto scrollbar-hide pb-2" staggerDelay={50}>
             {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                onClick={() => setSelectedProduct(product)}
-                className="w-[165px] flex-shrink-0 bg-card rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200 cursor-pointer flex flex-col justify-between"
-              >
-                {/* Visual Image Representation */}
-                <div className="w-full h-[135px] relative overflow-hidden bg-slate-100 group">
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    fill
-                    unoptimized
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
-                  <span className="absolute top-2 right-2 bg-black/60 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-sm shadow-sm">
-                    ⭐ {product.score}
-                  </span>
-                  <span className="absolute bottom-2 left-2 text-xs font-bold text-white bg-[#10284D]/80 px-2 py-0.5 rounded-md backdrop-blur-xs">
-                    {product.iconText} {product.category}
-                  </span>
-                </div>
+              <StaggerItem key={product.id} className="flex-shrink-0">
+                <div
+                  onClick={() => setSelectedProduct(product)}
+                  className="w-[165px] bg-card rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200 cursor-pointer flex flex-col justify-between"
+                >
+                  {/* Visual Image Representation */}
+                  <div className="w-full h-[135px] relative overflow-hidden bg-slate-100 group">
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      fill
+                      unoptimized
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
+                    <span className="absolute top-2 right-2 bg-black/60 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-sm shadow-sm">
+                      ⭐ {product.score}
+                    </span>
+                    <span className="absolute bottom-2 left-2 text-xs font-bold text-white bg-[#10284D]/80 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                      {product.iconText} {product.category}
+                    </span>
+                  </div>
 
-                {/* Card Content */}
-                <div className="p-3 space-y-1 bg-white">
-                  <span className="text-[10px] text-muted-foreground block truncate">
-                    {product.categoryTitle}
-                  </span>
-                  <h4 className="text-xs font-extrabold text-[#10284D] truncate">
-                    {product.name}
-                  </h4>
-                  <div className="flex items-baseline gap-1 pt-0.5">
-                    <span className="text-[#E86D50] text-xs font-extrabold">
-                      Rp{product.priceNow.toLocaleString('id-ID')},00
+                  {/* Card Content */}
+                  <div className="p-3 space-y-1 bg-white">
+                    <span className="text-[10px] text-muted-foreground block truncate">
+                      {product.categoryTitle}
                     </span>
-                  </div>
-                  <div className="flex items-center justify-between pt-1 border-t border-gray-100">
-                    <span className="text-[9px] text-muted-foreground line-through">
-                      Rp{product.priceOrig.toLocaleString('id-ID')},00
-                    </span>
-                    <span className="bg-[#D1FAE5] text-[#166534] text-[9px] font-extrabold px-1.5 py-0.5 rounded">
-                      {product.condition}
-                    </span>
+                    <h4 className="text-xs font-extrabold text-[#10284D] truncate">
+                      {product.name}
+                    </h4>
+                    <div className="flex items-baseline gap-1 pt-0.5">
+                      <span className="text-[#E86D50] text-xs font-extrabold">
+                        Rp{product.priceNow.toLocaleString('id-ID')},00
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between pt-1 border-t border-gray-100">
+                      <span className="text-[9px] text-muted-foreground line-through">
+                        Rp{product.priceOrig.toLocaleString('id-ID')},00
+                      </span>
+                      <span className="bg-[#D1FAE5] text-[#166534] text-[9px] font-extrabold px-1.5 py-0.5 rounded">
+                        {product.condition}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
 
         {/* ========================================================================= */}
