@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import KlambiLogo from '@/components/ui/KlambiLogo';
+import { FadeIn, ScaleIn } from '@/components/motion';
 
 export default function SplashScreenPage() {
   const router = useRouter();
@@ -42,7 +43,7 @@ export default function SplashScreenPage() {
       </div>
 
       {/* Bottom: Loading Text & Horizontal Rounded Progress Bar */}
-      <div className="w-full max-w-xs flex flex-col items-center gap-2">
+      <FadeIn delay={150} className="w-full max-w-xs flex flex-col items-center gap-2">
         <span className="text-xs font-semibold text-gray-500 tracking-wider">
           Loading...
         </span>
@@ -55,7 +56,7 @@ export default function SplashScreenPage() {
             style={{ width: `${progress}%` }}
           />
         </div>
-      </div>
+      </FadeIn>
     </div>
   );
 }
