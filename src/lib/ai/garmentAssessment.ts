@@ -202,7 +202,7 @@ export async function assessGarmentCondition(
         Authorization: `Bearer ${activeKey}`,
       },
       body: JSON.stringify({
-        model: 'deepseek-flash',
+        model: 'deepseek-chat',
         messages: [
           {
             role: 'system',

@@ -99,7 +99,7 @@ export default function SignatureCircularMotion({
               strokeLinecap="round"
               strokeDasharray="90 260"
               filter="url(#glow)"
-              className="animate-[dash_2.2s_linear_infinite]"
+              className="scm-stream1"
             />
 
             {/* Glowing infinity light stream 2 (trailing in reverse harmony) */}
@@ -109,7 +109,7 @@ export default function SignatureCircularMotion({
               strokeWidth={dimensions.strokeWidth - 1}
               strokeLinecap="round"
               strokeDasharray="60 290"
-              className="animate-[dashReverse_2.2s_linear_infinite]"
+              className="scm-stream2"
             />
 
             {/* Central energy point / convergence node */}
@@ -128,23 +128,17 @@ export default function SignatureCircularMotion({
         )}
       </div>
 
-      <style jsx>{`
-        @keyframes dash {
-          0% {
-            stroke-dashoffset: 350;
-          }
-          100% {
-            stroke-dashoffset: 0;
-          }
+      <style>{`
+        @keyframes scm-dash {
+          0% { stroke-dashoffset: 350; }
+          100% { stroke-dashoffset: 0; }
         }
-        @keyframes dashReverse {
-          0% {
-            stroke-dashoffset: 0;
-          }
-          100% {
-            stroke-dashoffset: -350;
-          }
+        @keyframes scm-dashReverse {
+          0% { stroke-dashoffset: 0; }
+          100% { stroke-dashoffset: -350; }
         }
+        .scm-stream1 { animation: scm-dash 2.2s linear infinite; }
+        .scm-stream2 { animation: scm-dashReverse 2.2s linear infinite; }
       `}</style>
     </div>
   );

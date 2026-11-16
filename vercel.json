@@ -1,0 +1,10 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": ".next",
+  "env": {
+    "DEEPSEEK_API_KEY": "@deepseek_api_key",
+    "CLOTHING_AI_API_KEY": "@deepseek_api_key"
+  }
+}

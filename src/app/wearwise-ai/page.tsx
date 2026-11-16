@@ -639,7 +639,7 @@ export default function WearwiseAIPage() {
               )}
 
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-muted-foreground">
-                <span>Model AI: DeepSeek Vision Flash</span>
+                <span>Model AI: DeepSeek Vision Chat (V3)</span>
                 <button
                   onClick={() => setShowContextModal(true)}
                   className="font-bold text-[#10284D] hover:underline flex items-center gap-1"
