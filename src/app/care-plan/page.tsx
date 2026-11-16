@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
@@ -10,7 +10,7 @@ export default function CarePlanPage() {
   const router = useRouter();
 
   // Garment Diagnosis Data (Section 5.6.1 Specification)
-  const garmentData = {
+  const [garmentData, setGarmentData] = useState({
     title: 'Kemeja Flannel Sage Green',
     category: 'Kemeja Katun Organik',
     difficulty: 'Sedang' as 'Mudah' | 'Sedang' | 'Sulit',
@@ -42,7 +42,27 @@ export default function CarePlanPage() {
     ],
     actionableRecommendation:
       'Pakaian ini sangat direkomendasikan untuk menggunakan produk perawatan deterjen lembaran Kindfoam. Jika Anda menginginkan pemulihan warna pudar yang sempurna, Anda juga dapat memesan jasa Re-Color / Permak dari mitra profesional terdekat.',
-  };
+  });
+
+  // Sync with AI Diagnosis if available
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('klambi_current_scan');
+      if (raw) {
+        const scan = JSON.parse(raw);
+        setGarmentData((prev) => ({
+          ...prev,
+          title: scan.garmentType ? `${scan.garmentType} (${scan.colorSummary || ''})` : prev.title,
+          category: scan.estimatedFabric ? `Bahan ${scan.estimatedFabric}` : prev.category,
+          summaryProblem: scan.dimensions?.cleanliness?.details || scan.actionReason || prev.summaryProblem,
+          causeDiagnosis: `Diagnosis Wearwise AI (Skor GCS: ${scan.gcsScore || 88}/100): ${scan.actionReason || prev.causeDiagnosis}`,
+          actionableRecommendation: scan.actionReason || prev.actionableRecommendation,
+        }));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   return (
     <AppLayout title="Diagnosis & Care Plan" showBack backHref="/keputusan">

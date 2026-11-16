@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
@@ -19,6 +19,29 @@ export default function TrifSellPage() {
     'Jaket denim vintage upcycle dengan teknik patchwork rapi. Skor serat kain 88/100 (Sangat Baik). Kondisi bersih tanpa noda, kancing logam orisinal lengkap, dan jahitan kelim kokoh. Siap pakai langsung dari lemari terawat.'
   );
   const [isPublished, setIsPublished] = useState(false);
+
+  // Sync with real AI Garment Assessment if available
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('klambi_current_scan');
+      if (raw) {
+        const scan = JSON.parse(raw);
+        if (scan.garmentType) {
+          setProductTitle(`${scan.garmentType} ${scan.colorSummary || ''}`.trim());
+        }
+        if (scan.category) {
+          setCategory(scan.category);
+        }
+        if (scan.actionReason || scan.gcsScore) {
+          setDescription(
+            `${scan.garmentType || 'Pakaian'} kondisi ${scan.conditionStatus || 'Sangat Baik'} (Skor GCS: ${scan.gcsScore || 88}/100, ${scan.conditionGrade || 'Grade A'}). Bahan: ${scan.estimatedFabric || 'Katun Organik'}. ${scan.actionReason || 'Siap pakai langsung dari lemari terawat.'}`
+          );
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   // Escrow Transaction Simulation Steps (Section 5.5.1a)
   const escrowSteps = [
