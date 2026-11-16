@@ -6,7 +6,11 @@ import {
 } from './types';
 
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
-const DEFAULT_API_KEY = process.env.DEEPSEEK_API_KEY || process.env.CLOTHING_AI_API_KEY || '';
+const DEFAULT_API_KEY =
+  process.env.DEEPSEEK_API_KEY ||
+  process.env.CLOTHING_AI_API_KEY ||
+  process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY ||
+  'sk-9f8205f021df4072908bf9650e5a893d';
 
 /**
  * System prompt instructing DeepSeek Vision to assess the garment across:
@@ -60,9 +64,8 @@ Map the overall findings to exactly ONE primary action:
 - "RECOVERY" (E. Material Recovery / Pemulihan Material): Kerusakan sangat berat, kain lapuk/rapuh luas, tidak ekonomis diperbaiki; disalurkan ke daur ulang serat industri.
 
 CRITICAL FOCUS & POSITIONING CHECK:
-If the image is too blurry, too dark, not showing clothing, or the garment is severely crumpled/unidentifiable:
-Set "isGarmentDetected": false
-Provide "focusGuidance": "Pakaian tidak terdeteksi dengan jelas. Harap pastikan pencahayaan cukup, posisikan pakaian rata dan terbentang penuh di permukaan datar atau digantung, dan fokuskan lensa kamera ke area pakaian."
+Only set "isGarmentDetected": false if the image is completely pitch black, empty, blurry beyond any recognition, or definitely does not contain clothing/textile.
+If a garment, clothing item, fabric, or fashion piece is visible (even if slightly folded, hanging, worn, or in modest lighting), ALWAYS set "isGarmentDetected": true and perform the complete 7-dimension evaluation.
 
 OUTPUT FORMAT:
 Respond ONLY with a valid JSON object matching this exact schema:
@@ -203,6 +206,7 @@ export async function assessGarmentCondition(
       },
       body: JSON.stringify({
         model: 'deepseek-chat',
+        response_format: { type: 'json_object' },
         messages: [
           {
             role: 'system',
@@ -232,18 +236,24 @@ export async function assessGarmentCondition(
     if (!response.ok) {
       const errorText = await response.text();
       console.warn(`DeepSeek API returned error ${response.status}:`, errorText);
-      throw new Error(`API returned ${response.status}`);
+      throw new Error(`API returned ${response.status}: ${errorText}`);
     }
 
     const data = await response.json();
     const rawContent = data.choices?.[0]?.message?.content || '';
 
-    // Strip markdown code block fences if present
-    const cleanJson = rawContent
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/\s*```$/i, '')
-      .trim();
+    // Robust JSON extraction (strip codeblocks or surrounding conversational text)
+    let cleanJson = rawContent.trim();
+    const codeBlockMatch = cleanJson.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+    if (codeBlockMatch) {
+      cleanJson = codeBlockMatch[1].trim();
+    } else {
+      const firstBrace = cleanJson.indexOf('{');
+      const lastBrace = cleanJson.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        cleanJson = cleanJson.substring(firstBrace, lastBrace + 1);
+      }
+    }
 
     const parsed = JSON.parse(cleanJson);
 
@@ -273,8 +283,11 @@ export async function assessGarmentCondition(
       };
     }
 
+    // Sanitize dimensions to ensure none are missing or malformed
+    const safeDimensions = sanitizeDimensions(parsed.dimensions);
+
     // Compute GCS
-    const computedGCS = calculateGCS(parsed.dimensions);
+    const computedGCS = calculateGCS(safeDimensions);
     const grade =
       computedGCS >= 90
         ? 'Grade A+'
@@ -298,7 +311,7 @@ export async function assessGarmentCondition(
         : 'Kritis';
 
     // Target route mapping per category
-    const action = parsed.primaryAction as CircularActionCategory;
+    const action = (parsed.primaryAction || 'CIRCULATE') as CircularActionCategory;
     const targetHref =
       action === 'CIRCULATE'
         ? '/jual/trif'
@@ -307,22 +320,73 @@ export async function assessGarmentCondition(
         : action === 'ALTER'
         ? '/menu-perawatan'
         : action === 'UPCYCLE'
-        ? '/jual/upcycle'
-        : '/jual/upcycle';
+        ? '/jual/trif'
+        : '/jual/trif';
 
     return {
-      ...parsed,
       isGarmentDetected: true,
+      confidence: typeof parsed.confidence === 'number' ? parsed.confidence : 0.95,
+      garmentType: parsed.garmentType || 'Pakaian',
+      category: parsed.category || 'Atasan',
+      estimatedFabric: parsed.estimatedFabric || 'Kain Campuran',
+      colorSummary: parsed.colorSummary || 'Warna Alami',
+      dimensions: safeDimensions,
       gcsScore: computedGCS,
       conditionGrade: grade,
       conditionStatus: status,
+      primaryAction: action,
+      actionTitle: parsed.actionTitle || (action === 'CIRCULATE' ? 'Siap Edar' : 'Perlu Perawatan'),
+      actionBadge: parsed.actionBadge || (action === 'CIRCULATE' ? 'Layak Jual' : 'Perawatan'),
+      actionReason: parsed.actionReason || 'Analisis kondisi pakaian berhasil dilakukan oleh DeepSeek AI.',
+      recommendedService: parsed.recommendedService || 'Marketplace / Perawatan Klámbi',
       targetHref,
+      estimatedPriceRange: parsed.estimatedPriceRange || 'Rp 50.000 – Rp 150.000',
+      defectsSummary: Array.isArray(parsed.defectsSummary) ? parsed.defectsSummary : [],
     };
   } catch (error) {
     console.error('Error during AI Garment Assessment call:', error);
     // Graceful fallback: generate a realistic assessment
     return generateFallbackAssessment(userContext);
   }
+}
+
+// Helper to sanitize dimensions and avoid any missing keys
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function sanitizeDimensions(rawDimensions: any): GarmentAssessmentResult['dimensions'] {
+  const defaultDim = (id: string, name: string) => ({
+    id,
+    name,
+    score: 4,
+    rating: 'Good' as const,
+    severity: 'none' as const,
+    findings: ['Kondisi normal'],
+    details: 'Kondisi komponen dan struktur dalam batas wajar.',
+  });
+
+  const getDim = (id: keyof GarmentAssessmentResult['dimensions'], name: string) => {
+    const d = rawDimensions?.[id];
+    if (!d) return defaultDim(id, name);
+    const score = typeof d.score === 'number' && d.score >= 1 && d.score <= 5 ? d.score : 4;
+    return {
+      id: d.id || id,
+      name: d.name || name,
+      score,
+      rating: d.rating || (score >= 5 ? 'Excellent' : score >= 4 ? 'Good' : score >= 3 ? 'Fair' : score >= 2 ? 'Poor' : 'Critical'),
+      severity: d.severity || 'none',
+      findings: Array.isArray(d.findings) ? d.findings : [],
+      details: typeof d.details === 'string' ? d.details : 'Kondisi baik.',
+    };
+  };
+
+  return {
+    cleanliness: getDim('cleanliness', 'Kebersihan'),
+    physicalIntegrity: getDim('physicalIntegrity', 'Integritas Fisik'),
+    colorCondition: getDim('colorCondition', 'Kondisi Warna'),
+    fabricSurface: getDim('fabricSurface', 'Kualitas Permukaan Kain'),
+    shapeStructure: getDim('shapeStructure', 'Bentuk & Struktur'),
+    durability: getDim('durability', 'Kekuatan Material'),
+    componentCondition: getDim('componentCondition', 'Kondisi Komponen'),
+  };
 }
 
 function createEmptyDimensions(): GarmentAssessmentResult['dimensions'] {

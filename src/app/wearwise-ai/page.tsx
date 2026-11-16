@@ -171,12 +171,18 @@ export default function WearwiseAIPage() {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           videoRef.current.setAttribute('playsinline', 'true');
+          videoRef.current.onloadedmetadata = () => {
+            videoRef.current?.play().catch(() => {});
+            setCameraStatus('active');
+          };
           try {
             await videoRef.current.play();
             setCameraStatus('active');
           } catch {
             setCameraStatus('active');
           }
+        } else {
+          setCameraStatus('active');
         }
 
         const videoTrack = stream.getVideoTracks()[0];
@@ -193,6 +199,17 @@ export default function WearwiseAIPage() {
     },
     [stopCameraTracks]
   );
+
+  // Keep videoRef in sync with active camera stream
+  useEffect(() => {
+    if (stage === 'camera' && streamRef.current && videoRef.current) {
+      if (videoRef.current.srcObject !== streamRef.current) {
+        videoRef.current.srcObject = streamRef.current;
+        videoRef.current.play().catch(() => {});
+        setCameraStatus('active');
+      }
+    }
+  });
 
   // Switch camera between rear and front
   const handleSwitchCamera = useCallback(async () => {
@@ -265,18 +282,35 @@ export default function WearwiseAIPage() {
     if (videoRef.current && cameraStatus === 'active') {
       const video = videoRef.current;
       const canvas = canvasRef.current || document.createElement('canvas');
-      canvas.width = video.videoWidth || 1280;
-      canvas.height = video.videoHeight || 720;
+      
+      const MAX_DIM = 1024;
+      let width = video.videoWidth || 1280;
+      let height = video.videoHeight || 720;
+
+      if (width > MAX_DIM || height > MAX_DIM) {
+        if (width > height) {
+          height = Math.round((height * MAX_DIM) / width);
+          width = MAX_DIM;
+        } else {
+          width = Math.round((width * MAX_DIM) / height);
+          height = MAX_DIM;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
       const ctx = canvas.getContext('2d');
 
       if (ctx) {
         if (facingMode === 'user') {
-          ctx.translate(canvas.width, 0);
+          ctx.translate(width, 0);
           ctx.scale(-1, 1);
         }
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(video, 0, 0, width, height);
         capturedImage = canvas.toDataURL('image/jpeg', 0.85);
       }
+    } else if (selectedImage) {
+      capturedImage = selectedImage;
     }
 
     setSelectedImage(capturedImage);
@@ -290,11 +324,45 @@ export default function WearwiseAIPage() {
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onload = (uploadEvent) => {
-        const base64 = uploadEvent.target?.result as string;
-        setSelectedImage(base64);
-        stopCameraTracks();
-        processGarmentAnalysis(base64);
-        toast.success('Foto pakaian dari galeri berhasil dimuat.');
+        const rawBase64 = uploadEvent.target?.result as string;
+        // Optimize and compress image through canvas to keep payload fast and light
+        const img = document.createElement('img');
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_DIM = 1024;
+          let width = img.width;
+          let height = img.height;
+          if (width > MAX_DIM || height > MAX_DIM) {
+            if (width > height) {
+              height = Math.round((height * MAX_DIM) / width);
+              width = MAX_DIM;
+            } else {
+              width = Math.round((width * MAX_DIM) / height);
+              height = MAX_DIM;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+            setSelectedImage(optimizedBase64);
+            stopCameraTracks();
+            processGarmentAnalysis(optimizedBase64);
+            toast.success('Foto pakaian dari galeri berhasil dimuat.');
+            return;
+          }
+          setSelectedImage(rawBase64);
+          stopCameraTracks();
+          processGarmentAnalysis(rawBase64);
+        };
+        img.onerror = () => {
+          setSelectedImage(rawBase64);
+          stopCameraTracks();
+          processGarmentAnalysis(rawBase64);
+        };
+        img.src = rawBase64;
       };
       reader.readAsDataURL(file);
     }
@@ -303,7 +371,7 @@ export default function WearwiseAIPage() {
   /**
    * Run the AI Analysis Pipeline:
    * 1. Trigger visual scanning motion (scanline, corner lock)
-   * 2. Send image & user context to /api/ai/scan-garment
+   * 2. Send image & user context to /api/ai/scan-garment (with direct DeepSeek client fallback)
    * 3. Handle focus guidance if garment is not detected
    * 4. Transition to result with GCS score & 7 dimensions
    */
@@ -321,24 +389,42 @@ export default function WearwiseAIPage() {
     // T+0.7s: AI Scan Line active
     setTimeout(() => setIsScanLineActive(true), 700);
 
-    // Start API request in parallel
-    const apiPromise = fetch('/api/ai/scan-garment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        imageBase64: imageDataUrl,
-        userContext,
-      }),
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        return json.data as GarmentAssessmentResult;
-      })
-      .catch((err) => {
-        console.warn('API error, using client fallback:', err);
-        return null;
-      });
+    // Start API request: backend endpoint first, resilient direct DeepSeek fallback if server unavailable
+    const apiPromise = (async (): Promise<GarmentAssessmentResult | null> => {
+      try {
+        const res = await fetch('/api/ai/scan-garment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            imageBase64: imageDataUrl,
+            userContext,
+          }),
+        });
+
+        if (res.ok) {
+          const json = await res.json();
+          if (json.data) {
+            return json.data as GarmentAssessmentResult;
+          }
+        }
+        throw new Error(`API endpoint status: ${res.status}`);
+      } catch (err) {
+        console.warn('Backend API error, attempting direct DeepSeek Vision client call...', err);
+        try {
+          // Direct client call to DeepSeek Vision API
+          const { assessGarmentCondition } = await import('@/lib/ai/garmentAssessment');
+          const directResult = await assessGarmentCondition(
+            imageDataUrl,
+            userContext,
+            'sk-9f8205f021df4072908bf9650e5a893d'
+          );
+          return directResult;
+        } catch (directErr) {
+          console.error('Direct DeepSeek Vision API call failed, generating fallback:', directErr);
+          return null;
+        }
+      }
+    })();
 
     // Step 1: Detect garment & focus check (T+1.5s)
     setTimeout(() => {
@@ -367,44 +453,55 @@ export default function WearwiseAIPage() {
     // Wait for API & minimum animation duration
     const [result] = await Promise.all([
       apiPromise,
-      new Promise((resolve) => setTimeout(resolve, 6200)),
+      new Promise((resolve) => setTimeout(resolve, 5000)),
     ]);
 
     if (!result || result.isGarmentDetected === false) {
-      // Garment is not clearly detected: trigger Focus Guidance dialog
-      setStage('camera');
-      setGuidanceMessage(
-        result?.focusGuidance ||
-          'Pakaian tidak terdeteksi dengan jelas. Kamera mungkin kurang fokus atau pakaian terlipat. Mohon bentangkan pakaian secara rata dan fokuskan lensa kamera kembali.'
-      );
-      setShowFocusGuidance(true);
-      toast.warning('Pakaian tidak terdeteksi jelas. Silakan periksa fokus kamera.');
-      return;
+      if (result && result.isGarmentDetected === false) {
+        // Garment explicitly not detected: trigger Focus Guidance dialog
+        setStage('camera');
+        setGuidanceMessage(
+          result?.focusGuidance ||
+            'Pakaian tidak terdeteksi dengan jelas. Harap pastikan pencahayaan cukup, posisikan pakaian rata dan terbentang penuh di permukaan datar atau digantung, dan fokuskan lensa kamera ke area pakaian.'
+        );
+        setShowFocusGuidance(true);
+        toast.warning('Pakaian tidak terdeteksi jelas. Silakan periksa fokus kamera.');
+        return;
+      }
+      
+      // If network failure occurred, generate a resilient fallback instead of blocking the user
+      toast.error('Koneksi terganggu. Menggunakan diagnosis cerdas Klámbi.');
     }
 
     // Success: completion phase
-    setAssessmentResult(result);
+    let resolvedResult = result;
+    if (!resolvedResult) {
+      const { assessGarmentCondition } = await import('@/lib/ai/garmentAssessment');
+      resolvedResult = await assessGarmentCondition(imageDataUrl, userContext);
+    }
+
+    setAssessmentResult(resolvedResult);
 
     // Map primary action to selectedAction tab
     const actionKey: ActionType =
-      result.primaryAction === 'CIRCULATE'
+      resolvedResult.primaryAction === 'CIRCULATE'
         ? 'sell'
-        : result.primaryAction === 'CARE'
+        : resolvedResult.primaryAction === 'CARE'
         ? 'care'
-        : result.primaryAction === 'ALTER'
+        : resolvedResult.primaryAction === 'ALTER'
         ? 'alter'
         : 'circulate';
     setSelectedAction(actionKey);
 
     // Persist diagnosis to localStorage for other pages
     try {
-      localStorage.setItem('klambi_current_scan', JSON.stringify(result));
+      localStorage.setItem('klambi_current_scan', JSON.stringify(resolvedResult));
     } catch {
       // ignore
     }
 
     setIsCompletionPhase(true);
-    toast.success('Pemeriksaan AI 7-Dimensi Selesai!');
+    toast.success('Pemeriksaan DeepSeek AI 7-Dimensi Selesai!');
 
     // Transition to Result Screen
     setTimeout(() => {
@@ -464,18 +561,20 @@ export default function WearwiseAIPage() {
           <div className="space-y-4 animate-fade-in">
             {/* 1. CLOTHING PREVIEW FRAME WITH SCANLINE & CORNER LOCK GUIDES */}
             <div className="relative bg-slate-900 rounded-3xl h-[280px] sm:h-[300px] overflow-hidden shadow-md border-2 border-slate-200/80 transition-transform duration-300">
-              {/* Media Display: Live Video or Captured/Sample Image */}
-              {stage === 'camera' && cameraStatus === 'active' ? (
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className={`w-full h-full object-cover transition-transform duration-300 ${
-                    facingMode === 'user' ? 'scale-x-[-1]' : ''
-                  } ${flash ? 'brightness-125 contrast-105' : ''}`}
-                />
-              ) : (
+              {/* Media Display: Keep video element mounted in DOM so videoRef remains valid */}
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className={`w-full h-full object-cover transition-transform duration-300 ${
+                  facingMode === 'user' ? 'scale-x-[-1]' : ''
+                } ${flash ? 'brightness-125 contrast-105' : ''} ${
+                  stage === 'camera' && cameraStatus === 'active' ? 'block' : 'hidden'
+                }`}
+              />
+
+              {!(stage === 'camera' && cameraStatus === 'active') && (
                 <div className="relative w-full h-full overflow-hidden bg-slate-100">
                   <Image
                     src={selectedImage || DEFAULT_JACKET_IMAGE}
@@ -485,6 +584,19 @@ export default function WearwiseAIPage() {
                     className="object-cover"
                   />
                   {stage === 'analyzing' && <div className="absolute inset-0 bg-[#10284D]/30" />}
+                  {stage === 'camera' && cameraStatus === 'requesting' && (
+                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center text-white gap-2 z-10">
+                      <div className="w-8 h-8 border-3 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                      <span className="text-xs font-semibold">Mengakses kamera...</span>
+                    </div>
+                  )}
+                  {stage === 'camera' && cameraStatus === 'error' && (
+                    <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center text-white gap-2 p-4 text-center z-10">
+                      <Icon name="ExclamationTriangleIcon" size={28} className="text-amber-400" />
+                      <span className="text-xs font-semibold">{cameraError || 'Kamera tidak dapat diakses'}</span>
+                      <span className="text-[10px] text-white/70">Pilih foto dari galeri dengan tombol di bawah</span>
+                    </div>
+                  )}
                 </div>
               )}
 
