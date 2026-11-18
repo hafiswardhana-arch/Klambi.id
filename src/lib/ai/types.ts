@@ -23,11 +23,26 @@ export type CircularActionCategory =
   | 'UPCYCLE'    // D. Upcycling Potential (Rework, Redesign, Kiloan)
   | 'RECOVERY';  // E. Material Recovery (Pemulihan & Daur Ulang Serat)
 
+export interface GarmentVisualProfile {
+  dominantR: number;
+  dominantG: number;
+  dominantB: number;
+  hueDeg: number;
+  satPct: number;
+  lumPct: number;
+  contrastPct: number;
+  colorName: string;
+  likelyFabric: string;
+  garmentType: string;
+  category: string;
+}
+
 export interface UserContextInput {
   odour?: 'none' | 'musty' | 'strong'; // Bau: Bersih / Apek / Bau Menyengat
   knownFabric?: string;               // Bahan jika diketahui: Katun, Denim, Poliester, dll.
   usageHistory?: string;              // Riwayat pemakaian: Harian, Jarang, Sering cuci panas, dll.
   notes?: string;                     // Catatan tambahan pengguna
+  visualProfile?: GarmentVisualProfile; // Ekstraksi profil visual piksel langsung dari kamera
 }
 
 export interface GarmentAssessmentResult {

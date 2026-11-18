@@ -12,7 +12,54 @@ import {
   GarmentAssessmentResult,
   UserContextInput,
   CircularActionCategory,
+  GarmentVisualProfile,
 } from '@/lib/ai/types';
+import { classifyVisualProfile } from '@/lib/ai/garmentAssessment';
+
+function extractVisualProfileFromCanvas(canvas: HTMLCanvasElement): GarmentVisualProfile {
+  try {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return classifyVisualProfile(120, 120, 120, 1.0);
+    }
+    const width = canvas.width;
+    const height = canvas.height;
+    const imgData = ctx.getImageData(0, 0, width, height);
+    const data = imgData.data;
+
+    const sampleSteps = 25;
+    const startX = Math.floor(width * 0.2);
+    const endX = Math.floor(width * 0.8);
+    const startY = Math.floor(height * 0.2);
+    const endY = Math.floor(height * 0.8);
+
+    let totalR = 0,
+      totalG = 0,
+      totalB = 0;
+    let count = 0;
+
+    for (let yi = 0; yi < sampleSteps; yi++) {
+      const y = Math.floor(startY + (yi / sampleSteps) * (endY - startY));
+      for (let xi = 0; xi < sampleSteps; xi++) {
+        const x = Math.floor(startX + (xi / sampleSteps) * (endX - startX));
+        const idx = (y * width + x) * 4;
+        totalR += data[idx];
+        totalG += data[idx + 1];
+        totalB += data[idx + 2];
+        count++;
+      }
+    }
+
+    const r = Math.round(totalR / Math.max(1, count));
+    const g = Math.round(totalG / Math.max(1, count));
+    const b = Math.round(totalB / Math.max(1, count));
+
+    return classifyVisualProfile(r, g, b, width / Math.max(1, height));
+  } catch (err) {
+    console.warn('Canvas pixel extraction fallback:', err);
+    return classifyVisualProfile(120, 120, 120, 1.0);
+  }
+}
 
 type ScanStage = 'camera' | 'analyzing' | 'result';
 type CameraStatus = 'idle' | 'requesting' | 'active' | 'error';
@@ -24,6 +71,9 @@ interface AnalysisStep {
   isComplete: boolean;
   iconName: string;
 }
+
+const isRearLabel = (label: string) => /back|rear|environment|belakang|world/i.test(label);
+const isFrontLabel = (label: string) => /front|user|selfie|depan|facetime/i.test(label);
 
 export default function WearwiseAIPage() {
   const router = useRouter();
@@ -90,114 +140,148 @@ export default function WearwiseAIPage() {
     }
   }, []);
 
+  // Incremented on every start/stop so stale async getUserMedia results can be discarded
+  const cameraRequestIdRef = useRef(0);
+
+  // Re-enumerate cameras (labels are only available after permission is granted)
+  const refreshCameraList = useCallback(async (): Promise<MediaDeviceInfo[]> => {
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices?.enumerateDevices) return [];
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter((d) => d.kind === 'videoinput');
+      setAvailableCameras(videoDevices);
+      setHasMultipleCameras(videoDevices.length > 1);
+      return videoDevices;
+    } catch {
+      return [];
+    }
+  }, []);
+
   // Initialize and start live camera hardware
   const startCamera = useCallback(
     async (mode: 'user' | 'environment', targetDeviceId?: string | null) => {
+      const requestId = ++cameraRequestIdRef.current;
       stopCameraTracks();
       setCameraStatus('requesting');
       setCameraError(null);
 
       if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
         setCameraStatus('error');
-        setCameraError('Browser tidak mendukung akses kamera langsung. Menampilkan mode demo foto.');
+        setCameraError(
+          typeof window !== 'undefined' && !window.isSecureContext
+            ? 'Kamera hanya bisa diakses lewat HTTPS. Buka situs dengan https://'
+            : 'Browser tidak mendukung akses kamera langsung. Pilih foto dari galeri.'
+        );
         return;
       }
 
+      const tryGet = async (constraints: MediaStreamConstraints): Promise<MediaStream | null> => {
+        try {
+          return await navigator.mediaDevices.getUserMedia(constraints);
+        } catch (err) {
+          console.warn('getUserMedia failed', constraints, err);
+          return null;
+        }
+      };
+
+      const size = { width: { ideal: 1280 }, height: { ideal: 720 } };
       let stream: MediaStream | null = null;
 
-      // Strategy 1: Specific deviceId
+      // Strategy 1: specific deviceId
       if (targetDeviceId) {
-        try {
-          stream = await navigator.mediaDevices.getUserMedia({
-            video: {
-              deviceId: { exact: targetDeviceId },
-              width: { ideal: 1280 },
-              height: { ideal: 720 },
-            },
-            audio: false,
-          });
-        } catch {
-          try {
-            stream = await navigator.mediaDevices.getUserMedia({
-              video: { deviceId: targetDeviceId },
-              audio: false,
-            });
-          } catch {
-            stream = null;
-          }
-        }
+        stream = await tryGet({ video: { deviceId: { exact: targetDeviceId }, ...size }, audio: false });
+      }
+      // Strategy 2: exact facingMode (forces the rear camera on phones)
+      if (!stream) {
+        stream = await tryGet({ video: { facingMode: { exact: mode }, ...size }, audio: false });
+      }
+      // Strategy 3: preferred facingMode
+      if (!stream) {
+        stream = await tryGet({ video: { facingMode: { ideal: mode }, ...size }, audio: false });
+      }
+      // Strategy 4: any camera
+      if (!stream) {
+        stream = await tryGet({ video: true, audio: false });
       }
 
-      // Strategy 2: exact facingMode
+      // A newer start/stop happened while waiting: release this stream so the camera isn't locked
+      if (requestId !== cameraRequestIdRef.current) {
+        stream?.getTracks().forEach((t) => t.stop());
+        return;
+      }
+
       if (!stream) {
-        try {
-          stream = await navigator.mediaDevices.getUserMedia({
-            video: {
-              facingMode: { exact: mode },
-              width: { ideal: 1280 },
-              height: { ideal: 720 },
-            },
-            audio: false,
-          });
-        } catch {
-          // Strategy 3: loose facingMode
-          try {
-            stream = await navigator.mediaDevices.getUserMedia({
-              video: {
-                facingMode: mode,
-                width: { ideal: 1280 },
-                height: { ideal: 720 },
-              },
+        setCameraStatus('error');
+        setCameraError('Izin kamera ditolak atau kamera sedang dipakai aplikasi lain.');
+        return;
+      }
+
+      // Rear camera requested but the browser returned the front one: pick the rear lens by label
+      if (mode === 'environment' && !targetDeviceId) {
+        const track = stream.getVideoTracks()[0];
+        const settings = track?.getSettings?.() || {};
+        const gotFront =
+          settings.facingMode === 'user' ||
+          (!!track?.label && isFrontLabel(track.label) && !isRearLabel(track.label));
+        if (gotFront) {
+          const cams = await refreshCameraList();
+          const rear = cams.find((c) => c.deviceId && isRearLabel(c.label) && c.deviceId !== settings.deviceId);
+          if (rear) {
+            stream.getTracks().forEach((t) => t.stop());
+            let rearStream = await tryGet({
+              video: { deviceId: { exact: rear.deviceId }, ...size },
               audio: false,
             });
-          } catch {
-            // Strategy 4: fallback any camera
-            try {
-              stream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: false,
-              });
-            } catch (err: unknown) {
-              setCameraStatus('error');
-              setCameraError('Izin kamera ditolak atau kamera tidak tersedia.');
+            if (requestId !== cameraRequestIdRef.current) {
+              rearStream?.getTracks().forEach((t) => t.stop());
               return;
             }
+            if (!rearStream) {
+              rearStream = await tryGet({ video: true, audio: false });
+            } else {
+              setActiveDeviceId(rear.deviceId);
+            }
+            if (!rearStream) {
+              setCameraStatus('error');
+              setCameraError('Kamera belakang tidak dapat dibuka.');
+              return;
+            }
+            stream = rearStream;
           }
         }
       }
 
-      if (stream) {
-        streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.setAttribute('playsinline', 'true');
-          videoRef.current.onloadedmetadata = () => {
-            videoRef.current?.play().catch(() => {});
-            setCameraStatus('active');
-          };
-          try {
-            await videoRef.current.play();
-            setCameraStatus('active');
-          } catch {
-            setCameraStatus('active');
-          }
-        } else {
-          setCameraStatus('active');
+      streamRef.current = stream;
+      const video = videoRef.current;
+      if (video) {
+        video.srcObject = stream;
+        video.setAttribute('playsinline', 'true');
+        video.muted = true;
+        video.onloadedmetadata = () => {
+          video.play().catch(() => {});
+        };
+        try {
+          await video.play();
+        } catch {
+          // autoplay may still start via onloadedmetadata
         }
+      }
+      setCameraStatus('active');
 
-        const videoTrack = stream.getVideoTracks()[0];
-        if (videoTrack) {
-          try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const capabilities = (videoTrack.getCapabilities?.() || {}) as { torch?: boolean };
-            setTorchSupported(Boolean(capabilities.torch));
-          } catch {
-            setTorchSupported(false);
-          }
+      // Labels are available now that permission is granted: refresh for the switch button
+      refreshCameraList();
+
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        try {
+          const capabilities = (videoTrack.getCapabilities?.() || {}) as { torch?: boolean };
+          setTorchSupported(Boolean(capabilities.torch));
+        } catch {
+          setTorchSupported(false);
         }
       }
     },
-    [stopCameraTracks]
+    [stopCameraTracks, refreshCameraList]
   );
 
   // Keep videoRef in sync with active camera stream
@@ -217,10 +301,8 @@ export default function WearwiseAIPage() {
     setFacingMode(nextMode);
 
     if (availableCameras.length > 1) {
-      const targetKeywords = nextMode === 'environment' ? ['back', 'rear', 'environment'] : ['front', 'user', 'selfie'];
-      const targetCam = availableCameras.find((cam) =>
-        targetKeywords.some((keyword) => cam.label.toLowerCase().includes(keyword))
-      );
+      const matches = nextMode === 'environment' ? isRearLabel : isFrontLabel;
+      const targetCam = availableCameras.find((cam) => cam.deviceId && cam.label && matches(cam.label));
       if (targetCam) {
         setActiveDeviceId(targetCam.deviceId);
         await startCamera(nextMode, targetCam.deviceId);
@@ -246,20 +328,8 @@ export default function WearwiseAIPage() {
 
   // Enumerate cameras
   useEffect(() => {
-    const detectCameras = async () => {
-      if (navigator.mediaDevices?.enumerateDevices) {
-        try {
-          const devices = await navigator.mediaDevices.enumerateDevices();
-          const videoDevices = devices.filter((d) => d.kind === 'videoinput');
-          setAvailableCameras(videoDevices);
-          setHasMultipleCameras(videoDevices.length > 1);
-        } catch {
-          // ignore
-        }
-      }
-    };
-    detectCameras();
-  }, []);
+    refreshCameraList();
+  }, [refreshCameraList]);
 
   // Camera start on mount
   useEffect(() => {
@@ -270,6 +340,8 @@ export default function WearwiseAIPage() {
     }
 
     return () => {
+      // Invalidate any getUserMedia call still in flight, then release the camera
+      cameraRequestIdRef.current++;
       stopCameraTracks();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -277,9 +349,10 @@ export default function WearwiseAIPage() {
 
   // Capture frame from live video or use default preview
   const handleCapture = () => {
-    let capturedImage = DEFAULT_JACKET_IMAGE;
+    let capturedImage: string | null = null;
+    let visualProfile: GarmentVisualProfile | undefined = undefined;
 
-    if (videoRef.current && cameraStatus === 'active') {
+    if (videoRef.current && cameraStatus === 'active' && videoRef.current.videoWidth > 0) {
       const video = videoRef.current;
       const canvas = canvasRef.current || document.createElement('canvas');
       
@@ -308,14 +381,18 @@ export default function WearwiseAIPage() {
         }
         ctx.drawImage(video, 0, 0, width, height);
         capturedImage = canvas.toDataURL('image/jpeg', 0.85);
+        visualProfile = extractVisualProfileFromCanvas(canvas);
       }
-    } else if (selectedImage) {
-      capturedImage = selectedImage;
+    }
+
+    if (!capturedImage) {
+      toast.error('Kamera belum siap. Tunggu kamera aktif atau pilih foto dari galeri.');
+      return;
     }
 
     setSelectedImage(capturedImage);
     stopCameraTracks();
-    processGarmentAnalysis(capturedImage);
+    processGarmentAnalysis(capturedImage, visualProfile);
   };
 
   // Handle gallery file upload
@@ -347,9 +424,10 @@ export default function WearwiseAIPage() {
           if (ctx) {
             ctx.drawImage(img, 0, 0, width, height);
             const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+            const visualProfile = extractVisualProfileFromCanvas(canvas);
             setSelectedImage(optimizedBase64);
             stopCameraTracks();
-            processGarmentAnalysis(optimizedBase64);
+            processGarmentAnalysis(optimizedBase64, visualProfile);
             toast.success('Foto pakaian dari galeri berhasil dimuat.');
             return;
           }
@@ -371,11 +449,14 @@ export default function WearwiseAIPage() {
   /**
    * Run the AI Analysis Pipeline:
    * 1. Trigger visual scanning motion (scanline, corner lock)
-   * 2. Send image & user context to /api/ai/scan-garment (with direct DeepSeek client fallback)
+   * 2. Send image, user context, and extracted visual profile to /api/ai/scan-garment
    * 3. Handle focus guidance if garment is not detected
    * 4. Transition to result with GCS score & 7 dimensions
    */
-  const processGarmentAnalysis = async (imageDataUrl: string) => {
+  const processGarmentAnalysis = async (
+    imageDataUrl: string,
+    visualProfile?: GarmentVisualProfile
+  ) => {
     setStage('analyzing');
     setIsObjectLocked(false);
     setIsScanLineActive(false);
@@ -389,8 +470,8 @@ export default function WearwiseAIPage() {
     // T+0.7s: AI Scan Line active
     setTimeout(() => setIsScanLineActive(true), 700);
 
-    // Start API request: backend endpoint first, resilient direct DeepSeek fallback if server unavailable
-    const apiPromise = (async (): Promise<GarmentAssessmentResult | null> => {
+    // Start API request with visualProfile
+    const apiPromise = (async (): Promise<{ data: GarmentAssessmentResult | null; error?: string }> => {
       try {
         const res = await fetch('/api/ai/scan-garment', {
           method: 'POST',
@@ -398,31 +479,24 @@ export default function WearwiseAIPage() {
           body: JSON.stringify({
             imageBase64: imageDataUrl,
             userContext,
+            visualProfile,
           }),
         });
 
-        if (res.ok) {
-          const json = await res.json();
-          if (json.data) {
-            return json.data as GarmentAssessmentResult;
-          }
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.data) {
+          return { data: json.data as GarmentAssessmentResult };
         }
-        throw new Error(`API endpoint status: ${res.status}`);
+        return {
+          data: null,
+          error:
+            json?.error ||
+            json?.message ||
+            `Analisis AI gagal (status ${res.status}). Silakan coba lagi.`,
+        };
       } catch (err) {
-        console.warn('Backend API error, attempting direct DeepSeek Vision client call...', err);
-        try {
-          // Direct client call to DeepSeek Vision API
-          const { assessGarmentCondition } = await import('@/lib/ai/garmentAssessment');
-          const directResult = await assessGarmentCondition(
-            imageDataUrl,
-            userContext,
-            'sk-9f8205f021df4072908bf9650e5a893d'
-          );
-          return directResult;
-        } catch (directErr) {
-          console.error('Direct DeepSeek Vision API call failed, generating fallback:', directErr);
-          return null;
-        }
+        console.error('Scan API request failed:', err);
+        return { data: null, error: 'Koneksi ke server terputus. Periksa internet lalu coba lagi.' };
       }
     })();
 
@@ -451,35 +525,37 @@ export default function WearwiseAIPage() {
     }, 5800);
 
     // Wait for API & minimum animation duration
-    const [result] = await Promise.all([
+    const [apiResponse] = await Promise.all([
       apiPromise,
       new Promise((resolve) => setTimeout(resolve, 5000)),
     ]);
+    const result = apiResponse.data;
 
-    if (!result || result.isGarmentDetected === false) {
-      if (result && result.isGarmentDetected === false) {
-        // Garment explicitly not detected: trigger Focus Guidance dialog
-        setStage('camera');
-        setGuidanceMessage(
-          result?.focusGuidance ||
-            'Pakaian tidak terdeteksi dengan jelas. Harap pastikan pencahayaan cukup, posisikan pakaian rata dan terbentang penuh di permukaan datar atau digantung, dan fokuskan lensa kamera ke area pakaian.'
-        );
-        setShowFocusGuidance(true);
-        toast.warning('Pakaian tidak terdeteksi jelas. Silakan periksa fokus kamera.');
-        return;
-      }
-      
-      // If network failure occurred, generate a resilient fallback instead of blocking the user
-      toast.error('Koneksi terganggu. Menggunakan diagnosis cerdas Klámbi.');
+    if (!result) {
+      // AI failed: show the real reason and return to the camera instead of a fake result
+      setStage('camera');
+      setIsObjectLocked(false);
+      setIsScanLineActive(false);
+      setCurrentStepIndex(0);
+      setSteps((prev) => prev.map((s) => ({ ...s, isComplete: false })));
+      toast.error(apiResponse.error || 'Analisis AI gagal. Silakan coba lagi.', { duration: 8000 });
+      return;
+    }
+
+    if (result.isGarmentDetected === false) {
+      // Garment explicitly not detected: trigger Focus Guidance dialog
+      setStage('camera');
+      setGuidanceMessage(
+        result.focusGuidance ||
+          'Pakaian tidak terdeteksi dengan jelas. Harap pastikan pencahayaan cukup, posisikan pakaian rata dan terbentang penuh di permukaan datar atau digantung, dan fokuskan lensa kamera ke area pakaian.'
+      );
+      setShowFocusGuidance(true);
+      toast.warning('Pakaian tidak terdeteksi jelas. Silakan periksa fokus kamera.');
+      return;
     }
 
     // Success: completion phase
-    let resolvedResult = result;
-    if (!resolvedResult) {
-      const { assessGarmentCondition } = await import('@/lib/ai/garmentAssessment');
-      resolvedResult = await assessGarmentCondition(imageDataUrl, userContext);
-    }
-
+    const resolvedResult = result;
     setAssessmentResult(resolvedResult);
 
     // Map primary action to selectedAction tab
