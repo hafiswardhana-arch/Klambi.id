@@ -8,6 +8,7 @@ import Icon from '@/components/ui/AppIcon';
 import { StaggerContainer, StaggerItem } from '@/components/motion';
 import { distanceKm, formatDistance, type LatLng } from '@/lib/geo';
 import type { MapUserPosition } from './components/PartnerMap';
+import { fetchData } from '@/lib/supabase/client';
 
 // Leaflet touches `window` on import, so the map only renders in the browser.
 const PartnerMap = dynamic(() => import('./components/PartnerMap'), {
@@ -141,6 +142,13 @@ type GeoStatus = 'idle' | 'locating' | 'granted' | 'denied' | 'unavailable';
 export default function MenuPerawatanPage() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  // Live partners from Supabase (falls back to the built-in demo partners)
+  const [partners, setPartners] = useState<PartnerData[]>(servicePartners);
+  useEffect(() => {
+    fetchData<PartnerData[]>('/api/catalog/partners').then((rows) => {
+      if (rows && rows.length) setPartners(rows);
+    });
+  }, []);
   const [sortBy, setSortBy] = useState<SortMode>('terdekat');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPartner, setSelectedPartner] = useState<ServicePartner | null>(null);
@@ -178,13 +186,13 @@ export default function MenuPerawatanPage() {
   const origin: LatLng = userPos ?? FALLBACK_CENTER;
 
   const partnersWithDistance = useMemo<ServicePartner[]>(() => {
-    const list = servicePartners.map((p) => ({
+    const list = partners.map((p) => ({
       ...p,
       distanceKm: Math.round(distanceKm(origin, p) * 10) / 10,
     }));
     const nearest = list.reduce((min, p) => (p.distanceKm < min.distanceKm ? p : min), list[0]);
     return list.map((p) => (p.id === nearest.id && !p.badge ? { ...p, badge: 'Terdekat' } : p));
-  }, [origin.lat, origin.lng]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [partners, origin.lat, origin.lng]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const nearestKm = Math.min(...partnersWithDistance.map((p) => p.distanceKm));
   const isOutsideCoverage = userPos !== null && nearestKm > COVERAGE_RADIUS_KM;

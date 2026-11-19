@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { fetchData } from '@/lib/supabase/client';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
 import { StaggerContainer, StaggerItem } from '@/components/motion';
@@ -138,6 +139,11 @@ const initialNotifications: NotificationItem[] = [
 export default function NotifikasiPage() {
   const router = useRouter();
   const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
+  useEffect(() => {
+    fetchData<NotificationItem[]>('/api/me/notifications').then((rows) => {
+      if (rows) setNotifications(rows);
+    });
+  }, []);
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'order' | 'care' | 'ai' | 'promo' | 'impact'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNotification, setSelectedNotification] = useState<NotificationItem | null>(null);

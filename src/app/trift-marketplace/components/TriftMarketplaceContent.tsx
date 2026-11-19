@@ -1,11 +1,12 @@
 'use client';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Icon from '@/components/ui/AppIcon';
 import TriftListingGrid from './TriftListingGrid';
 import TriftListingModal from './TriftListingModal';
 import { TriftListing, triftListings } from '../data/triftListings';
 import { toast } from 'sonner';
+import { fetchData } from '@/lib/supabase/client';
 
 type SortOption = 'terbaru' | 'termurah' | 'termahal' | 'skor_tertinggi';
 type TabType = 'trift' | 'produk' | 'umkm';
@@ -220,11 +221,19 @@ export default function TriftMarketplaceContent() {
   const [selectedListing, setSelectedListing] = useState<TriftListing | null>(null);
   const [heroBannerIdx, setHeroBannerIdx] = useState(0);
   const [cart, setCart] = useState<Set<string>>(new Set());
+  // Live listings from Supabase (falls back to the built-in demo listings)
+  const [allListings, setAllListings] = useState<TriftListing[]>(triftListings);
+
+  useEffect(() => {
+    fetchData<TriftListing[]>('/api/catalog/listings').then((rows) => {
+      if (rows && rows.length) setAllListings(rows);
+    });
+  }, []);
 
   const banner = heroBanners[heroBannerIdx];
 
   const filtered = useMemo(() => {
-    let result = [...triftListings];
+    let result = [...allListings];
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter((l) =>
@@ -249,7 +258,7 @@ export default function TriftMarketplaceContent() {
       return new Date(b.listedAt).getTime() - new Date(a.listedAt).getTime();
     });
     return result;
-  }, [search, selectedCategory, selectedCondition, sortBy]);
+  }, [allListings, search, selectedCategory, selectedCondition, sortBy]);
 
   const toggleCart = (id: string, name: string) => {
     setCart((prev) => {

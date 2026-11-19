@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { assessGarmentCondition, GarmentAssessmentError } from '@/lib/ai/garmentAssessment';
 import { UserContextInput, GarmentVisualProfile } from '@/lib/ai/types';
+import { getSupabaseAdmin } from '@/lib/supabase/admin';
+import { getSession } from '@/lib/supabase/session';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -32,6 +34,24 @@ export async function POST(req: NextRequest) {
     };
 
     const assessmentResult = await assessGarmentCondition(imageBase64, mergedContext);
+
+    // Best-effort: save the result to the logged-in user's scan history (never blocks the response).
+    try {
+      const db = getSupabaseAdmin();
+      const session = getSession(req);
+      if (db && session && assessmentResult.isGarmentDetected !== false) {
+        await db.from('garment_scans').insert({
+          user_id: session.uid,
+          garment_type: assessmentResult.garmentType,
+          gcs_score: assessmentResult.gcsScore,
+          condition_grade: assessmentResult.conditionGrade,
+          primary_action: assessmentResult.primaryAction,
+          result: assessmentResult,
+        });
+      }
+    } catch (e) {
+      console.error('Failed to save scan history:', e);
+    }
 
     return NextResponse.json({
       success: true,

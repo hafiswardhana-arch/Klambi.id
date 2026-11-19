@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { fetchData } from '@/lib/supabase/client';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
 import { StaggerContainer, StaggerItem } from '@/components/motion';
@@ -94,6 +95,11 @@ const initialItems: CartItem[] = [
 export default function KeranjangPage() {
   const router = useRouter();
   const [items, setItems] = useState<CartItem[]>(initialItems);
+  useEffect(() => {
+    fetchData<CartItem[]>('/api/me/cart').then((rows) => {
+      if (rows) setItems(rows);
+    });
+  }, []);
   const [removingId, setRemovingId] = useState<string | null>(null);
 
   const toggleSelect = (id: string) => {

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { fetchData } from '@/lib/supabase/client';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
 import { StaggerContainer, StaggerItem, RevealOnScroll, FadeIn } from '@/components/motion';
@@ -319,6 +320,11 @@ export default function RawatPage() {
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('Semua');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [garments, setGarments] = useState<ScannedGarment[]>(initialScannedGarments);
+  useEffect(() => {
+    fetchData<ScannedGarment[]>('/api/me/garments').then((rows) => {
+      if (rows && rows.length) setGarments(rows);
+    });
+  }, []);
   const [selectedGarment, setSelectedGarment] = useState<ScannedGarment | null>(null);
   const [schedules, setSchedules] = useState(careSchedules);
 

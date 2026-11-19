@@ -86,17 +86,41 @@ export default function LoginPage() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    (async () => {
+      // 1) Real credentials check against Supabase (server-side). 2) If the database is
+      // not configured (503) we fall back to the legacy demo check so the app keeps working.
+      let remoteUser: { username: string; name: string; avatar?: string } | null = null;
+      let valid = false;
+      let remoteError = '';
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier: username.trim(), password }),
+        });
+        if (res.status === 503) {
+          valid =
+            (username.trim().toLowerCase() === 'admin' && password.trim() === 'admin') ||
+            (username.trim().length > 0 && password.trim().length >= 4);
+        } else {
+          const json = await res.json().catch(() => null);
+          if (res.ok && json?.user) {
+            valid = true;
+            remoteUser = json.user;
+          } else {
+            remoteError = json?.error || '';
+          }
+        }
+      } catch {
+        remoteError = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
+      }
       setIsLoading(false);
-      // Validate credentials
-      const isValidAdmin = username.trim().toLowerCase() === 'admin' && password.trim() === 'admin';
-      const isValidGeneric = username.trim().length > 0 && password.trim().length >= 4;
 
-      if (isValidAdmin || isValidGeneric) {
+      if (valid) {
         const fp = getDeviceFingerprint();
         const userObj = {
-          username: username.trim(),
-          name: fullName || 'Muhammad Hafiz Maulana',
+          username: remoteUser?.username || username.trim(),
+          name: remoteUser?.name || fullName || 'Muhammad Hafiz Maulana',
         };
 
         // 2. Security Check: 2FA OTP on login
@@ -116,10 +140,12 @@ export default function LoginPage() {
         completeSuccessfulAuth(userObj);
       } else {
         triggerErrorShake(
-          `Username atau password salah! Sisa percobaan: ${rateCheck.remainingAttempts}`
+          remoteError && !remoteError.includes('salah')
+            ? remoteError
+            : `Username atau password salah! Sisa percobaan: ${rateCheck.remainingAttempts}`
         );
       }
-    }, 600);
+    })();
   };
 
   const handleVerifyOtp = (e?: React.FormEvent) => {
@@ -153,15 +179,39 @@ export default function LoginPage() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    (async () => {
+      let name = fullName;
+      let uname = username;
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: username.trim(), password, fullName: fullName.trim() }),
+        });
+        if (res.status !== 503) {
+          const json = await res.json().catch(() => null);
+          if (!res.ok || !json?.user) {
+            setIsLoading(false);
+            toast.error(json?.error || 'Pendaftaran gagal. Coba lagi.');
+            return;
+          }
+          name = json.user.name;
+          uname = json.user.username;
+        }
+      } catch {
+        setIsLoading(false);
+        toast.error('Tidak dapat terhubung ke server. Periksa koneksi internet Anda.');
+        return;
+      }
+
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('klambi_auth', 'true');
         sessionStorage.setItem('klambi_splashed', 'true');
         localStorage.setItem(
           'klambi_user',
           JSON.stringify({
-            name: fullName,
-            username: username,
+            name,
+            username: uname,
             avatar: '🧑‍🦱',
           })
         );
@@ -171,7 +221,7 @@ export default function LoginPage() {
       setTimeout(() => {
         router.push('/');
       }, 500);
-    }, 900);
+    })();
   };
 
   const handleSocialLogin = (provider: 'google' | 'facebook') => {

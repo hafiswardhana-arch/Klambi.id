@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
 import { FadeIn, SlideUp, StaggerContainer, StaggerItem } from '@/components/motion';
+import { fetchData } from '@/lib/supabase/client';
 
 interface ProductItem {
   id: string;
@@ -208,6 +209,23 @@ export default function BerandaPage() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [cartCount, setCartCount] = useState(3);
+  // Live data from Supabase (falls back to the built-in demo data when unavailable)
+  const [products, setProducts] = useState<ProductItem[]>(productsData);
+  const [impactTarget, setImpactTarget] = useState({ goal: 32, kg: 12.5, rank: 8, scan: 12 });
+
+  useEffect(() => {
+    fetchData<ProductItem[]>('/api/catalog/products').then((rows) => {
+      if (rows && rows.length) setProducts(rows);
+    });
+    fetchData<{
+      impact?: { goalPct: number; kgSaved: number; rank: number; scanCount: number } | null;
+      cartCount?: number;
+    }>('/api/me/summary').then((s) => {
+      if (!s) return;
+      if (s.impact) setImpactTarget({ goal: s.impact.goalPct, kg: s.impact.kgSaved, rank: s.impact.rank, scan: s.impact.scanCount });
+      if (typeof s.cartCount === 'number') setCartCount(s.cartCount);
+    });
+  }, []);
 
   // Count-up animation state for Impact Tracker
   const [countProgress, setCountProgress] = useState(0);
@@ -259,10 +277,10 @@ export default function BerandaPage() {
       // Ease Out Cubic curve: fast start, soft settle
       const easeFactor = 1 - Math.pow(1 - linearFactor, 3);
 
-      setCountProgress(Math.round(32 * easeFactor));
-      setCountKg(Number((12.5 * easeFactor).toFixed(1)));
-      setCountRank(Math.max(8, Math.round(50 - 42 * easeFactor)));
-      setCountScan(Math.round(12 * easeFactor));
+      setCountProgress(Math.round(impactTarget.goal * easeFactor));
+      setCountKg(Number((impactTarget.kg * easeFactor).toFixed(1)));
+      setCountRank(Math.max(impactTarget.rank, Math.round(50 - (50 - impactTarget.rank) * easeFactor)));
+      setCountScan(Math.round(impactTarget.scan * easeFactor));
 
       if (currentStep >= steps) {
         clearInterval(countInterval);
@@ -270,7 +288,7 @@ export default function BerandaPage() {
     }, intervalTime);
 
     return () => clearInterval(countInterval);
-  }, []);
+  }, [impactTarget]);
 
   const greeting = getGreeting();
   const [userName, setUserName] = useState('Muhammad Hafiz Maulana');
@@ -290,7 +308,7 @@ export default function BerandaPage() {
     .map((w) => w[0]?.toUpperCase())
     .join('');
 
-  const filteredProducts = productsData.filter((p) => {
+  const filteredProducts = products.filter((p) => {
     if (selectedCategory === 'Semua') return true;
     return p.category === selectedCategory;
   });
