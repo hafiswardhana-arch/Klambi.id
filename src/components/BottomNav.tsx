@@ -30,7 +30,7 @@ export default function BottomNav({ muted = false }: BottomNavProps) {
       <div className="max-w-md mx-auto pointer-events-auto px-4">
         <nav
           aria-label="Navigasi utama"
-          className={`rounded-[32px] flex items-stretch justify-between px-2 py-2 shadow-[0_12px_32px_rgba(11,42,82,0.35)] transition-colors duration-300 ${
+          className={`rounded-[26px] flex items-stretch justify-between px-1.5 py-1.5 shadow-[0_12px_32px_rgba(11,42,82,0.35)] transition-colors duration-300 ${
             muted ? 'bg-navy-deep/90 backdrop-blur-md' : 'bg-navy'
           }`}
         >
@@ -41,18 +41,18 @@ export default function BottomNav({ muted = false }: BottomNavProps) {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`group relative flex flex-1 min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-2xl transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 active:scale-95 ${
+                className={`group relative flex flex-1 min-h-[46px] flex-col items-center justify-center gap-0.5 rounded-2xl transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 active:scale-95 ${
                   active ? 'text-white' : 'text-white/70 hover:text-white'
                 }`}
               >
                 <Icon
                   name={item.icon}
                   variant="solid"
-                  size={24}
+                  size={21}
                   className={`transition-transform duration-200 ${active ? 'scale-110' : 'group-hover:scale-105'}`}
                   aria-hidden="true"
                 />
-                <span className={`text-[10.5px] leading-none tracking-tight ${active ? 'font-semibold' : 'font-medium'}`}>
+                <span className={`text-[10px] leading-none tracking-tight ${active ? 'font-semibold' : 'font-medium'}`}>
                   {item.name}
                 </span>
                 {active && (

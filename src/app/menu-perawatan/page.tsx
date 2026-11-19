@@ -38,7 +38,7 @@ const servicePartners: ServicePartner[] = [
     services: ['Potong Panjang Celana', 'Hemming Chainstitch', 'Ganti Resleting YKK', 'Kecilkan Pinggang'],
     openHours: 'Senin–Sabtu, 09.00–18.00',
     minOrder: 'Mulai 1 item',
-    badge: '🏆 Terpopuler',
+    badge: 'Terpopuler',
   },
   {
     id: 'sp-2',
@@ -69,7 +69,7 @@ const servicePartners: ServicePartner[] = [
     services: ['Permak Cepat 1 Hari', 'Ganti Kancing', 'Jahit Robekan Ringan'],
     openHours: 'Senin–Jumat, 09.00–17.00',
     minOrder: 'Mulai 1 item',
-    badge: '⚡ Terdekat',
+    badge: 'Terdekat',
   },
   {
     id: 'sp-4',
@@ -85,7 +85,7 @@ const servicePartners: ServicePartner[] = [
     services: ['Pewarnaan Ulang Denim Hitam/Navy', 'Restorasi Warna Katun', 'Tie-Dye Kreatif'],
     openHours: 'Selasa–Minggu, 10.00–18.00',
     minOrder: 'Minimal 1 item',
-    badge: '⭐ Rating Teratas',
+    badge: 'Rating Teratas',
   },
   {
     id: 'sp-5',
@@ -101,14 +101,14 @@ const servicePartners: ServicePartner[] = [
     services: ['Rework Jeans jadi Tote Bag', 'Patchwork Jacket', 'Custom Bucket Hat'],
     openHours: 'Senin–Sabtu, 10.00–17.00',
     minOrder: 'Konsultasi gratis',
-    badge: '🌿 Eco-Partner',
+    badge: 'Eco-Partner',
   },
 ];
 
 type SortMode = 'terdekat' | 'termurah' | 'rating' | 'sesuai';
 
 const mapPins = [
-  { top: '35%', left: '45%', label: 'Kamu', color: '#3A7BF7', isUser: true },
+  { top: '58%', left: '45%', label: 'Kamu', color: '#3A7BF7', isUser: true },
   { top: '50%', left: '30%', label: '0.8km', color: '#22C55E' },
   { top: '40%', left: '60%', label: '1.2km', color: '#E86D50' },
   { top: '60%', left: '55%', label: '2.5km', color: '#E86D50' },
@@ -124,12 +124,19 @@ export default function MenuPerawatanPage() {
   const [selectedPartner, setSelectedPartner] = useState<ServicePartner | null>(null);
 
   const categories = [
-    { id: 'all', label: 'Semua Jasa', emoji: '🔍' },
-    { id: 'permak', label: 'Permak & Jahit', emoji: '🧵' },
-    { id: 'cuci', label: 'Cuci & Spa', emoji: '🫧' },
-    { id: 'recolor', label: 'Re-Colour', emoji: '🎨' },
-    { id: 'upcycle', label: 'Upcycle', emoji: '♻️' },
+    { id: 'all', label: 'Semua Jasa', icon: 'Squares2X2Icon' },
+    { id: 'permak', label: 'Permak & Jahit', icon: 'ScissorsIcon' },
+    { id: 'cuci', label: 'Cuci & Spa', icon: 'SparklesIcon' },
+    { id: 'recolor', label: 'Re-Colour', icon: 'SwatchIcon' },
+    { id: 'upcycle', label: 'Upcycle', icon: 'ArrowPathRoundedSquareIcon' },
   ];
+
+  const categoryIcon: Record<ServicePartner['category'], string> = {
+    permak: 'ScissorsIcon',
+    cuci: 'SparklesIcon',
+    recolor: 'SwatchIcon',
+    upcycle: 'ArrowPathRoundedSquareIcon',
+  };
 
   const filteredPartners = useMemo(() => {
     let result = [...servicePartners];
@@ -156,60 +163,58 @@ export default function MenuPerawatanPage() {
     return result;
   }, [selectedCategory, searchQuery, sortBy]);
 
-  const sortOptions: { id: SortMode; label: string; emoji: string }[] = [
-    { id: 'terdekat', label: 'Terdekat', emoji: '📍' },
-    { id: 'termurah', label: 'Termurah', emoji: '🏷️' },
-    { id: 'rating', label: 'Rating', emoji: '⭐' },
-    { id: 'sesuai', label: 'Sesuai Kebutuhan', emoji: '✅' },
+  const sortOptions: { id: SortMode; label: string; icon: string }[] = [
+    { id: 'terdekat', label: 'Terdekat', icon: 'MapPinIcon' },
+    { id: 'termurah', label: 'Termurah', icon: 'TagIcon' },
+    { id: 'rating', label: 'Rating', icon: 'StarIcon' },
+    { id: 'sesuai', label: 'Sesuai', icon: 'CheckBadgeIcon' },
   ];
 
   const categoryColors: Record<string, string> = {
-    permak: 'bg-blue-100 text-blue-800',
-    cuci: 'bg-cyan-100 text-cyan-800',
-    recolor: 'bg-purple-100 text-purple-800',
-    upcycle: 'bg-emerald-100 text-emerald-800',
+    permak: 'bg-blue-50 text-blue-800',
+    cuci: 'bg-cyan-50 text-cyan-800',
+    recolor: 'bg-purple-50 text-purple-800',
+    upcycle: 'bg-emerald-50 text-emerald-800',
   };
+
+  const goOrder = (name: string) => router.push(`/pemesanan-jasa?provider=${encodeURIComponent(name)}`);
 
   return (
     <AppLayout title="Jasa & Perawatan" showBack backHref="/">
-      <div className="max-w-2xl mx-auto space-y-4 pb-20 animate-fade-in">
-
-        {/* Interactive Map Placeholder */}
-        <div className="relative bg-slate-200 rounded-3xl h-48 border border-border shadow-inner overflow-hidden">
-          {/* Gradient map background */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-slate-300 via-blue-100 to-emerald-100" />
-          {/* Grid lines */}
-          <div className="absolute inset-0 opacity-20"
+      <div className="space-y-3 pb-4 animate-fade-in">
+        {/* Map placeholder */}
+        <div className="relative rounded-2xl h-36 shadow-card overflow-hidden bg-slate-200" role="img" aria-label="Peta mitra jasa di sekitarmu">
+          <div className="absolute inset-0 bg-gradient-to-tr from-slate-200 via-blue-100 to-emerald-100" />
+          <div
+            className="absolute inset-0 opacity-20"
             style={{
-              backgroundImage: 'linear-gradient(#94a3b8 1px, transparent 1px), linear-gradient(90deg, #94a3b8 1px, transparent 1px)',
-              backgroundSize: '32px 32px'
+              backgroundImage:
+                'linear-gradient(#94a3b8 1px, transparent 1px), linear-gradient(90deg, #94a3b8 1px, transparent 1px)',
+              backgroundSize: '28px 28px',
             }}
           />
-          {/* Road lines */}
-          <div className="absolute top-[45%] left-0 right-0 h-[3px] bg-white/60 rounded-full" />
-          <div className="absolute top-0 bottom-0 left-[40%] w-[3px] bg-white/60 rounded-full" />
+          <div className="absolute top-[45%] left-0 right-0 h-[3px] bg-white/70 rounded-full" />
+          <div className="absolute top-0 bottom-0 left-[40%] w-[3px] bg-white/70 rounded-full" />
 
-          {/* Map Pins */}
           {mapPins.map((pin, i) => (
             <div
               key={i}
               className="absolute flex flex-col items-center animate-scale-in"
               style={{ top: pin.top, left: pin.left, transform: 'translate(-50%, -100%)' }}
             >
-              {pin.isUser ? (
-                <div className="w-8 h-8 rounded-full bg-[#3A7BF7] border-3 border-white shadow-lg flex items-center justify-center">
-                  <span className="text-[10px] text-white font-black">📍</span>
-                </div>
-              ) : (
-                <div
-                  className="w-6 h-6 rounded-full border-2 border-white shadow-md flex items-center justify-center"
-                  style={{ backgroundColor: pin.color }}
-                >
-                  <span className="text-[8px] text-white font-black">✂</span>
-                </div>
-              )}
               <span
-                className="text-[9px] font-bold bg-white/90 px-1.5 py-0.5 rounded-full shadow-xs mt-0.5"
+                className={`${pin.isUser ? 'w-7 h-7' : 'w-5 h-5'} rounded-full border-2 border-white shadow-md flex items-center justify-center text-white`}
+                style={{ backgroundColor: pin.color }}
+                aria-hidden="true"
+              >
+                <Icon
+                  name={pin.isUser ? 'MapPinIcon' : 'ScissorsIcon'}
+                  variant="solid"
+                  size={pin.isUser ? 14 : 10}
+                />
+              </span>
+              <span
+                className="text-[9px] font-semibold bg-white/90 px-1.5 rounded-full shadow-sm mt-0.5 leading-4"
                 style={{ color: pin.isUser ? '#3A7BF7' : '#374151' }}
               >
                 {pin.label}
@@ -217,150 +222,180 @@ export default function MenuPerawatanPage() {
             </div>
           ))}
 
-          {/* Info bubble */}
-          <div className="absolute bottom-3 left-0 right-0 flex justify-center">
-            <div className="flex items-center gap-2 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-md border border-gray-200">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-extrabold text-[#10284D]">
-                {filteredPartners.length} Mitra aktif di sekitarmu
+          <div className="absolute top-2 left-0 right-0 flex justify-center">
+            <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm pl-2.5 pr-3 h-7 rounded-full shadow-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[11px] font-semibold text-navy">
+                {filteredPartners.length} mitra aktif di sekitarmu
               </span>
             </div>
           </div>
         </div>
 
-        {/* Search Bar */}
+        {/* Search */}
         <div className="relative">
           <Icon
             name="MagnifyingGlassIcon"
             size={18}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy pointer-events-none"
+            aria-hidden="true"
           />
           <input
             type="search"
+            aria-label="Cari jasa"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari tailor, perbaikan kancing, recolor, spa..."
-            className="w-full bg-card border border-border rounded-2xl pl-10 pr-4 py-3 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-[#10284D]"
+            placeholder="Cari tailor, kancing, recolor, spa..."
+            className="w-full h-10 bg-white rounded-full pl-10 pr-10 text-[13px] text-gray-900 placeholder:text-gray-500 shadow-card outline-none focus:ring-2 focus:ring-navy"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-800"
+              aria-label="Hapus pencarian"
             >
               <Icon name="XMarkIcon" size={16} />
             </button>
           )}
         </div>
 
-        {/* Category Filter Chips */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                selectedCategory === cat.id
-                  ? 'bg-[#10284D] text-white shadow-sm'
-                  : 'bg-white text-foreground border border-border hover:border-[#10284D]/40'
-              }`}
-            >
-              <span>{cat.emoji}</span>
-              <span>{cat.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Sorting Pills — 4 Options */}
-        <div className="space-y-2">
-          <span className="text-[11px] font-bold text-muted-foreground">Urutkan berdasarkan:</span>
-          <div className="grid grid-cols-4 gap-2">
-            {sortOptions.map((opt) => (
+        {/* Category chips */}
+        <div className="-mx-4 px-4 flex gap-2 overflow-x-auto scrollbar-hide" role="tablist" aria-label="Kategori jasa">
+          {categories.map((cat) => {
+            const active = selectedCategory === cat.id;
+            return (
               <button
-                key={opt.id}
-                onClick={() => setSortBy(opt.id)}
-                className={`flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl text-[10px] font-bold transition-all ${
-                  sortBy === opt.id
-                    ? 'bg-[#10284D] text-white shadow-md'
-                    : 'bg-card border border-border text-muted-foreground hover:border-[#10284D]'
+                key={cat.id}
+                role="tab"
+                aria-selected={active}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`flex items-center gap-1.5 h-9 px-3.5 rounded-full text-[12px] whitespace-nowrap border transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy ${
+                  active
+                    ? 'bg-navy border-navy text-white font-medium shadow-sm'
+                    : 'bg-white border-gray-300 text-gray-800 hover:border-navy/60'
                 }`}
               >
-                <span className="text-base">{opt.emoji}</span>
-                <span className="text-center leading-tight">{opt.label}</span>
+                <Icon name={cat.icon} size={15} aria-hidden="true" />
+                <span>{cat.label}</span>
               </button>
-            ))}
+            );
+          })}
+        </div>
+
+        {/* Sort segmented control */}
+        <div>
+          <p className="text-[11px] text-gray-600 mb-1.5">Urutkan berdasarkan</p>
+          <div className="grid grid-cols-4 bg-white rounded-xl shadow-card p-1" role="radiogroup" aria-label="Urutkan">
+            {sortOptions.map((opt) => {
+              const active = sortBy === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setSortBy(opt.id)}
+                  className={`h-9 rounded-lg flex items-center justify-center gap-1 text-[11px] transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy ${
+                    active ? 'bg-navy text-white font-medium' : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <Icon name={opt.icon} variant={active ? 'solid' : 'outline'} size={14} aria-hidden="true" />
+                  <span>{opt.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Count */}
-        <div className="flex items-center justify-between text-[11px] text-muted-foreground font-semibold">
+        <div className="flex items-center justify-between text-[11px] text-gray-600">
           <span>Menampilkan {filteredPartners.length} mitra</span>
           {sortBy === 'sesuai' && (
-            <span className="text-emerald-600 font-bold">✅ Hanya mitra terverifikasi</span>
+            <span className="flex items-center gap-1 text-emerald-700 font-medium">
+              <Icon name="CheckBadgeIcon" variant="solid" size={13} aria-hidden="true" />
+              Hanya mitra terverifikasi
+            </span>
           )}
         </div>
 
-        {/* List Mitra Jasa */}
-        <StaggerContainer className="space-y-3" staggerDelay={50}>
+        {/* Partner list */}
+        <StaggerContainer className="space-y-2.5" staggerDelay={50}>
           {filteredPartners.map((partner) => (
             <StaggerItem key={partner.id}>
               <div
-                className="bg-card rounded-2xl p-4 border border-border shadow-sm hover:shadow-md transition-all space-y-3 cursor-pointer active:scale-[0.99]"
+                role="button"
+                tabIndex={0}
                 onClick={() => setSelectedPartner(partner)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedPartner(partner);
+                  }
+                }}
+                className="bg-white rounded-2xl p-3 shadow-card hover:shadow-card-hover transition-all cursor-pointer active:scale-[0.99] space-y-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-primary font-bold flex-shrink-0 text-xl">
-                      {partner.category === 'permak' ? '🧵' :
-                       partner.category === 'cuci' ? '🫧' :
-                       partner.category === 'recolor' ? '🎨' : '♻️'}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="text-xs font-extrabold text-foreground">{partner.name}</h4>
-                        {partner.isVerified && (
-                          <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">
-                            ✓ Terpercaya
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-[10px] text-muted-foreground block mt-0.5">
-                        {partner.categoryLabel} • {partner.address}
-                      </span>
-                      {partner.badge && (
-                        <span className="text-[9px] font-bold text-[#E86D50] mt-0.5 block">{partner.badge}</span>
+                <div className="flex items-start gap-2.5">
+                  <span
+                    className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${categoryColors[partner.category]}`}
+                    aria-hidden="true"
+                  >
+                    <Icon name={categoryIcon[partner.category]} size={22} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <h4 className="text-[13px] font-semibold text-gray-900 truncate">{partner.name}</h4>
+                      {partner.isVerified && (
+                        <Icon
+                          name="CheckBadgeIcon"
+                          variant="solid"
+                          size={15}
+                          className="text-emerald-600 flex-shrink-0"
+                          aria-label="Mitra terpercaya"
+                        />
                       )}
                     </div>
+                    <p className="text-[11px] text-gray-600 truncate mt-0.5">
+                      {partner.categoryLabel} • {partner.address}
+                    </p>
+                    {partner.badge && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-coral mt-0.5">
+                        <Icon name="SparklesIcon" variant="solid" size={11} aria-hidden="true" />
+                        {partner.badge}
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                {/* Service tags */}
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1">
                   {partner.services.map((srv, i) => (
                     <span
                       key={i}
-                      className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${categoryColors[partner.category] ?? 'bg-muted text-foreground/80'}`}
+                      className={`text-[10px] px-2 py-0.5 rounded-full ${categoryColors[partner.category] ?? 'bg-gray-100 text-gray-800'}`}
                     >
                       {srv}
                     </span>
                   ))}
                 </div>
 
-                {/* Footer row */}
-                <div className="flex items-center justify-between text-xs pt-2 border-t border-border">
-                  <div className="flex items-center gap-3 text-muted-foreground font-semibold text-[11px]">
-                    <span>📍 {partner.distanceKm} km</span>
-                    <span>⭐ {partner.rating} ({partner.reviewsCount})</span>
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                  <div className="flex items-center gap-2.5 text-[11px] text-gray-700">
+                    <span className="flex items-center gap-0.5">
+                      <Icon name="MapPinIcon" variant="solid" size={13} className="text-coral" aria-hidden="true" />
+                      {partner.distanceKm} km
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <Icon name="StarIcon" variant="solid" size={13} className="text-amber-400" aria-hidden="true" />
+                      {partner.rating} ({partner.reviewsCount})
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-extrabold text-[#E86D50]">
-                      Mulai Rp {partner.estimatedPrice.toLocaleString('id-ID')}
+                    <span className="text-[12px] font-semibold text-coral">
+                      Rp{partner.estimatedPrice.toLocaleString('id-ID')}
                     </span>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(`/pemesanan-jasa?provider=${encodeURIComponent(partner.name)}`);
+                        goOrder(partner.name);
                       }}
-                      className="bg-[#10284D] text-white px-4 py-2 rounded-xl text-xs font-extrabold shadow-sm hover:bg-[#152248] active:scale-95 transition-all"
+                      className="h-8 px-4 rounded-full bg-navy text-white text-[12px] font-medium hover:bg-navy-deep active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-1"
                     >
                       Pesan
                     </button>
@@ -370,88 +405,92 @@ export default function MenuPerawatanPage() {
             </StaggerItem>
           ))}
         </StaggerContainer>
+
+        {filteredPartners.length === 0 && (
+          <div className="text-center py-10 text-[12px] text-gray-600">
+            Tidak ada mitra yang cocok. Coba ubah kata kunci atau kategori.
+          </div>
+        )}
       </div>
 
-      {/* Detail Modal */}
+      {/* Detail bottom sheet */}
       {selectedPartner && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 backdrop-blur-sm"
           onClick={() => setSelectedPartner(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Detail ${selectedPartner.name}`}
         >
           <div
-            className="bg-white rounded-3xl w-full max-w-md p-5 space-y-4 animate-slide-up shadow-2xl"
+            className="bg-white rounded-t-3xl w-full max-w-md p-4 pb-6 space-y-3.5 animate-slide-up shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center text-2xl shadow-inner">
-                  {selectedPartner.category === 'permak' ? '🧵' :
-                   selectedPartner.category === 'cuci' ? '🫧' :
-                   selectedPartner.category === 'recolor' ? '🎨' : '♻️'}
-                </div>
-                <div>
-                  <h3 className="text-sm font-extrabold text-[#10284D]">{selectedPartner.name}</h3>
-                  <span className="text-xs text-muted-foreground">{selectedPartner.categoryLabel}</span>
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <span
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${categoryColors[selectedPartner.category]}`}
+                  aria-hidden="true"
+                >
+                  <Icon name={categoryIcon[selectedPartner.category]} size={24} />
+                </span>
+                <div className="min-w-0">
+                  <h3 className="text-[14px] font-semibold text-navy leading-snug">{selectedPartner.name}</h3>
+                  <p className="text-[11px] text-gray-600">{selectedPartner.categoryLabel}</p>
                   {selectedPartner.isVerified && (
-                    <div className="mt-0.5">
-                      <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
-                        ✓ Mitra Terpercaya Klámbi
-                      </span>
-                    </div>
+                    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-medium mt-0.5">
+                      <Icon name="CheckBadgeIcon" variant="solid" size={12} aria-hidden="true" />
+                      Mitra Terpercaya Klámbi
+                    </span>
                   )}
                 </div>
               </div>
               <button
                 onClick={() => setSelectedPartner(null)}
-                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"
+                className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 flex-shrink-0"
+                aria-label="Tutup"
               >
-                ✕
+                <Icon name="XMarkIcon" size={18} />
               </button>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-2 bg-slate-50 rounded-2xl p-3">
+            <div className="grid grid-cols-3 bg-gray-50 rounded-xl py-2.5">
               <div className="text-center">
-                <div className="text-base font-black text-[#10284D]">{selectedPartner.rating}</div>
-                <div className="text-[10px] text-muted-foreground">⭐ Rating</div>
+                <div className="text-[15px] font-semibold text-navy">{selectedPartner.rating}</div>
+                <div className="text-[10px] text-gray-600">Rating</div>
               </div>
-              <div className="text-center border-x border-border">
-                <div className="text-base font-black text-[#10284D]">{selectedPartner.distanceKm}km</div>
-                <div className="text-[10px] text-muted-foreground">📍 Jarak</div>
+              <div className="text-center border-x border-gray-200">
+                <div className="text-[15px] font-semibold text-navy">{selectedPartner.distanceKm} km</div>
+                <div className="text-[10px] text-gray-600">Jarak</div>
               </div>
               <div className="text-center">
-                <div className="text-base font-black text-[#E86D50]">
-                  {selectedPartner.reviewsCount}
-                </div>
-                <div className="text-[10px] text-muted-foreground">✍️ Ulasan</div>
+                <div className="text-[15px] font-semibold text-coral">{selectedPartner.reviewsCount}</div>
+                <div className="text-[10px] text-gray-600">Ulasan</div>
               </div>
             </div>
 
-            {/* Info */}
-            <div className="space-y-2 text-xs text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Icon name="MapPinIcon" size={14} className="text-[#10284D] flex-shrink-0" />
+            <ul className="space-y-1.5 text-[12px] text-gray-700">
+              <li className="flex items-center gap-2">
+                <Icon name="MapPinIcon" size={15} className="text-navy flex-shrink-0" aria-hidden="true" />
                 <span>{selectedPartner.address}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Icon name="ClockIcon" size={14} className="text-[#10284D] flex-shrink-0" />
+              </li>
+              <li className="flex items-center gap-2">
+                <Icon name="ClockIcon" size={15} className="text-navy flex-shrink-0" aria-hidden="true" />
                 <span>{selectedPartner.openHours}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Icon name="CubeIcon" size={14} className="text-[#10284D] flex-shrink-0" />
+              </li>
+              <li className="flex items-center gap-2">
+                <Icon name="CubeIcon" size={15} className="text-navy flex-shrink-0" aria-hidden="true" />
                 <span>{selectedPartner.minOrder}</span>
-              </div>
-            </div>
+              </li>
+            </ul>
 
-            {/* Services */}
             <div>
-              <p className="text-[11px] font-bold text-foreground mb-2">Layanan Tersedia:</p>
+              <p className="text-[12px] font-semibold text-gray-900 mb-1.5">Layanan tersedia</p>
               <div className="flex flex-wrap gap-1.5">
                 {selectedPartner.services.map((srv, i) => (
                   <span
                     key={i}
-                    className={`text-[10px] font-medium px-2.5 py-1 rounded-full ${categoryColors[selectedPartner.category] ?? 'bg-muted text-foreground'}`}
+                    className={`text-[11px] px-2.5 py-1 rounded-full ${categoryColors[selectedPartner.category]}`}
                   >
                     {srv}
                   </span>
@@ -459,19 +498,18 @@ export default function MenuPerawatanPage() {
               </div>
             </div>
 
-            {/* CTA */}
-            <div className="grid grid-cols-2 gap-3 pt-1">
+            <div className="grid grid-cols-2 gap-2.5 pt-1">
               <button
                 onClick={() => setSelectedPartner(null)}
-                className="py-3 rounded-2xl border border-border text-xs font-bold text-muted-foreground hover:bg-slate-50"
+                className="h-11 rounded-full border border-gray-300 text-[13px] font-medium text-gray-700 hover:bg-gray-50 active:scale-95 transition-all"
               >
                 Kembali
               </button>
               <button
-                onClick={() => router.push(`/pemesanan-jasa?provider=${encodeURIComponent(selectedPartner.name)}`)}
-                className="py-3 rounded-2xl bg-[#10284D] text-white text-xs font-extrabold shadow-md hover:bg-[#152248] active:scale-95 transition-all"
+                onClick={() => goOrder(selectedPartner.name)}
+                className="h-11 rounded-full bg-navy text-white text-[13px] font-medium hover:bg-navy-deep active:scale-95 transition-all"
               >
-                Pesan Jasa →
+                Pesan Jasa
               </button>
             </div>
           </div>

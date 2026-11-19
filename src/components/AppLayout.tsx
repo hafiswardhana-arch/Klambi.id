@@ -38,8 +38,8 @@ export default function AppLayout({
           headerRight={headerRight}
         />
       )}
-      <main className={`flex-1 pb-24 animate-fade-in ${hideTopHeader ? 'pt-0' : 'pt-16'}`}>
-        <div className="max-w-screen-2xl mx-auto w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-16 py-4">
+      <main className={`flex-1 pb-24 animate-fade-in ${hideTopHeader ? 'pt-0' : 'pt-14'}`}>
+        <div className="max-w-md mx-auto w-full px-4 py-3">
           {children}
         </div>
       </main>
