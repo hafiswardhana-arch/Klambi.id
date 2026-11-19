@@ -26,7 +26,7 @@ export default function WalletEscrowSection({
           </div>
           <div>
             <h3 className="text-sm font-bold text-foreground">Saldo & Rekening Bersama (Escrow)</h3>
-            <p className="text-[11px] text-muted-foreground">Perlindungan transaksi jual-beli & jasa perawatan</p>
+            <p className="text-[0.6875rem] text-muted-foreground">Perlindungan transaksi jual-beli & jasa perawatan</p>
           </div>
         </div>
 
@@ -45,14 +45,14 @@ export default function WalletEscrowSection({
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs font-semibold text-muted-foreground">Saldo Tersedia (Bisa Ditarik)</span>
-              <span className="text-[10px] font-bold text-accent bg-card px-2 py-0.5 rounded-full border border-border">
+              <span className="text-[0.625rem] font-bold text-accent bg-card px-2 py-0.5 rounded-full border border-border">
                 Aktif
               </span>
             </div>
             <p className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight">
               Rp {withdrawableBalance.toLocaleString('id-ID')}
             </p>
-            <p className="text-[11px] text-muted-foreground mt-1">
+            <p className="text-[0.6875rem] text-muted-foreground mt-1">
               Hasil penjualan Trift & refund yang sudah cair
             </p>
           </div>
@@ -74,20 +74,20 @@ export default function WalletEscrowSection({
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs font-semibold text-muted-foreground">Dana Tertahan di Escrow</span>
-              <span className="text-[10px] font-bold text-info bg-card px-2 py-0.5 rounded-full border border-info/30">
+              <span className="text-[0.625rem] font-bold text-info bg-card px-2 py-0.5 rounded-full border border-info/30">
                 {escrowPendingCount} Transaksi
               </span>
             </div>
             <p className="text-xl sm:text-2xl font-extrabold text-info tracking-tight">
               Rp {escrowBalance.toLocaleString('id-ID')}
             </p>
-            <p className="text-[11px] text-muted-foreground mt-1">
+            <p className="text-[0.6875rem] text-muted-foreground mt-1">
               🔒 Aman di sistem Klámbi. Cair otomatis setelah pembeli konfirmasi barang diterima.
             </p>
           </div>
 
           <div className="mt-4 pt-3 border-t border-info/20 flex items-center justify-between">
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-[0.6875rem] text-muted-foreground">
               Estimasi cair: <strong>1-2 hari kerja</strong>
             </span>
             <button

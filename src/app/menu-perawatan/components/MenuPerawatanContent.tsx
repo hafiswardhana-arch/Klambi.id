@@ -23,7 +23,7 @@ export default function MenuPerawatanContent() {
         </div>
         <div className="text-right flex-shrink-0">
           <p className="text-xs font-600 text-accent">Skor 67</p>
-          <p className="text-[10px] text-muted-foreground">Cukup Baik</p>
+          <p className="text-[0.625rem] text-muted-foreground">Cukup Baik</p>
         </div>
       </div>
 

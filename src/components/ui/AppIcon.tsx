@@ -26,14 +26,16 @@ function Icon({
     disabled = false,
     ...props
 }: IconProps) {
+    // rem-based so icons scale with the tablet root font-size
+    const rem = `${size / 16}rem`;
     const iconSet = variant === 'solid' ? HeroIconsSolid : HeroIcons;
     const IconComponent = iconSet[name as keyof typeof iconSet] as React.ComponentType<any>;
 
     if (!IconComponent) {
         return (
             <QuestionMarkCircleIcon
-                width={size}
-                height={size}
+                width={rem}
+                height={rem}
                 className={`text-gray-400 ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
                 onClick={disabled ? undefined : onClick}
                 {...props}
@@ -43,8 +45,8 @@ function Icon({
 
     return (
         <IconComponent
-            width={size}
-            height={size}
+            width={rem}
+            height={rem}
             className={`${disabled ? 'opacity-50 cursor-not-allowed' : onClick ? 'cursor-pointer hover:opacity-80' : ''} ${className}`}
             onClick={disabled ? undefined : onClick}
             {...props}

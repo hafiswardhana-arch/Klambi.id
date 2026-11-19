@@ -42,7 +42,7 @@ export default function TriftListingGrid({ listings, onSelectListing }: TriftLis
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
       {listings.map((listing, index) => {
         const animDelay = Math.min(index * 40, 320);
         return (
@@ -66,7 +66,7 @@ export default function TriftListingGrid({ listings, onSelectListing }: TriftLis
               {/* AI Score Badge */}
               <div className="absolute top-2 left-2">
                 <div
-                  className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-700 shadow-xs ${
+                  className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[0.625rem] font-700 shadow-xs ${
                     listing.aiScore >= 80
                       ? 'bg-primary text-white'
                       : listing.aiScore >= 60
@@ -103,8 +103,8 @@ export default function TriftListingGrid({ listings, onSelectListing }: TriftLis
               <p className="text-xs font-700 text-foreground leading-tight line-clamp-2">{listing.title}</p>
 
               <div className="flex items-center gap-1">
-                <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">{listing.brand}</span>
-                <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">{listing.size}</span>
+                <span className="text-[0.625rem] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">{listing.brand}</span>
+                <span className="text-[0.625rem] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">{listing.size}</span>
               </div>
 
               {/* Score bar */}
@@ -115,7 +115,7 @@ export default function TriftListingGrid({ listings, onSelectListing }: TriftLis
                     style={{ width: `${listing.aiScore}%` }}
                   />
                 </div>
-                <span className="text-[10px] text-muted-foreground font-tabular">{listing.aiScore}</span>
+                <span className="text-[0.625rem] text-muted-foreground font-tabular">{listing.aiScore}</span>
               </div>
 
               <div className="flex items-end justify-between gap-1">
@@ -123,13 +123,13 @@ export default function TriftListingGrid({ listings, onSelectListing }: TriftLis
                   <p className="text-sm font-800 text-primary font-tabular leading-none">
                     Rp {(listing.price / 1000).toFixed(0)}rb
                   </p>
-                  <p className="text-[10px] text-muted-foreground line-through font-tabular">
+                  <p className="text-[0.625rem] text-muted-foreground line-through font-tabular">
                     Rp {(listing.originalPrice / 1000).toFixed(0)}rb
                   </p>
                 </div>
                 <div className="flex items-center gap-0.5">
                   <Icon name="MapPinIcon" size={10} className="text-muted-foreground" />
-                  <span className="text-[10px] text-muted-foreground">{listing.seller.location}</span>
+                  <span className="text-[0.625rem] text-muted-foreground">{listing.seller.location}</span>
                 </div>
               </div>
             </div>

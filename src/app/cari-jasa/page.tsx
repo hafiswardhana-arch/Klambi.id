@@ -147,7 +147,7 @@ export default function CariJasaPage() {
                 📍 Lokasi Anda: Senopati, Jakarta Selatan
               </span>
             </div>
-            <span className="text-[10px] font-bold text-cyan-200 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
+            <span className="text-[0.625rem] font-bold text-cyan-200 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
               Menampilkan {filteredProviders.length} Mitra Terdekat dalam Radius 5 km
             </span>
           </div>
@@ -244,7 +244,7 @@ export default function CariJasaPage() {
                 <button
                   key={cat}
                   onClick={() => setCategoryFilter(cat)}
-                  className={`px-3 py-1 rounded-xl text-[11px] font-bold capitalize transition-all ${
+                  className={`px-3 py-1 rounded-xl text-[0.6875rem] font-bold capitalize transition-all ${
                     categoryFilter === cat
                       ? 'bg-secondary text-primary border border-primary/30'
                       : 'bg-muted text-muted-foreground hover:bg-muted/80'
@@ -287,16 +287,16 @@ export default function CariJasaPage() {
                           {provider.name}
                         </h4>
                         {provider.isVerified && (
-                          <span className="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.2 rounded">
+                          <span className="text-[0.5625rem] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.2 rounded">
                             ✓ Terverifikasi
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">{provider.address}</p>
+                      <p className="text-[0.6875rem] text-muted-foreground mt-0.5">{provider.address}</p>
                     </div>
                   </div>
 
-                  <span className="text-[10px] bg-blue-50 text-blue-800 font-bold px-2 py-0.5 rounded-full flex-shrink-0">
+                  <span className="text-[0.625rem] bg-blue-50 text-blue-800 font-bold px-2 py-0.5 rounded-full flex-shrink-0">
                     {provider.statusAvailability}
                   </span>
                 </div>
@@ -306,7 +306,7 @@ export default function CariJasaPage() {
                   {provider.servicesList.map((srv, idx) => (
                     <span
                       key={idx}
-                      className="text-[10px] bg-muted text-muted-foreground font-semibold px-2 py-0.5 rounded-lg"
+                      className="text-[0.625rem] bg-muted text-muted-foreground font-semibold px-2 py-0.5 rounded-lg"
                     >
                       • {srv}
                     </span>
@@ -322,7 +322,7 @@ export default function CariJasaPage() {
 
                   <div className="flex items-center gap-2.5">
                     <div className="text-right">
-                      <span className="text-[10px] text-muted-foreground block">Mulai Dari:</span>
+                      <span className="text-[0.625rem] text-muted-foreground block">Mulai Dari:</span>
                       <span className="font-black text-[#E86D50]">
                         Rp {provider.estimatedPrice.toLocaleString('id-ID')}
                       </span>

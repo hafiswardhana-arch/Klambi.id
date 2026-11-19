@@ -50,7 +50,7 @@ export default function EscrowTracker({ status, className = '' }: EscrowTrackerP
                 />
               </div>
               <span
-                className={`text-[10px] font-600 whitespace-nowrap ${
+                className={`text-[0.625rem] font-600 whitespace-nowrap ${
                   isDone
                     ? 'text-accent'
                     : isActive

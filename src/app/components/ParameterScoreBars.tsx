@@ -45,7 +45,7 @@ export default function ParameterScoreBars({ parameters, showNotes = false }: Pa
             />
           </div>
           {showNotes && param.note && (
-            <p className="text-[11px] text-muted-foreground italic pl-1">{param.note}</p>
+            <p className="text-[0.6875rem] text-muted-foreground italic pl-1">{param.note}</p>
           )}
         </div>
       ))}

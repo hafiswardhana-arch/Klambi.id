@@ -57,24 +57,24 @@ export default function DampakPage() {
               <span className="text-xs font-bold text-[#E8C547] uppercase tracking-wider">
                 Capaian Ekologis Sirkular
               </span>
-              <span className="bg-white/20 text-white text-[10px] font-bold px-3 py-1 rounded-full">
+              <span className="bg-white/20 text-white text-[0.625rem] font-bold px-3 py-1 rounded-full">
                 Level 2: Eco-Warrior
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-2">
               <div className="bg-white/10 rounded-2xl p-4 border border-white/10 transition-transform active:scale-98">
-                <span className="text-[10px] text-white/70 block">Limbah Tekstil</span>
+                <span className="text-[0.625rem] text-white/70 block">Limbah Tekstil</span>
                 <span className="text-2xl font-extrabold text-white">{kgCount} kg</span>
-                <span className="text-[10px] text-emerald-400 font-semibold block mt-1">
+                <span className="text-[0.625rem] text-emerald-400 font-semibold block mt-1">
                   +4.3 kg bulan ini
                 </span>
               </div>
 
               <div className="bg-white/10 rounded-2xl p-4 border border-white/10 transition-transform active:scale-98">
-                <span className="text-[10px] text-white/70 block">Penghematan Air</span>
+                <span className="text-[0.625rem] text-white/70 block">Penghematan Air</span>
                 <span className="text-2xl font-extrabold text-white">{waterCount.toLocaleString('id-ID')} L</span>
-                <span className="text-[10px] text-cyan-300 font-semibold block mt-1">
+                <span className="text-[0.625rem] text-cyan-300 font-semibold block mt-1">
                   Setara 165 mandi
                 </span>
               </div>
@@ -105,7 +105,7 @@ export default function DampakPage() {
               </svg>
               <div className="absolute text-center">
                 <span className="text-sm font-extrabold text-foreground block">{Math.round(percentProgress * 100)}%</span>
-                <span className="text-[9px] text-muted-foreground">Progress</span>
+                <span className="text-[0.5625rem] text-muted-foreground">Progress</span>
               </div>
             </div>
 
@@ -118,7 +118,7 @@ export default function DampakPage() {
                 <span className="w-3 h-3 rounded-full bg-gray-200" />
                 <span className="text-muted-foreground">Target 40 kg limbah</span>
               </div>
-              <p className="text-[11px] text-muted-foreground pt-1">
+              <p className="text-[0.6875rem] text-muted-foreground pt-1">
                 Anda berada di peringkat <b>#8</b> di antara pengguna Klámbi.id! 🏆
               </p>
             </div>
@@ -131,12 +131,12 @@ export default function DampakPage() {
           <div className="flex items-end justify-between h-40 pt-6 px-4">
             {historyGraph.map((item, i) => (
               <div key={i} className="flex flex-col items-center gap-2 flex-1 group">
-                <span className="text-[10px] font-bold text-primary group-hover:scale-110 transition-transform">{item.kg} kg</span>
+                <span className="text-[0.625rem] font-bold text-primary group-hover:scale-110 transition-transform">{item.kg} kg</span>
                 <div
                   className="w-8 rounded-t-xl bg-[#10284D] hover:bg-[#1E4D8C] transition-all duration-500 shadow-xs"
                   style={{ height: `${(item.kg / 15) * 100}%` }}
                 />
-                <span className="text-[11px] font-semibold text-muted-foreground">{item.month}</span>
+                <span className="text-[0.6875rem] font-semibold text-muted-foreground">{item.month}</span>
               </div>
             ))}
           </div>

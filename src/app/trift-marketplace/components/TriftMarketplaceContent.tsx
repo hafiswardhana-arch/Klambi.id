@@ -271,7 +271,7 @@ export default function TriftMarketplaceContent() {
       {/* Hero Banner */}
       <div className={`relative rounded-3xl overflow-hidden bg-gradient-to-r ${banner.gradient} text-white p-5 min-h-[140px] flex flex-col justify-between`}>
         <div>
-          <span className="text-[10px] font-extrabold bg-white/20 border border-white/30 px-2.5 py-0.5 rounded-full tracking-wider">
+          <span className="text-[0.625rem] font-extrabold bg-white/20 border border-white/30 px-2.5 py-0.5 rounded-full tracking-wider">
             {banner.tag}
           </span>
           <h2 className="text-lg font-black leading-tight mt-2">{banner.headline}</h2>
@@ -413,11 +413,11 @@ export default function TriftMarketplaceContent() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-extrabold text-[#10284D]">Kindfoam Eco-Deterjen Lembaran 30pcs</div>
-                <div className="text-[10px] text-muted-foreground mt-0.5">by Kindfoam • ⭐ 4.9 • 1,240 terjual</div>
+                <div className="text-[0.625rem] text-muted-foreground mt-0.5">by Kindfoam • ⭐ 4.9 • 1,240 terjual</div>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-sm font-black text-[#E86D50]">Rp 45.000</span>
                   <span className="text-xs text-muted-foreground line-through">Rp 65.000</span>
-                  <span className="text-[10px] bg-red-100 text-red-700 font-bold px-1.5 py-0.5 rounded">-31%</span>
+                  <span className="text-[0.625rem] bg-red-100 text-red-700 font-bold px-1.5 py-0.5 rounded">-31%</span>
                 </div>
                 <button
                   onClick={() => toggleCart('cp-1', 'Kindfoam 30pcs')}
@@ -449,25 +449,25 @@ export default function TriftMarketplaceContent() {
                     className="object-cover hover:scale-105 transition-transform duration-300"
                   />
                   {p.badge && (
-                    <span className="absolute top-2 left-2 text-[9px] bg-emerald-600/90 text-white font-bold px-2 py-0.5 rounded-full backdrop-blur-xs shadow-xs">
+                    <span className="absolute top-2 left-2 text-[0.5625rem] bg-emerald-600/90 text-white font-bold px-2 py-0.5 rounded-full backdrop-blur-xs shadow-xs">
                       {p.badge}
                     </span>
                   )}
-                  <span className="absolute bottom-1.5 right-1.5 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded-md backdrop-blur-xs">
+                  <span className="absolute bottom-1.5 right-1.5 bg-black/50 text-white text-[0.625rem] px-1.5 py-0.5 rounded-md backdrop-blur-xs">
                     {p.emoji}
                   </span>
                 </div>
                 <div>
-                  <div className="text-[11px] font-extrabold text-foreground leading-tight truncate">{p.name}</div>
-                  <div className="text-[10px] text-muted-foreground mt-0.5">{p.brand} • ⭐ {p.rating}</div>
+                  <div className="text-[0.6875rem] font-extrabold text-foreground leading-tight truncate">{p.name}</div>
+                  <div className="text-[0.625rem] text-muted-foreground mt-0.5">{p.brand} • ⭐ {p.rating}</div>
                 </div>
                 <div className="flex items-center gap-1 flex-wrap">
                   <span className="text-xs font-black text-[#E86D50]">Rp {p.price.toLocaleString('id-ID')}</span>
-                  <span className="text-[10px] text-muted-foreground line-through">Rp {p.originalPrice.toLocaleString('id-ID')}</span>
+                  <span className="text-[0.625rem] text-muted-foreground line-through">Rp {p.originalPrice.toLocaleString('id-ID')}</span>
                 </div>
                 <button
                   onClick={() => toggleCart(p.id, p.name)}
-                  className={`w-full py-2 rounded-xl text-[10px] font-extrabold transition-all active:scale-95 ${
+                  className={`w-full py-2 rounded-xl text-[0.625rem] font-extrabold transition-all active:scale-95 ${
                     cart.has(p.id)
                       ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                       : 'bg-[#10284D] text-white hover:bg-[#152248]'
@@ -489,7 +489,7 @@ export default function TriftMarketplaceContent() {
             <span className="text-3xl">♻️</span>
             <div>
               <div className="text-xs font-extrabold text-purple-900">Dukung Pengrajin Lokal</div>
-              <div className="text-[11px] text-purple-700">Setiap pembelian = 1 item limbah tekstil teselamatkan</div>
+              <div className="text-[0.6875rem] text-purple-700">Setiap pembelian = 1 item limbah tekstil teselamatkan</div>
             </div>
           </div>
 
@@ -511,25 +511,25 @@ export default function TriftMarketplaceContent() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
                   {p.badge && (
-                    <span className="absolute top-2 left-2 text-[9px] bg-purple-700/90 text-white font-bold px-2 py-0.5 rounded-full shadow-xs backdrop-blur-xs">
+                    <span className="absolute top-2 left-2 text-[0.5625rem] bg-purple-700/90 text-white font-bold px-2 py-0.5 rounded-full shadow-xs backdrop-blur-xs">
                       {p.badge}
                     </span>
                   )}
-                  <span className="absolute bottom-2 left-2 text-white text-[10px] font-bold bg-black/40 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                  <span className="absolute bottom-2 left-2 text-white text-[0.625rem] font-bold bg-black/40 px-2 py-0.5 rounded-md backdrop-blur-xs">
                     {p.emoji}
                   </span>
                 </div>
                 <div className="p-3 space-y-1.5">
-                  <div className="text-[11px] font-extrabold text-foreground leading-tight truncate">{p.name}</div>
-                  <div className="text-[10px] text-muted-foreground truncate">{p.artisan}</div>
-                  <div className="text-[10px] text-emerald-700 font-semibold truncate">♻️ {p.originalMaterial}</div>
+                  <div className="text-[0.6875rem] font-extrabold text-foreground leading-tight truncate">{p.name}</div>
+                  <div className="text-[0.625rem] text-muted-foreground truncate">{p.artisan}</div>
+                  <div className="text-[0.625rem] text-emerald-700 font-semibold truncate">♻️ {p.originalMaterial}</div>
                   <div className="flex items-center justify-between pt-0.5">
                     <span className="text-xs font-black text-[#E86D50]">Rp {p.price.toLocaleString('id-ID')}</span>
-                    <span className="text-[9px] text-muted-foreground">📍 {p.location}</span>
+                    <span className="text-[0.5625rem] text-muted-foreground">📍 {p.location}</span>
                   </div>
                   <button
                     onClick={() => toggleCart(p.id, p.name)}
-                    className={`w-full py-2 rounded-xl text-[10px] font-extrabold transition-all active:scale-95 mt-1 ${
+                    className={`w-full py-2 rounded-xl text-[0.625rem] font-extrabold transition-all active:scale-95 mt-1 ${
                       cart.has(p.id)
                         ? 'bg-purple-100 text-purple-800 border border-purple-300'
                         : 'bg-[#10284D] text-white hover:bg-[#152248]'

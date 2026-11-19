@@ -51,7 +51,7 @@ export default function WithdrawModal({
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
           <div className="p-3 bg-secondary/50 rounded-xl border border-border">
-            <span className="text-[11px] text-muted-foreground block">Total Saldo Bisa Ditarik</span>
+            <span className="text-[0.6875rem] text-muted-foreground block">Total Saldo Bisa Ditarik</span>
             <span className="text-lg font-extrabold text-foreground">
               Rp {balance.toLocaleString('id-ID')}
             </span>
@@ -74,21 +74,21 @@ export default function WithdrawModal({
               <button
                 type="button"
                 onClick={() => setAmount('100000')}
-                className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground hover:text-foreground"
+                className="text-[0.625rem] px-2 py-0.5 rounded bg-muted text-muted-foreground hover:text-foreground"
               >
                 100rb
               </button>
               <button
                 type="button"
                 onClick={() => setAmount('250000')}
-                className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground hover:text-foreground"
+                className="text-[0.625rem] px-2 py-0.5 rounded bg-muted text-muted-foreground hover:text-foreground"
               >
                 250rb
               </button>
               <button
                 type="button"
                 onClick={() => setAmount(balance.toString())}
-                className="text-[10px] px-2 py-0.5 rounded bg-secondary text-primary font-bold"
+                className="text-[0.625rem] px-2 py-0.5 rounded bg-secondary text-primary font-bold"
               >
                 Tarik Semua
               </button>
@@ -115,7 +115,7 @@ export default function WithdrawModal({
             </select>
           </div>
 
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-[0.6875rem] text-muted-foreground">
             ⚡ Penarikan dana diproses instan tanpa biaya admin ke e-wallet & rekening bank terdaftar.
           </p>
 

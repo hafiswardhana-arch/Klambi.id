@@ -26,7 +26,7 @@ export default function JualPage() {
         {/* Banner */}
         <FadeIn>
           <div className="bg-gradient-to-r from-[#10284D] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
-            <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+            <span className="bg-white/20 text-white text-[0.625rem] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
               Sub-Keputusan 5.5.1
             </span>
             <h2 className="text-base sm:text-lg font-black tracking-tight">
@@ -43,7 +43,7 @@ export default function JualPage() {
           <SlideUp className="space-y-4">
             <div className="bg-card rounded-3xl p-5 border border-border shadow-sm space-y-3">
               <div className="flex items-center justify-between border-b border-border pb-2.5">
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full">
+                <span className="text-[0.625rem] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full">
                   ✨ Rekomendasi Terbaik AI
                 </span>
                 <span className="text-xs font-bold text-[#E86D50]">
@@ -92,7 +92,7 @@ export default function JualPage() {
                     Jual pakaian satuan langsung ke pembeli di marketplace dengan deskripsi otomatis dari AI.
                   </p>
                 </div>
-                <div className="text-[11px] font-bold text-blue-700 pt-1">
+                <div className="text-[0.6875rem] font-bold text-blue-700 pt-1">
                   Pilih Trif Satuan →
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default function JualPage() {
                     Jual borongan (minimal 5kg) ke mitra pengepul terdekat untuk disalurkan ke UMKM / Industri daur ulang.
                   </p>
                 </div>
-                <div className="text-[11px] font-bold text-emerald-700 pt-1">
+                <div className="text-[0.6875rem] font-bold text-emerald-700 pt-1">
                   Pilih Upcycle Kiloan →
                 </div>
               </div>

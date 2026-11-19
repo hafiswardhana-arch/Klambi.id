@@ -38,7 +38,7 @@ export default function AddressesSection({
           </div>
           <div>
             <h3 className="text-sm font-bold text-foreground">Daftar Alamat Penjemputan & Pengantaran</h3>
-            <p className="text-[11px] text-muted-foreground">Dipakai kurir untuk pick-up pakaian permak & laundry</p>
+            <p className="text-[0.6875rem] text-muted-foreground">Dipakai kurir untuk pick-up pakaian permak & laundry</p>
           </div>
         </div>
 
@@ -68,7 +68,7 @@ export default function AddressesSection({
                     {addr.label}
                   </span>
                   {addr.isDefault && (
-                    <span className="text-[10px] font-extrabold text-primary bg-secondary px-2 py-0.5 rounded-md border border-accent/40">
+                    <span className="text-[0.625rem] font-extrabold text-primary bg-secondary px-2 py-0.5 rounded-md border border-accent/40">
                       Alamat Utama (Pick-up)
                     </span>
                   )}
@@ -80,7 +80,7 @@ export default function AddressesSection({
                   {addr.fullAddress}, {addr.city} {addr.postalCode}
                 </p>
                 {addr.notes && (
-                  <p className="text-[11px] text-primary/80 font-medium mt-1">
+                  <p className="text-[0.6875rem] text-primary/80 font-medium mt-1">
                     Patokan: {addr.notes}
                   </p>
                 )}

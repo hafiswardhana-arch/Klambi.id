@@ -146,7 +146,7 @@ export default function ClothingHistoryTab() {
             <div>
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <span className="text-[10px] font-mono text-muted-foreground">
+                  <span className="text-[0.625rem] font-mono text-muted-foreground">
                     {item.date} • {item.category}
                   </span>
                   <h4 className="font-bold text-sm text-foreground truncate mt-0.5">
@@ -162,7 +162,7 @@ export default function ClothingHistoryTab() {
                     <Icon name="SparklesIcon" size={13} variant="solid" />
                     <span>{item.aiScore} / 100</span>
                   </div>
-                  <span className="text-[10px] text-muted-foreground mt-1">
+                  <span className="text-[0.625rem] text-muted-foreground mt-1">
                     {item.conditionGrade}
                   </span>
                 </div>
@@ -173,14 +173,14 @@ export default function ClothingHistoryTab() {
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Status Baju:</span>
                   <span
-                    className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${getStatusBadge(
+                    className={`px-2 py-0.5 rounded-md text-[0.625rem] font-bold border ${getStatusBadge(
                       item.lastStatus
                     )}`}
                   >
                     {item.lastStatus}
                   </span>
                 </div>
-                <p className="text-[11px] text-foreground font-medium truncate pt-1">
+                <p className="text-[0.6875rem] text-foreground font-medium truncate pt-1">
                   🔍 {item.stainInfo}
                 </p>
               </div>

@@ -27,7 +27,7 @@ export default function BottomNav({ muted = false }: BottomNavProps) {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-      <div className="max-w-md mx-auto pointer-events-auto px-4">
+      <div className="max-w-md md:max-w-xl lg:max-w-2xl mx-auto pointer-events-auto px-4">
         <nav
           aria-label="Navigasi utama"
           className={`rounded-[26px] flex items-stretch justify-between px-1.5 py-1.5 shadow-[0_12px_32px_rgba(11,42,82,0.35)] transition-colors duration-300 ${
@@ -52,7 +52,7 @@ export default function BottomNav({ muted = false }: BottomNavProps) {
                   className={`transition-transform duration-200 ${active ? 'scale-110' : 'group-hover:scale-105'}`}
                   aria-hidden="true"
                 />
-                <span className={`text-[10px] leading-none tracking-tight ${active ? 'font-semibold' : 'font-medium'}`}>
+                <span className={`text-[0.625rem] leading-none tracking-tight ${active ? 'font-semibold' : 'font-medium'}`}>
                   {item.name}
                 </span>
                 {active && (

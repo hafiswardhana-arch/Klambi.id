@@ -202,10 +202,10 @@ export default function LoginPage() {
   const fieldShell =
     'relative flex items-center h-12 bg-white rounded-full pl-4 pr-3 shadow-[inset_0_1px_2px_rgba(0,0,0,0.06)] focus-within:ring-[3px] focus-within:ring-brand-yellow/80 transition-shadow duration-200';
   const fieldInput =
-    'w-full h-full bg-transparent text-[14px] text-gray-900 placeholder:text-gray-500 outline-none';
+    'w-full h-full bg-transparent text-[0.875rem] text-gray-900 placeholder:text-gray-500 outline-none';
 
   return (
-    <div className="min-h-screen bg-white flex flex-col max-w-md mx-auto relative overflow-hidden select-none font-sans">
+    <div className="min-h-screen bg-white flex flex-col max-w-md md:max-w-xl mx-auto relative overflow-hidden select-none font-sans">
       {/* TOP: LOGO & WELCOME */}
       <div className="pt-10 pb-5 px-6 flex flex-col items-center text-center animate-fade-in">
         <Image
@@ -217,14 +217,14 @@ export default function LoginPage() {
           unoptimized
           className="w-28 h-auto object-contain mb-4"
         />
-        <h1 className="text-[20px] leading-tight font-normal text-gray-900 tracking-tight animate-slide-up">
+        <h1 className="text-[1.25rem] leading-tight font-normal text-gray-900 tracking-tight animate-slide-up">
           Welcome to <span className="font-bold text-navy">Klámbi.id</span>
         </h1>
       </div>
 
       {/* NAVY CARD */}
       <div className="mx-4 sm:mx-6 bg-navy-soft rounded-t-[36px] px-5 sm:px-6 pt-7 pb-6 text-white flex-1 flex flex-col animate-slide-up">
-        <p className="text-center text-[14px] leading-snug font-normal text-white max-w-[260px] mx-auto">
+        <p className="text-center text-[0.875rem] leading-snug font-normal text-white max-w-[260px] mx-auto">
           {isRegisterMode ? (
             <>
               Daftar akun <span className="font-medium text-brand-yellow">Klámbi.id</span> baru untuk
@@ -322,7 +322,7 @@ export default function LoginPage() {
                 onClick={() =>
                   toast.info('Untuk demo, gunakan username "admin" dan password "admin"')
                 }
-                className="text-[12px] font-medium text-brand-yellow underline underline-offset-2 py-1 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow rounded"
+                className="text-[0.75rem] font-medium text-brand-yellow underline underline-offset-2 py-1 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow rounded"
               >
                 Forgot Password?
               </button>
@@ -333,7 +333,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 bg-white text-[#163B2E] font-bold text-[16px] tracking-wide rounded-xl shadow-[0_6px_16px_rgba(0,0,0,0.18)] hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 ease-out uppercase flex items-center justify-center gap-2 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
+              className="w-full h-11 bg-white text-[#163B2E] font-bold text-[1rem] tracking-wide rounded-xl shadow-[0_6px_16px_rgba(0,0,0,0.18)] hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 ease-out uppercase flex items-center justify-center gap-2 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
             >
               {isLoading ? (
                 <>
@@ -349,14 +349,14 @@ export default function LoginPage() {
           </div>
         </form>
 
-        <p className="text-center text-[12px] font-medium text-white my-3">OR</p>
+        <p className="text-center text-[0.75rem] font-medium text-white my-3">OR</p>
 
         <div className="grid grid-cols-2 gap-3 px-1 sm:px-3">
           <button
             type="button"
             onClick={() => handleSocialLogin('google')}
             disabled={socialLoading !== null}
-            className="h-10 bg-white text-gray-900 font-medium text-[13px] rounded-full flex items-center justify-center gap-2.5 hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
+            className="h-10 bg-white text-gray-900 font-medium text-[0.8125rem] rounded-full flex items-center justify-center gap-2.5 hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
           >
             {socialLoading === 'google' ? (
               <span className="w-5 h-5 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
@@ -375,7 +375,7 @@ export default function LoginPage() {
             type="button"
             onClick={() => handleSocialLogin('facebook')}
             disabled={socialLoading !== null}
-            className="h-10 bg-white text-gray-900 font-medium text-[13px] rounded-full flex items-center justify-center gap-2.5 hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
+            className="h-10 bg-white text-gray-900 font-medium text-[0.8125rem] rounded-full flex items-center justify-center gap-2.5 hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
           >
             {socialLoading === 'facebook' ? (
               <span className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
@@ -389,7 +389,7 @@ export default function LoginPage() {
         </div>
 
         <div className="pt-7 text-center">
-          <p className="text-[13px] text-white">
+          <p className="text-[0.8125rem] text-white">
             {isRegisterMode ? 'Sudah punya akun?' : 'Belum punya akun?'}{' '}
             <button
               type="button"

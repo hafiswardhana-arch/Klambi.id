@@ -21,8 +21,8 @@ export default function TopHeader({
   headerRight,
 }: TopHeaderProps) {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md h-14 flex items-center px-4">
-      <div className="max-w-md mx-auto w-full flex items-center justify-between gap-3">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md h-14 flex items-center">
+      <div className="max-w-md md:max-w-2xl lg:max-w-3xl mx-auto w-full px-4 md:px-6 flex items-center justify-between gap-3">
         {/* Left */}
         <div className="flex items-center gap-2 min-w-0 flex-1">
           {showBack ? (
@@ -40,7 +40,7 @@ export default function TopHeader({
           )}
 
           {showBack && title && (
-            <h1 className="text-[15px] font-semibold text-navy truncate">{title}</h1>
+            <h1 className="text-[0.9375rem] font-semibold text-navy truncate">{title}</h1>
           )}
         </div>
 

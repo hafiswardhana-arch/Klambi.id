@@ -71,7 +71,7 @@ export default function ProfileHeader({
                   {profile.email}
                 </span>
                 {profile.isEmailVerified && (
-                  <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-accent bg-secondary px-1.5 py-0.2 rounded-md">
+                  <span className="inline-flex items-center gap-0.5 text-[0.625rem] font-bold text-accent bg-secondary px-1.5 py-0.2 rounded-md">
                     <Icon name="CheckBadgeIcon" size={11} variant="solid" />
                     Terverifikasi
                   </span>
@@ -84,7 +84,7 @@ export default function ProfileHeader({
                   {profile.phone}
                 </span>
                 {profile.isPhoneVerified && (
-                  <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-accent bg-secondary px-1.5 py-0.2 rounded-md">
+                  <span className="inline-flex items-center gap-0.5 text-[0.625rem] font-bold text-accent bg-secondary px-1.5 py-0.2 rounded-md">
                     <Icon name="CheckBadgeIcon" size={11} variant="solid" />
                     Terverifikasi
                   </span>
@@ -95,12 +95,12 @@ export default function ProfileHeader({
             {/* Identity & Trust Mini Badges */}
             <div className="flex items-center gap-2 mt-2 flex-wrap">
               {profile.isKtpVerified && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary bg-secondary/80 px-2 py-0.5 rounded-md border border-accent/30">
+                <span className="inline-flex items-center gap-1 text-[0.6875rem] font-semibold text-primary bg-secondary/80 px-2 py-0.5 rounded-md border border-accent/30">
                   <Icon name="ShieldCheckIcon" size={13} className="text-primary" />
                   KTP Terverifikasi
                 </span>
               )}
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-[0.6875rem] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
                 🌱 Anggota Sejak Jan 2026
               </span>
             </div>
@@ -128,7 +128,7 @@ export default function ProfileHeader({
               <p className="text-xs font-bold text-primary">
                 Dampak Lingkungan Sirkular Kamu 🌿
               </p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-[0.6875rem] text-muted-foreground">
                 Kamu telah menyelamatkan <strong className="text-foreground">{profile.textileSavedKg} kg limbah tekstil</strong> & menghemat <strong className="text-foreground">{profile.waterSavedLitres.toLocaleString('id-ID')} Liter air</strong>!
               </p>
             </div>
@@ -136,7 +136,7 @@ export default function ProfileHeader({
 
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end text-xs">
             <div className="text-right">
-              <span className="text-[10px] text-muted-foreground block">Klámbi Poin</span>
+              <span className="text-[0.625rem] text-muted-foreground block">Klámbi Poin</span>
               <span className="font-extrabold text-primary text-sm">
                 {profile.points.toLocaleString('id-ID')} pts
               </span>

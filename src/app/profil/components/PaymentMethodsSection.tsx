@@ -33,7 +33,7 @@ export default function PaymentMethodsSection({
           </div>
           <div>
             <h3 className="text-sm font-bold text-foreground">Metode Pembayaran & E-Wallet</h3>
-            <p className="text-[11px] text-muted-foreground">Pembayaran instan & penarikan saldo penjualan</p>
+            <p className="text-[0.6875rem] text-muted-foreground">Pembayaran instan & penarikan saldo penjualan</p>
           </div>
         </div>
 
@@ -64,7 +64,7 @@ export default function PaymentMethodsSection({
                 <div className="flex items-center gap-1.5">
                   <h4 className="text-xs font-bold text-foreground">{pm.name}</h4>
                   {pm.isPrimary && (
-                    <span className="text-[9px] font-extrabold text-primary bg-secondary px-1.5 py-0.2 rounded border border-accent/40">
+                    <span className="text-[0.5625rem] font-extrabold text-primary bg-secondary px-1.5 py-0.2 rounded border border-accent/40">
                       Utama
                     </span>
                   )}
@@ -79,7 +79,7 @@ export default function PaymentMethodsSection({
               {!pm.isPrimary && (
                 <button
                   onClick={() => onSetPrimaryPayment(pm.id)}
-                  className="text-[11px] text-muted-foreground hover:text-primary hover:underline font-medium"
+                  className="text-[0.6875rem] text-muted-foreground hover:text-primary hover:underline font-medium"
                 >
                   Set Utama
                 </button>

@@ -16,7 +16,7 @@ export default function KeputusanPage() {
         <SlideUp duration={400}>
           <div className="bg-gradient-to-r from-[#10284D] via-[#163768] to-[#1E4D8C] text-white rounded-3xl p-6 shadow-md space-y-2 relative overflow-hidden">
             <div className="flex items-center gap-2">
-              <span className="bg-white/20 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
+              <span className="bg-white/20 text-white text-[0.625rem] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Decision Hub 5.4
               </span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -56,7 +56,7 @@ export default function KeputusanPage() {
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-border flex items-center gap-2 text-[11px] font-bold text-blue-700">
+              <div className="pt-2 border-t border-border flex items-center gap-2 text-[0.6875rem] font-bold text-blue-700">
                 <span>🛍️ Thrift Satuan</span>
                 <span>•</span>
                 <span>♻️ Upcycle Kiloan (Min 5kg)</span>
@@ -88,7 +88,7 @@ export default function KeputusanPage() {
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-border flex items-center gap-2 text-[11px] font-bold text-emerald-700">
+              <div className="pt-2 border-t border-border flex items-center gap-2 text-[0.6875rem] font-bold text-emerald-700">
                 <span>🧼 Eco-Deterjen</span>
                 <span>•</span>
                 <span>🧵 Permak / Binatu / Re-color</span>

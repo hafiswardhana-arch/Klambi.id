@@ -397,12 +397,12 @@ function StylissAIContent() {
           <div className="bg-gradient-to-r from-[#D1FAE5] to-[#A7F3D0] border border-emerald-200 rounded-2xl p-3 flex items-center gap-3 animate-slide-up">
             <span className="text-2xl">{selectedItem.emoji}</span>
             <div className="flex-1 min-w-0">
-              <div className="text-[10px] font-bold text-emerald-700">Dari Keranjangmu</div>
+              <div className="text-[0.625rem] font-bold text-emerald-700">Dari Keranjangmu</div>
               <div className="text-xs font-extrabold text-emerald-900 truncate">{selectedItem.title}</div>
             </div>
             <button
               onClick={() => router.push('/keranjang')}
-              className="text-[10px] font-bold text-emerald-700 border border-emerald-400 px-2.5 py-1 rounded-full hover:bg-emerald-100"
+              className="text-[0.625rem] font-bold text-emerald-700 border border-emerald-400 px-2.5 py-1 rounded-full hover:bg-emerald-100"
             >
               ← Keranjang
             </button>
@@ -419,7 +419,7 @@ function StylissAIContent() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`flex flex-col items-center gap-0.5 py-2.5 rounded-xl text-[11px] font-bold transition-all ${
+              className={`flex flex-col items-center gap-0.5 py-2.5 rounded-xl text-[0.6875rem] font-bold transition-all ${
                 activeTab === tab.id
                   ? 'bg-white text-[#10284D] shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
@@ -483,16 +483,16 @@ function StylissAIContent() {
 
                 {/* HUD overlays */}
                 {/* Top-left: view label */}
-                <div className="absolute top-3 left-3 bg-black/40 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1.5 rounded-full">
+                <div className="absolute top-3 left-3 bg-black/40 backdrop-blur-sm text-white text-[0.625rem] font-bold px-3 py-1.5 rounded-full">
                   {viewLabel}
                 </div>
                 {/* Top-right: zoom */}
-                <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1.5 rounded-full">
+                <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white text-[0.625rem] font-bold px-3 py-1.5 rounded-full">
                   🔍 {Math.round(zoom * 100)}%
                 </div>
                 {/* Bottom: drag hint */}
                 <div className="absolute bottom-3 left-0 right-0 flex justify-center">
-                  <div className="bg-black/30 backdrop-blur-sm text-white text-[10px] font-semibold px-4 py-1.5 rounded-full flex items-center gap-2">
+                  <div className="bg-black/30 backdrop-blur-sm text-white text-[0.625rem] font-semibold px-4 py-1.5 rounded-full flex items-center gap-2">
                     <span>↔ Seret untuk rotasi</span>
                     <span className="opacity-60">|</span>
                     <span>⬡ Scroll untuk zoom</span>
@@ -500,7 +500,7 @@ function StylissAIContent() {
                 </div>
                 {/* Outfit label badge */}
                 {selectedItem && (
-                  <div className="absolute top-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm border border-border text-[#10284D] text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm">
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm border border-border text-[#10284D] text-[0.625rem] font-bold px-3 py-1.5 rounded-full shadow-sm">
                     <span>{selectedItem.emoji}</span>
                     <span>{selectedItem.category}</span>
                     {selectedItem.size && <span className="text-[#E86D50]">• {selectedItem.size}</span>}
@@ -551,7 +551,7 @@ function StylissAIContent() {
 
             {/* Rotation quick-select */}
             <div className="bg-card rounded-2xl p-3 border border-border shadow-sm">
-              <div className="text-[11px] font-bold text-muted-foreground mb-2">Tampilkan Sudut Pandang:</div>
+              <div className="text-[0.6875rem] font-bold text-muted-foreground mb-2">Tampilkan Sudut Pandang:</div>
               <div className="grid grid-cols-4 gap-1.5">
                 {[
                   { label: 'Depan', rot: 0 },
@@ -562,7 +562,7 @@ function StylissAIContent() {
                   <button
                     key={v.rot}
                     onClick={() => { setRotation(v.rot); setIsAutoRotate(false); }}
-                    className={`py-2 rounded-xl text-[11px] font-bold transition-all ${
+                    className={`py-2 rounded-xl text-[0.6875rem] font-bold transition-all ${
                       Math.abs(((rotation % 360) + 360) % 360 - v.rot) < 20
                         ? 'bg-[#10284D] text-white'
                         : 'bg-slate-50 text-muted-foreground border border-border hover:border-[#10284D]/40'
@@ -622,9 +622,9 @@ function StylissAIContent() {
               <div className="bg-gradient-to-r from-[#10284D] to-[#1A3A6B] rounded-2xl p-4 text-white flex items-center gap-3">
                 <span className="text-3xl">{selectedItem.emoji}</span>
                 <div className="flex-1">
-                  <div className="text-[10px] font-semibold opacity-70">Sedang Dipakai:</div>
+                  <div className="text-[0.625rem] font-semibold opacity-70">Sedang Dipakai:</div>
                   <div className="text-xs font-extrabold">{selectedItem.title}</div>
-                  <div className="text-[10px] opacity-70">{selectedItem.category} • Size {selectedItem.size ?? '—'}</div>
+                  <div className="text-[0.625rem] opacity-70">{selectedItem.category} • Size {selectedItem.size ?? '—'}</div>
                 </div>
                 <button
                   onClick={() => setSelectedItem(null)}
@@ -655,7 +655,7 @@ function StylissAIContent() {
                   >
                     {isActive && (
                       <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#10284D] flex items-center justify-center">
-                        <span className="text-[8px] text-white font-black">✓</span>
+                        <span className="text-[0.5rem] text-white font-black">✓</span>
                       </div>
                     )}
                     <div className="relative w-full h-24 rounded-xl overflow-hidden bg-slate-100 border border-border/70">
@@ -680,9 +680,9 @@ function StylissAIContent() {
                       </span>
                     </div>
                     <div className="w-full">
-                      <div className="text-[10px] font-extrabold text-foreground leading-tight">{item.title}</div>
-                      <div className="text-[9px] text-muted-foreground mt-0.5">{item.category} • {item.size}</div>
-                      <div className="text-[10px] font-bold text-[#E86D50] mt-1">
+                      <div className="text-[0.625rem] font-extrabold text-foreground leading-tight">{item.title}</div>
+                      <div className="text-[0.5625rem] text-muted-foreground mt-0.5">{item.category} • {item.size}</div>
+                      <div className="text-[0.625rem] font-bold text-[#E86D50] mt-1">
                         Rp {item.price.toLocaleString('id-ID')}
                       </div>
                     </div>
@@ -737,7 +737,7 @@ function StylissAIContent() {
                   className="w-full accent-[#10284D] cursor-pointer h-2"
                   style={{ accentColor: '#10284D' }}
                 />
-                <div className="flex justify-between text-[10px] text-muted-foreground font-semibold">
+                <div className="flex justify-between text-[0.625rem] text-muted-foreground font-semibold">
                   <span>150 cm</span>
                   <span className="text-[#10284D] font-bold">↑ Referensi 170cm</span>
                   <span>200 cm</span>
@@ -762,7 +762,7 @@ function StylissAIContent() {
                   onChange={(e) => setBody((b) => ({ ...b, weight: Number(e.target.value) }))}
                   className="w-full accent-[#10284D] cursor-pointer h-2"
                 />
-                <div className="flex justify-between text-[10px] text-muted-foreground font-semibold">
+                <div className="flex justify-between text-[0.625rem] text-muted-foreground font-semibold">
                   <span>40 kg</span>
                   <span className="text-[#10284D] font-bold">↑ Referensi 65kg</span>
                   <span>120 kg</span>
@@ -782,7 +782,7 @@ function StylissAIContent() {
                     style={{ left: `${Math.min(95, Math.max(2, ((parseFloat(bmi) - 15) / 25) * 100))}%`, transform: 'translateX(-50%)' }}
                   />
                 </div>
-                <div className="grid grid-cols-4 text-[9px] text-center text-muted-foreground font-semibold">
+                <div className="grid grid-cols-4 text-[0.5625rem] text-center text-muted-foreground font-semibold">
                   <span>Kurus<br/>&lt;18.5</span>
                   <span className="text-emerald-600">Ideal<br/>18.5–24.9</span>
                   <span className="text-amber-600">Gemuk<br/>25–29.9</span>
@@ -799,14 +799,14 @@ function StylissAIContent() {
                 ].map((stat) => (
                   <div key={stat.label} className="bg-slate-50 rounded-xl p-3 text-center border border-border">
                     <div className="text-sm font-black text-[#10284D]">{stat.value}</div>
-                    <div className="text-[10px] text-muted-foreground mt-0.5">{stat.label}</div>
+                    <div className="text-[0.625rem] text-muted-foreground mt-0.5">{stat.label}</div>
                   </div>
                 ))}
               </div>
 
               {/* Quick presets */}
               <div>
-                <div className="text-[11px] font-bold text-muted-foreground mb-2">Preset Cepat:</div>
+                <div className="text-[0.6875rem] font-bold text-muted-foreground mb-2">Preset Cepat:</div>
                 <div className="grid grid-cols-3 gap-2">
                   {[
                     { label: 'Petite', h: 155, w: 48 },
@@ -819,10 +819,10 @@ function StylissAIContent() {
                         setBody({ height: p.h, weight: p.w });
                         toast.success(`Ukuran "${p.label}" diterapkan ke manekin!`);
                       }}
-                      className="py-2.5 rounded-xl bg-slate-50 border border-border text-[11px] font-bold text-muted-foreground hover:border-[#10284D] hover:text-[#10284D] transition-all active:scale-95"
+                      className="py-2.5 rounded-xl bg-slate-50 border border-border text-[0.6875rem] font-bold text-muted-foreground hover:border-[#10284D] hover:text-[#10284D] transition-all active:scale-95"
                     >
                       {p.label}<br />
-                      <span className="text-[9px] font-normal">{p.h}cm / {p.w}kg</span>
+                      <span className="text-[0.5625rem] font-normal">{p.h}cm / {p.w}kg</span>
                     </button>
                   ))}
                 </div>

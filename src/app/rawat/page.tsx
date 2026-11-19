@@ -426,14 +426,14 @@ export default function RawatPage() {
           <div className="space-y-1.5 z-10 max-w-[280px]">
             <div className="inline-flex items-center gap-1.5 bg-[#E8C547]/20 border border-[#E8C547]/40 px-2.5 py-0.5 rounded-full">
               <span className="w-1.5 h-1.5 rounded-full bg-[#E8C547] animate-pulse" />
-              <span className="text-[10px] font-extrabold text-[#E8C547] uppercase tracking-wider">
+              <span className="text-[0.625rem] font-extrabold text-[#E8C547] uppercase tracking-wider">
                 Klámbi Care Center
               </span>
             </div>
             <h2 className="text-sm sm:text-base font-extrabold leading-tight">
               Kenali Kondisinya, Rawat dengan Tepat!
             </h2>
-            <p className="text-[11px] text-white/85 leading-relaxed">
+            <p className="text-[0.6875rem] text-white/85 leading-relaxed">
               Pantau kesehatan pakaian, pelajari panduan eco-care, dan hitung dosis Kindfoam hemat air.
             </p>
           </div>
@@ -448,7 +448,7 @@ export default function RawatPage() {
             </button>
             <button
               onClick={() => router.push('/menu-perawatan')}
-              className="bg-white/15 text-white border border-white/30 px-3 py-1.5 rounded-xl text-[10px] font-bold hover:bg-white/25 active:scale-95 transition-all text-center"
+              className="bg-white/15 text-white border border-white/30 px-3 py-1.5 rounded-xl text-[0.625rem] font-bold hover:bg-white/25 active:scale-95 transition-all text-center"
             >
               Cari Jasa Permak →
             </button>
@@ -560,8 +560,8 @@ export default function RawatPage() {
             {/* Category Filter Pills */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-muted-foreground">Kategori Pakaian:</span>
-                <span className="text-[10px] text-muted-foreground font-semibold">
+                <span className="text-[0.6875rem] font-bold text-muted-foreground">Kategori Pakaian:</span>
+                <span className="text-[0.625rem] text-muted-foreground font-semibold">
                   Menampilkan {filteredGarments.length} dari {garments.length} pakaian
                 </span>
               </div>
@@ -584,12 +584,12 @@ export default function RawatPage() {
 
             {/* Status Filter Chips */}
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-1">
-              <span className="text-[10px] font-bold text-muted-foreground pr-1">Status:</span>
+              <span className="text-[0.625rem] font-bold text-muted-foreground pr-1">Status:</span>
               {statusOptions.map((st) => (
                 <button
                   key={st}
                   onClick={() => setSelectedStatusFilter(st)}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                  className={`px-2.5 py-1 rounded-lg text-[0.625rem] font-bold transition-all ${
                     selectedStatusFilter === st
                       ? 'bg-secondary text-primary border border-primary/30'
                       : 'bg-muted/50 text-muted-foreground hover:bg-muted'
@@ -607,7 +607,7 @@ export default function RawatPage() {
                   🔍
                 </div>
                 <h4 className="text-xs font-bold text-foreground">Tidak Ada Pakaian Ditemukan</h4>
-                <p className="text-[11px] text-muted-foreground max-w-xs mx-auto">
+                <p className="text-[0.6875rem] text-muted-foreground max-w-xs mx-auto">
                   Coba sesuaikan kata kunci pencarian atau ganti filter kategori/status di atas.
                 </p>
                 <button
@@ -643,14 +643,14 @@ export default function RawatPage() {
                           </div>
                           <div>
                             <h3 className="text-xs font-extrabold text-foreground">{garment.title}</h3>
-                            <p className="text-[10px] text-muted-foreground mt-0.5">
+                            <p className="text-[0.625rem] text-muted-foreground mt-0.5">
                               {garment.category} • Scanned: {garment.scanDate}
                             </p>
                           </div>
                         </div>
 
                         <span
-                          className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${
+                          className={`text-[0.625rem] font-bold px-2.5 py-1 rounded-lg ${
                             garment.statusBadge === 'Baik'
                               ? 'bg-[#D1FAE5] text-[#166534]'
                               : garment.statusBadge === 'Perlu Perawatan'
@@ -668,7 +668,7 @@ export default function RawatPage() {
 
                       {/* Progress Checklist Bar */}
                       <div className="space-y-1.5 bg-muted/40 p-2.5 rounded-xl border border-border/60">
-                        <div className="flex items-center justify-between text-[10px] font-bold">
+                        <div className="flex items-center justify-between text-[0.625rem] font-bold">
                           <span className="text-foreground/80">
                             Checklist Perawatan ({completedCount}/{totalCount} Selesai)
                           </span>
@@ -683,8 +683,8 @@ export default function RawatPage() {
                       </div>
 
                       {/* Footer Row */}
-                      <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground pt-1 border-t border-border">
-                        <span className="text-[10px] text-muted-foreground">
+                      <div className="flex items-center justify-between text-[0.6875rem] font-semibold text-muted-foreground pt-1 border-t border-border">
+                        <span className="text-[0.625rem] text-muted-foreground">
                           Bahan: <strong className="text-foreground">{garment.fabric}</strong>
                         </span>
                         <span className="text-primary font-bold hover:underline flex items-center gap-1">
@@ -714,14 +714,14 @@ export default function RawatPage() {
                     <span className="text-2xl">{guide.icon}</span>
                     <div>
                       <h3 className="text-xs font-extrabold text-foreground">{guide.title}</h3>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">{guide.desc}</p>
+                      <p className="text-[0.625rem] text-muted-foreground mt-0.5">{guide.desc}</p>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                    <span className="text-[9px] bg-secondary text-primary font-extrabold px-2 py-0.5 rounded-md">
+                    <span className="text-[0.5625rem] bg-secondary text-primary font-extrabold px-2 py-0.5 rounded-md">
                       {guide.category}
                     </span>
-                    <span className="text-[9px] text-muted-foreground font-semibold">
+                    <span className="text-[0.5625rem] text-muted-foreground font-semibold">
                       ⏱️ {guide.timeEst}
                     </span>
                   </div>
@@ -736,7 +736,7 @@ export default function RawatPage() {
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-1 border-t border-border">
+                <div className="flex items-center justify-between text-[0.625rem] text-muted-foreground pt-1 border-t border-border">
                   <span>Tingkat: <strong className="text-foreground">{guide.difficulty}</strong></span>
                   <button
                     onClick={() => toast.success(`Panduan "${guide.title}" disimpan ke favorit!`)}
@@ -764,19 +764,19 @@ export default function RawatPage() {
                       <span className="text-2xl">{fabric.icon}</span>
                       <div>
                         <h4 className="text-xs font-extrabold text-foreground">{fabric.name}</h4>
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-[0.625rem] text-muted-foreground">
                           Setrika: {fabric.ironTemp}
                         </span>
                       </div>
                     </div>
-                    <span className="text-[10px] bg-secondary text-primary font-bold px-2 py-1 rounded-lg">
+                    <span className="text-[0.625rem] bg-secondary text-primary font-bold px-2 py-1 rounded-lg">
                       Suhu Cuci: {fabric.temp}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed pl-9">
                     {fabric.care}
                   </p>
-                  <div className="ml-9 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-2 text-[11px] flex items-center gap-2">
+                  <div className="ml-9 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-2 text-[0.6875rem] flex items-center gap-2">
                     <span>💡</span>
                     <span><strong>Tips Khusus:</strong> {fabric.tips}</span>
                   </div>
@@ -800,7 +800,7 @@ export default function RawatPage() {
                   <h3 className="text-sm font-extrabold text-foreground">
                     Kalkulator Dosis Eco-Deterjen Kindfoam
                   </h3>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-[0.6875rem] text-muted-foreground">
                     Hitung lembaran deterjen & dampak penghematan air cucianmu
                   </p>
                 </div>
@@ -823,7 +823,7 @@ export default function RawatPage() {
                   onChange={(e) => setLoadWeightKg(Number(e.target.value))}
                   className="w-full accent-[#10284D] cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-muted-foreground font-semibold px-1">
+                <div className="flex justify-between text-[0.625rem] text-muted-foreground font-semibold px-1">
                   <span>1 kg (Sedikit)</span>
                   <span>6 kg (Keluarga)</span>
                   <span>12 kg (Banyak)</span>
@@ -833,49 +833,49 @@ export default function RawatPage() {
               {/* Hasil Kalkulasi Grid */}
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="bg-blue-50 border border-blue-100 rounded-2xl p-3.5 space-y-1">
-                  <span className="text-[10px] text-blue-700 font-bold block uppercase tracking-wider">
+                  <span className="text-[0.625rem] text-blue-700 font-bold block uppercase tracking-wider">
                     Dosis Kindfoam
                   </span>
                   <span className="text-xl font-black text-[#10284D] block">
                     {kindfoamSheets} Lembar
                   </span>
-                  <span className="text-[10px] text-blue-600">
+                  <span className="text-[0.625rem] text-blue-600">
                     Cukup larutkan langsung dalam tabung
                   </span>
                 </div>
 
                 <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-3.5 space-y-1">
-                  <span className="text-[10px] text-emerald-700 font-bold block uppercase tracking-wider">
+                  <span className="text-[0.625rem] text-emerald-700 font-bold block uppercase tracking-wider">
                     Air Yang Dihemat
                   </span>
                   <span className="text-xl font-black text-emerald-800 block">
                     💧 {waterSavedLiters} Liter
                   </span>
-                  <span className="text-[10px] text-emerald-600">
+                  <span className="text-[0.625rem] text-emerald-600">
                     Bebas busa kimia berlebih
                   </span>
                 </div>
 
                 <div className="bg-amber-50 border border-amber-100 rounded-2xl p-3.5 space-y-1">
-                  <span className="text-[10px] text-amber-800 font-bold block uppercase tracking-wider">
+                  <span className="text-[0.625rem] text-amber-800 font-bold block uppercase tracking-wider">
                     Emisi Karbon Dicegah
                   </span>
                   <span className="text-base font-extrabold text-amber-900 block">
                     🌿 {carbonSavedGrams} g CO2e
                   </span>
-                  <span className="text-[10px] text-amber-700">
+                  <span className="text-[0.625rem] text-amber-700">
                     Beban distribusi 80% lebih ringan
                   </span>
                 </div>
 
                 <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-1">
-                  <span className="text-[10px] text-slate-700 font-bold block uppercase tracking-wider">
+                  <span className="text-[0.625rem] text-slate-700 font-bold block uppercase tracking-wider">
                     Estimasi Biaya
                   </span>
                   <span className="text-base font-extrabold text-slate-900 block">
                     Rp {costEstimateRupiah.toLocaleString('id-ID')}
                   </span>
-                  <span className="text-[10px] text-slate-500">
+                  <span className="text-[0.625rem] text-slate-500">
                     Rp 1.800 / lembar cuci
                   </span>
                 </div>
@@ -884,11 +884,11 @@ export default function RawatPage() {
               {/* Promo Banner CTA Kindfoam */}
               <div className="bg-gradient-to-r from-[#0F3875] to-[#1E5FA8] text-white rounded-2xl p-4 flex items-center justify-between">
                 <div className="space-y-1">
-                  <span className="text-[9px] bg-cyan-400/30 text-cyan-200 font-bold px-2 py-0.5 rounded">
+                  <span className="text-[0.5625rem] bg-cyan-400/30 text-cyan-200 font-bold px-2 py-0.5 rounded">
                     Official Product
                   </span>
                   <h4 className="text-xs font-extrabold">Kindfoam Eco Detergent Sheet</h4>
-                  <p className="text-[10px] text-white/80">Tersedia di Market Klámbi (Pack isi 30 lembar)</p>
+                  <p className="text-[0.625rem] text-white/80">Tersedia di Market Klámbi (Pack isi 30 lembar)</p>
                 </div>
                 <button
                   onClick={() => router.push('/trift-marketplace')}
@@ -928,11 +928,11 @@ export default function RawatPage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <h4 className="text-xs font-extrabold text-foreground">{sch.title}</h4>
-                      <span className="text-[9px] bg-blue-100 text-blue-800 font-bold px-1.5 py-0.2 rounded">
+                      <span className="text-[0.5625rem] bg-blue-100 text-blue-800 font-bold px-1.5 py-0.2 rounded">
                         {sch.dateBadge}
                       </span>
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
+                    <p className="text-[0.625rem] text-muted-foreground mt-0.5">
                       {sch.category} • Frekuensi: {sch.frequency}
                     </p>
                   </div>
@@ -980,13 +980,13 @@ export default function RawatPage() {
               {/* Score & Material */}
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                  <span className="text-gray-500 block text-[10px]">Skor Kondisi</span>
+                  <span className="text-gray-500 block text-[0.625rem]">Skor Kondisi</span>
                   <span className="font-extrabold text-sm text-[#10284D]">
                     {selectedGarment.score} / 100
                   </span>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                  <span className="text-gray-500 block text-[10px]">Komposisi Bahan</span>
+                  <span className="text-gray-500 block text-[0.625rem]">Komposisi Bahan</span>
                   <span className="font-bold text-xs text-gray-800 truncate block">
                     {selectedGarment.fabric}
                   </span>
@@ -996,21 +996,21 @@ export default function RawatPage() {
               {/* Diagnosis Parameters */}
               <div className="space-y-1.5">
                 <span className="text-xs font-bold text-gray-800 block">Detail Parameter AI:</span>
-                <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <div className="grid grid-cols-2 gap-2 text-[0.6875rem]">
                   <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                    <span className="text-gray-400 block text-[9px]">Kebersihan</span>
+                    <span className="text-gray-400 block text-[0.5625rem]">Kebersihan</span>
                     <span className="font-semibold text-gray-700">{selectedGarment.parameters.cleanliness}</span>
                   </div>
                   <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                    <span className="text-gray-400 block text-[9px]">Kelunturan</span>
+                    <span className="text-gray-400 block text-[0.5625rem]">Kelunturan</span>
                     <span className="font-semibold text-gray-700">{selectedGarment.parameters.fading}</span>
                   </div>
                   <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                    <span className="text-gray-400 block text-[9px]">Kondisi Serat</span>
+                    <span className="text-gray-400 block text-[0.5625rem]">Kondisi Serat</span>
                     <span className="font-semibold text-gray-700">{selectedGarment.parameters.fiber}</span>
                   </div>
                   <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                    <span className="text-gray-400 block text-[9px]">Kerusakan</span>
+                    <span className="text-gray-400 block text-[0.5625rem]">Kerusakan</span>
                     <span className="font-semibold text-gray-700">{selectedGarment.parameters.damage}</span>
                   </div>
                 </div>
@@ -1020,7 +1020,7 @@ export default function RawatPage() {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-gray-800">Checklist Langkah Perawatan:</span>
-                  <span className="text-[10px] text-emerald-600 font-bold">
+                  <span className="text-[0.625rem] text-emerald-600 font-bold">
                     {selectedGarment.careSteps.filter((s) => s.done).length} / {selectedGarment.careSteps.length} selesai
                   </span>
                 </div>

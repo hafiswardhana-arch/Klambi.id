@@ -159,7 +159,7 @@ export default function KeranjangPage() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-xs font-extrabold text-emerald-900">Coba Dulu Sebelum Beli!</div>
-            <div className="text-[10px] text-emerald-800 mt-0.5">Tekan tombol <strong>Coba di Manekin 3D</strong> di tiap item pakaian untuk visualisasi sebelum checkout.</div>
+            <div className="text-[0.625rem] text-emerald-800 mt-0.5">Tekan tombol <strong>Coba di Manekin 3D</strong> di tiap item pakaian untuk visualisasi sebelum checkout.</div>
           </div>
         </div>
 
@@ -241,24 +241,24 @@ export default function KeranjangPage() {
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] text-muted-foreground font-semibold uppercase">
+                      <span className="text-[0.625rem] text-muted-foreground font-semibold uppercase">
                         {item.category}{item.size ? ` • Size ${item.size}` : ''}
                       </span>
                       <h4 className="text-xs font-bold text-foreground leading-snug">{item.title}</h4>
                       {item.brand && (
-                        <span className="text-[10px] text-muted-foreground">by {item.brand}</span>
+                        <span className="text-[0.625rem] text-muted-foreground">by {item.brand}</span>
                       )}
-                      <span className="inline-block mt-1 bg-[#D1FAE5] text-[#166534] text-[10px] font-bold px-2 py-0.5 rounded-md">
+                      <span className="inline-block mt-1 bg-[#D1FAE5] text-[#166534] text-[0.625rem] font-bold px-2 py-0.5 rounded-md">
                         {item.condition}
                       </span>
                       <div className="flex items-baseline gap-2 mt-1.5">
                         <span className="text-xs font-extrabold text-[#E86D50]">
                           Rp {item.price.toLocaleString('id-ID')}
                         </span>
-                        <span className="text-[10px] text-muted-foreground line-through">
+                        <span className="text-[0.625rem] text-muted-foreground line-through">
                           Rp {item.originalPrice.toLocaleString('id-ID')}
                         </span>
-                        <span className="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
+                        <span className="text-[0.625rem] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
                           -{Math.round((1 - item.price / item.originalPrice) * 100)}%
                         </span>
                       </div>
@@ -270,13 +270,13 @@ export default function KeranjangPage() {
                     {item.isClothing ? (
                       <button
                         onClick={() => handleTryMannequin(item)}
-                        className="flex items-center gap-1.5 bg-gradient-to-r from-[#10284D] to-[#1A3A6B] text-white px-4 py-2 rounded-xl text-[11px] font-extrabold shadow-sm hover:shadow-md active:scale-95 transition-all"
+                        className="flex items-center gap-1.5 bg-gradient-to-r from-[#10284D] to-[#1A3A6B] text-white px-4 py-2 rounded-xl text-[0.6875rem] font-extrabold shadow-sm hover:shadow-md active:scale-95 transition-all"
                       >
                         <span>🧍</span>
                         <span>Coba di Manekin 3D</span>
                       </button>
                     ) : (
-                      <span className="text-[10px] text-muted-foreground italic px-2">
+                      <span className="text-[0.625rem] text-muted-foreground italic px-2">
                         (Produk non-pakaian)
                       </span>
                     )}
@@ -284,7 +284,7 @@ export default function KeranjangPage() {
                       onClick={() => {
                         toast.info(`${item.title} disimpan ke wishlist`);
                       }}
-                      className="flex items-center gap-1 px-3 py-2 rounded-xl text-[11px] font-semibold text-muted-foreground border border-border hover:border-[#10284D]/40 hover:text-[#10284D] active:scale-95 transition-all"
+                      className="flex items-center gap-1 px-3 py-2 rounded-xl text-[0.6875rem] font-semibold text-muted-foreground border border-border hover:border-[#10284D]/40 hover:text-[#10284D] active:scale-95 transition-all"
                     >
                       <Icon name="HeartIcon" size={12} />
                       Wishlist
@@ -302,7 +302,7 @@ export default function KeranjangPage() {
         <div className="fixed bottom-16 left-0 right-0 z-40 bg-card border-t border-border p-4 shadow-modal">
           <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
             <div>
-              <span className="text-[10px] text-muted-foreground font-semibold block">
+              <span className="text-[0.625rem] text-muted-foreground font-semibold block">
                 Total Subtotal ({selectedItems.length} item)
               </span>
               <span className="text-base font-extrabold text-[#E86D50]">

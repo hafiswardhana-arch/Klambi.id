@@ -163,10 +163,10 @@ export default function ScanResultCard({ imageUrl, onRescan }: ScanResultCardPro
           </div>
           <div className="text-center">
             <p className="text-sm font-700 text-foreground">Rawat</p>
-            <p className="text-[11px] text-muted-foreground">Permak atau dirawat</p>
+            <p className="text-[0.6875rem] text-muted-foreground">Permak atau dirawat</p>
           </div>
           {result.recommendation === 'rawat' && (
-            <span className="text-[10px] bg-warning/20 text-warning-foreground px-2 py-0.5 rounded-full font-600">
+            <span className="text-[0.625rem] bg-warning/20 text-warning-foreground px-2 py-0.5 rounded-full font-600">
               Disarankan AI
             </span>
           )}
@@ -182,10 +182,10 @@ export default function ScanResultCard({ imageUrl, onRescan }: ScanResultCardPro
           </div>
           <div className="text-center">
             <p className="text-sm font-700 text-foreground">Jual</p>
-            <p className="text-[11px] text-muted-foreground">Trift atau Upcycle</p>
+            <p className="text-[0.6875rem] text-muted-foreground">Trift atau Upcycle</p>
           </div>
           {result.recommendation === 'jual' && (
-            <span className="text-[10px] bg-accent/20 text-primary px-2 py-0.5 rounded-full font-600">
+            <span className="text-[0.625rem] bg-accent/20 text-primary px-2 py-0.5 rounded-full font-600">
               Disarankan AI
             </span>
           )}

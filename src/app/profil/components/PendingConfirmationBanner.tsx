@@ -26,7 +26,7 @@ export default function PendingConfirmationBanner({
             Pesanan Menunggu Konfirmasi Diterima ({pendingOrders.length})
           </h3>
         </div>
-        <span className="text-[11px] font-semibold text-warning-foreground bg-warning/20 px-2.5 py-0.5 rounded-full border border-warning/40">
+        <span className="text-[0.6875rem] font-semibold text-warning-foreground bg-warning/20 px-2.5 py-0.5 rounded-full border border-warning/40">
           Dana Escrow Tertahan
         </span>
       </div>
@@ -58,7 +58,7 @@ export default function PendingConfirmationBanner({
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-secondary px-1.5 py-0.2 rounded">
+                  <span className="text-[0.625rem] font-bold uppercase tracking-wider text-primary bg-secondary px-1.5 py-0.2 rounded">
                     {order.moduleLabel}
                   </span>
                   <span className="text-xs font-mono text-muted-foreground">

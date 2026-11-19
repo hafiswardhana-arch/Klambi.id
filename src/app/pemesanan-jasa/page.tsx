@@ -37,7 +37,7 @@ function PemesananJasaContent() {
         </div>
         <div>
           <h3 className="text-xs font-extrabold text-foreground">{providerName}</h3>
-          <p className="text-[10px] text-muted-foreground">Layanan Permak & Perawatan Sirkular</p>
+          <p className="text-[0.625rem] text-muted-foreground">Layanan Permak & Perawatan Sirkular</p>
         </div>
       </div>
 
@@ -59,7 +59,7 @@ function PemesananJasaContent() {
             </div>
             <div>
               <h4 className="text-xs font-bold text-foreground">Diantar Sendiri</h4>
-              <p className="text-[10px] text-muted-foreground">Antar langsung ke lokasi mitra</p>
+              <p className="text-[0.625rem] text-muted-foreground">Antar langsung ke lokasi mitra</p>
             </div>
           </div>
 
@@ -77,7 +77,7 @@ function PemesananJasaContent() {
             </div>
             <div>
               <h4 className="text-xs font-bold text-foreground">Dijemput Kurir</h4>
-              <p className="text-[10px] text-muted-foreground">Kurir Klámbi jemput ke rumah (+Rp 15rb)</p>
+              <p className="text-[0.625rem] text-muted-foreground">Kurir Klámbi jemput ke rumah (+Rp 15rb)</p>
             </div>
           </div>
         </div>

@@ -77,7 +77,7 @@ export default function ProviderCard({ provider, onSelect, selected = false }: P
             {provider.services.slice(0, 3).map((svc) => (
               <span
                 key={`svc-${provider.id}-${svc}`}
-                className="text-[10px] font-500 bg-muted text-muted-foreground px-2 py-0.5 rounded-full border border-border"
+                className="text-[0.625rem] font-500 bg-muted text-muted-foreground px-2 py-0.5 rounded-full border border-border"
               >
                 {svc}
               </span>
@@ -94,7 +94,7 @@ export default function ProviderCard({ provider, onSelect, selected = false }: P
                   style={{ width: `${provider.matchScore}%` }}
                 />
               </div>
-              <span className="text-[10px] text-muted-foreground font-600">{provider.matchScore}% cocok</span>
+              <span className="text-[0.625rem] text-muted-foreground font-600">{provider.matchScore}% cocok</span>
             </div>
           </div>
         </div>

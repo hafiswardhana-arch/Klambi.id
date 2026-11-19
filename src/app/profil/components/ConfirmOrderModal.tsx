@@ -69,7 +69,7 @@ export default function ConfirmOrderModal({
         {/* Order Details Brief */}
         <div className="mt-4 p-3.5 bg-muted/60 rounded-xl border border-border/70 flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-secondary px-2 py-0.5 rounded">
+            <span className="text-[0.625rem] font-bold uppercase tracking-wider text-primary bg-secondary px-2 py-0.5 rounded">
               {order.moduleLabel}
             </span>
             <h4 className="font-bold text-sm text-foreground mt-1 truncate">
@@ -79,13 +79,13 @@ export default function ConfirmOrderModal({
               Mitra/Penjual: <strong className="text-foreground">{order.partnerOrSeller}</strong>
             </p>
             {order.courier && (
-              <p className="text-[11px] text-muted-foreground mt-0.5">
+              <p className="text-[0.6875rem] text-muted-foreground mt-0.5">
                 📦 {order.courier} ({order.trackingNumber})
               </p>
             )}
           </div>
           <div className="text-right flex-shrink-0">
-            <span className="text-[10px] text-muted-foreground block">Total Escrow</span>
+            <span className="text-[0.625rem] text-muted-foreground block">Total Escrow</span>
             <span className="text-sm font-extrabold text-primary">
               Rp {order.amount.toLocaleString('id-ID')}
             </span>

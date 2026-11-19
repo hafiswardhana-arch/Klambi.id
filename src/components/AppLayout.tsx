@@ -39,7 +39,7 @@ export default function AppLayout({
         />
       )}
       <main className={`flex-1 pb-24 animate-fade-in ${hideTopHeader ? 'pt-0' : 'pt-14'}`}>
-        <div className="max-w-md mx-auto w-full px-4 py-3">
+        <div className="max-w-md md:max-w-2xl lg:max-w-3xl mx-auto w-full px-4 md:px-6 py-3 md:py-4">
           {children}
         </div>
       </main>

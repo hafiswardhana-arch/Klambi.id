@@ -32,7 +32,7 @@ export default function Badge({
   className = '',
   size = 'sm',
 }: BadgeProps) {
-  const sizeStyles = size === 'sm' ? 'text-[11px] px-2 py-0.5' : 'text-xs px-2.5 py-1';
+  const sizeStyles = size === 'sm' ? 'text-[0.6875rem] px-2 py-0.5' : 'text-xs px-2.5 py-1';
   return (
     <span
       className={`inline-flex items-center gap-1 font-600 rounded-full leading-none ${sizeStyles} ${variantStyles[variant]} ${className}`}

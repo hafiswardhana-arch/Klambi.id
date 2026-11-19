@@ -81,7 +81,7 @@ export default function UpcycleSellPage() {
         {/* Banner */}
         <FadeIn>
           <div className="bg-gradient-to-r from-[#10284D] via-[#163768] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
-            <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+            <span className="bg-white/20 text-white text-[0.625rem] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
               Alur 5.5.1b: Upcycle Kiloan
             </span>
             <h2 className="text-base sm:text-lg font-black tracking-tight">
@@ -126,7 +126,7 @@ export default function UpcycleSellPage() {
                   ⚖️ Estimasi Berat Pakaian:
                 </label>
                 <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                  className={`text-[0.625rem] font-bold px-2 py-0.5 rounded ${
                     isWeightValid
                       ? 'bg-emerald-100 text-emerald-800'
                       : 'bg-rose-100 text-rose-800 animate-pulse'
@@ -168,7 +168,7 @@ export default function UpcycleSellPage() {
                 <h3 className="text-xs font-black uppercase tracking-wider text-[#10284D]">
                   📍 Mitra Pengepul Terdekat
                 </h3>
-                <span className="text-[10px] text-muted-foreground">Senopati, Jaksel</span>
+                <span className="text-[0.625rem] text-muted-foreground">Senopati, Jaksel</span>
               </div>
 
               <div className="space-y-2.5">
@@ -185,12 +185,12 @@ export default function UpcycleSellPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <h4 className="text-xs font-extrabold text-[#10284D]">{partner.name}</h4>
-                        <span className="text-[10px] bg-secondary text-primary font-bold px-1.5 py-0.2 rounded">
+                        <span className="text-[0.625rem] bg-secondary text-primary font-bold px-1.5 py-0.2 rounded">
                           📍 {partner.distanceKm} km
                         </span>
                       </div>
-                      <p className="text-[11px] text-muted-foreground">{partner.address}</p>
-                      <div className="text-[10px] text-emerald-700 font-bold">
+                      <p className="text-[0.6875rem] text-muted-foreground">{partner.address}</p>
+                      <div className="text-[0.625rem] text-emerald-700 font-bold">
                         Tarif: Rp {partner.ratePerKg.toLocaleString('id-ID')}/kg • ⭐ {partner.rating}
                       </div>
                     </div>
@@ -225,7 +225,7 @@ export default function UpcycleSellPage() {
                 >
                   <span className="text-2xl block">🏠</span>
                   <h4 className="text-xs font-extrabold text-[#10284D]">Dijemput Mitra</h4>
-                  <p className="text-[10px] text-muted-foreground leading-tight">
+                  <p className="text-[0.625rem] text-muted-foreground leading-tight">
                     Mitra jemput ke rumah, cek fisik langsung di lokasi & konfirmasi di tempat.
                   </p>
                 </div>
@@ -241,7 +241,7 @@ export default function UpcycleSellPage() {
                 >
                   <span className="text-2xl block">📦</span>
                   <h4 className="text-xs font-extrabold text-[#10284D]">Diantar Sendiri</h4>
-                  <p className="text-[10px] text-muted-foreground leading-tight">
+                  <p className="text-[0.625rem] text-muted-foreground leading-tight">
                     Kirim via ekspedisi. Mitra memverifikasi paket saat sampai. Dana cair dalam 2 hari.
                   </p>
                 </div>
@@ -255,7 +255,7 @@ export default function UpcycleSellPage() {
                     Rp {estimatedPayout.toLocaleString('id-ID')}
                   </span>
                 </div>
-                <p className="text-[11px] text-emerald-800">
+                <p className="text-[0.6875rem] text-emerald-800">
                   {deliveryMethod === 'dijemput'
                     ? '⚡ Saldo otomatis dicairkan ke dompet Klámbi setelah mitra selesai menimbang & menyetujui di tempat.'
                     : '⏳ Status Escrow: Dana akan cair ke dompet Anda dalam waktu 2 hari kerja setelah paket diterima & diverifikasi mitra.'}
@@ -286,10 +286,10 @@ export default function UpcycleSellPage() {
                   <span>🧵</span>
                   <h4>1. Penjualan ke UMKM / Pengrajin Daur Ulang</h4>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                <p className="text-[0.6875rem] text-muted-foreground leading-relaxed">
                   Mitra memilah kain per jenis bahan (denim, katun, tenun). UMKM artisan membeli bahan terpilih sesuai kebutuhan (bukan per-ball), lalu mengolahnya menjadi tas, jaket patchwork, atau aksesoris bernilai tinggi, dan menjualnya kembali di <strong>Marketplace Klámbi</strong>.
                 </p>
-                <div className="bg-white p-2.5 rounded-xl border border-blue-200 text-[10px] text-blue-900 font-bold">
+                <div className="bg-white p-2.5 rounded-xl border border-blue-200 text-[0.625rem] text-blue-900 font-bold">
                   Status Transaksi: Pembelian Bahan ➔ Olah Upcycle ➔ Listing Kembali di Market
                 </div>
               </div>
@@ -300,10 +300,10 @@ export default function UpcycleSellPage() {
                   <span>🏭</span>
                   <h4>2. Penjualan ke Industri Daur Ulang Tekstil</h4>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                <p className="text-[0.6875rem] text-muted-foreground leading-relaxed">
                   Bahan kain rusak berat dihancurkan dan dipintal ulang menjadi benang daur ulang (recycled yarn) atau kain perca industri. Industri juga dapat menjual kain perca terpilah di ekosistem sirkular Klámbi.
                 </p>
-                <div className="bg-white p-2.5 rounded-xl border border-emerald-200 text-[10px] text-emerald-900 font-bold">
+                <div className="bg-white p-2.5 rounded-xl border border-emerald-200 text-[0.625rem] text-emerald-900 font-bold">
                   Status Transaksi: Pembelian Kiloan Besar ➔ Ekstraksi Serat ➔ Zero Waste Textile
                 </div>
               </div>

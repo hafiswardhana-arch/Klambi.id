@@ -624,7 +624,7 @@ export default function WearwiseAIPage() {
       {/* Hidden canvas for capturing frame */}
       <canvas ref={canvasRef} className="hidden" />
 
-      <div className="max-w-md mx-auto pb-28 select-none font-sans">
+      <div className="max-w-md md:max-w-2xl lg:max-w-3xl mx-auto pb-28 select-none font-sans">
         {/* HEADER: back + menu floating buttons, centered title */}
         <div className="flex items-center justify-between pt-1">
           <button
@@ -645,7 +645,7 @@ export default function WearwiseAIPage() {
           </button>
         </div>
 
-        <h1 className="text-center text-[15px] font-semibold text-navy -mt-8 mb-3 pointer-events-none">Kenali Kondisi Pakaianmu</h1>
+        <h1 className="text-center text-[0.9375rem] font-semibold text-navy -mt-8 mb-3 pointer-events-none">Kenali Kondisi Pakaianmu</h1>
 
         {/* STAGE 1 & 2: CAMERA + ANALYZING */}
         {stage !== 'result' && (
@@ -704,7 +704,7 @@ export default function WearwiseAIPage() {
 
                 {/* Camera guidance + switch */}
                 {stage === 'camera' && cameraStatus === 'active' && (
-                  <span className="absolute top-4 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap bg-black/45 backdrop-blur-sm text-white text-[11px] font-medium px-3 py-1 rounded-full">
+                  <span className="absolute top-4 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap bg-black/45 backdrop-blur-sm text-white text-[0.6875rem] font-medium px-3 py-1 rounded-full">
                     Bentangkan pakaian & fokuskan kamera
                   </span>
                 )}
@@ -721,7 +721,7 @@ export default function WearwiseAIPage() {
             </div>
 
             {/* Status label */}
-            <p className="text-center text-[15px] font-medium text-navy mt-1" aria-live="polite">
+            <p className="text-center text-[0.9375rem] font-medium text-navy mt-1" aria-live="polite">
               {isCompletionPhase
                 ? 'Diagnosis Selesai'
                 : stage === 'analyzing'
@@ -747,7 +747,7 @@ export default function WearwiseAIPage() {
 
             {/* Process card */}
             <div className="mt-3 bg-white rounded-2xl px-3.5 pt-3 pb-2 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
-              <span className="inline-block bg-navy-deep text-white text-[10.5px] font-medium px-3 py-1 rounded-full tracking-wide">
+              <span className="inline-block bg-navy-deep text-white text-[0.6563rem] font-medium px-3 py-1 rounded-full tracking-wide">
                 PROSES ANALISIS
               </span>
 
@@ -773,7 +773,7 @@ export default function WearwiseAIPage() {
                           <Icon name={step.iconName} size={22} strokeWidth={1.5} />
                         </span>
                         <span
-                          className={`text-[12.5px] leading-snug transition-colors duration-300 ${
+                          className={`text-[0.7813rem] leading-snug transition-colors duration-300 ${
                             isDone
                               ? 'text-success-green'
                               : isCurrent
@@ -804,7 +804,7 @@ export default function WearwiseAIPage() {
               )}
             </div>
 
-            <p className="text-center text-[11px] text-white mt-1.5 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
+            <p className="text-center text-[0.6875rem] text-white mt-1.5 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
               Analisis biasanya memakan waktu 10–20 detik
             </p>
 
@@ -882,37 +882,37 @@ export default function WearwiseAIPage() {
                 )}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${scoreTone}`}>
+                    <span className={`text-[0.625rem] font-medium px-2 py-0.5 rounded-full ${scoreTone}`}>
                       {assessmentResult.conditionGrade} • {assessmentResult.conditionStatus}
                     </span>
-                    <span className="text-[10px] text-gray-500">{assessmentResult.category}</span>
+                    <span className="text-[0.625rem] text-gray-500">{assessmentResult.category}</span>
                   </div>
-                  <h3 className="text-[14px] font-semibold text-gray-900 truncate mt-0.5">{assessmentResult.garmentType}</h3>
-                  <p className="text-[11px] text-gray-600 truncate">
+                  <h3 className="text-[0.875rem] font-semibold text-gray-900 truncate mt-0.5">{assessmentResult.garmentType}</h3>
+                  <p className="text-[0.6875rem] text-gray-600 truncate">
                     {assessmentResult.estimatedFabric} • {assessmentResult.colorSummary}
                   </p>
                 </div>
                 <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-navy text-white flex flex-col items-center justify-center" aria-label={`Skor kondisi ${animatedScore} dari 100`}>
-                  <span className="text-[20px] font-bold leading-none font-tabular">{animatedScore}</span>
-                  <span className="text-[8px] text-white/80 mt-0.5 tracking-wide">GCS /100</span>
+                  <span className="text-[1.25rem] font-bold leading-none font-tabular">{animatedScore}</span>
+                  <span className="text-[0.5rem] text-white/80 mt-0.5 tracking-wide">GCS /100</span>
                 </div>
               </div>
 
               {/* AI recommendation */}
               <div className="bg-navy text-white rounded-2xl p-3.5 shadow-card space-y-1.5">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="flex items-center gap-1.5 text-brand-yellow text-[11px] font-medium">
+                  <span className="flex items-center gap-1.5 text-brand-yellow text-[0.6875rem] font-medium">
                     <Icon name="LightBulbIcon" variant="solid" size={14} aria-hidden="true" />
                     Rekomendasi AI
                   </span>
-                  <span className="bg-emerald-500 text-white text-[9px] font-medium px-2 py-0.5 rounded-full">
+                  <span className="bg-emerald-500 text-white text-[0.5625rem] font-medium px-2 py-0.5 rounded-full">
                     {assessmentResult.actionBadge}
                   </span>
                 </div>
-                <h4 className="text-[13px] font-semibold">{assessmentResult.actionTitle}</h4>
-                <p className="text-[11.5px] text-white/90 leading-relaxed">{assessmentResult.actionReason}</p>
+                <h4 className="text-[0.8125rem] font-semibold">{assessmentResult.actionTitle}</h4>
+                <p className="text-[0.7188rem] text-white/90 leading-relaxed">{assessmentResult.actionReason}</p>
                 {assessmentResult.estimatedPriceRange && (
-                  <p className="text-[11px] text-cyan-200">
+                  <p className="text-[0.6875rem] text-cyan-200">
                     Estimasi nilai: <span className="font-medium">{assessmentResult.estimatedPriceRange}</span>
                   </p>
                 )}
@@ -921,11 +921,11 @@ export default function WearwiseAIPage() {
               {/* 7 dimensions */}
               <div className="bg-white rounded-2xl p-3 shadow-card">
                 <div className="flex items-center justify-between mb-1.5">
-                  <h4 className="text-[12px] font-semibold text-gray-900 flex items-center gap-1.5">
+                  <h4 className="text-[0.75rem] font-semibold text-gray-900 flex items-center gap-1.5">
                     <Icon name="BeakerIcon" size={15} className="text-navy" aria-hidden="true" />
                     7 Dimensi Penilaian
                   </h4>
-                  <span className="text-[10px] text-gray-500">Skala 1–5</span>
+                  <span className="text-[0.625rem] text-gray-500">Skala 1–5</span>
                 </div>
                 <ul className="divide-y divide-gray-100">
                   {Object.values(assessmentResult.dimensions).map((dim) => {
@@ -941,13 +941,13 @@ export default function WearwiseAIPage() {
                           className="w-full text-left py-2 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy rounded-lg"
                         >
                           <div className="flex items-center gap-2">
-                            <span className="text-[12px] text-gray-900 flex-1 truncate">{dim.name}</span>
+                            <span className="text-[0.75rem] text-gray-900 flex-1 truncate">{dim.name}</span>
                             <span className="flex gap-0.5" aria-hidden="true">
                               {[1, 2, 3, 4, 5].map((n) => (
                                 <span key={n} className={`w-3 h-1.5 rounded-full ${n <= dim.score ? barColor : 'bg-gray-200'}`} />
                               ))}
                             </span>
-                            <span className="text-[11px] font-medium text-gray-700 w-7 text-right font-tabular">{dim.score}/5</span>
+                            <span className="text-[0.6875rem] font-medium text-gray-700 w-7 text-right font-tabular">{dim.score}/5</span>
                             <Icon
                               name="ChevronDownIcon"
                               size={14}
@@ -956,16 +956,16 @@ export default function WearwiseAIPage() {
                             />
                           </div>
                           {!isExpanded && (
-                            <p className="text-[10.5px] text-gray-500 mt-0.5 line-clamp-1">{dim.details}</p>
+                            <p className="text-[0.6563rem] text-gray-500 mt-0.5 line-clamp-1">{dim.details}</p>
                           )}
                         </button>
                         {isExpanded && (
                           <div className="pb-2.5 space-y-1.5 animate-fade-in">
-                            <p className="text-[11px] text-gray-700 leading-relaxed">{dim.details}</p>
+                            <p className="text-[0.6875rem] text-gray-700 leading-relaxed">{dim.details}</p>
                             {dim.findings && dim.findings.length > 0 && (
                               <ul className="space-y-0.5">
                                 {dim.findings.map((f, i) => (
-                                  <li key={i} className="text-[10.5px] text-gray-600 flex gap-1.5">
+                                  <li key={i} className="text-[0.6563rem] text-gray-600 flex gap-1.5">
                                     <span className="text-gray-400">•</span>
                                     <span>{f}</span>
                                   </li>
@@ -982,7 +982,7 @@ export default function WearwiseAIPage() {
 
               {/* Circular action choice */}
               <div>
-                <h4 className="text-[12px] font-semibold text-gray-900 mb-1.5 px-0.5">Pilih tindakan</h4>
+                <h4 className="text-[0.75rem] font-semibold text-gray-900 mb-1.5 px-0.5">Pilih tindakan</h4>
                 <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Pilih tindakan sirkular">
                   {actions.map((a) => {
                     const active = selectedAction === a.key;
@@ -998,7 +998,7 @@ export default function WearwiseAIPage() {
                         }`}
                       >
                         {recommendedKey === a.key && (
-                          <span className="absolute -top-2 right-2 bg-emerald-600 text-white text-[8.5px] font-medium px-1.5 py-0.5 rounded-full">
+                          <span className="absolute -top-2 right-2 bg-emerald-600 text-white text-[0.5313rem] font-medium px-1.5 py-0.5 rounded-full">
                             Saran AI
                           </span>
                         )}
@@ -1007,8 +1007,8 @@ export default function WearwiseAIPage() {
                             <Icon name={a.icon} variant="solid" size={17} />
                           </span>
                           <span className="min-w-0">
-                            <span className="block text-[12px] font-medium text-gray-900">{a.title}</span>
-                            <span className="block text-[10px] text-gray-500 truncate">{a.desc}</span>
+                            <span className="block text-[0.75rem] font-medium text-gray-900">{a.title}</span>
+                            <span className="block text-[0.625rem] text-gray-500 truncate">{a.desc}</span>
                           </span>
                         </span>
                       </button>
@@ -1020,7 +1020,7 @@ export default function WearwiseAIPage() {
               <div className="space-y-2 pt-1">
                 <button
                   onClick={() => router.push(chosen.href)}
-                  className="w-full h-11 bg-navy text-white rounded-full text-[13px] font-medium shadow-card hover:bg-navy-deep active:scale-[0.97] transition-all flex items-center justify-center gap-1.5"
+                  className="w-full h-11 bg-navy text-white rounded-full text-[0.8125rem] font-medium shadow-card hover:bg-navy-deep active:scale-[0.97] transition-all flex items-center justify-center gap-1.5"
                 >
                   {chosen.cta}
                   <Icon name="ArrowRightIcon" size={15} aria-hidden="true" />
@@ -1031,7 +1031,7 @@ export default function WearwiseAIPage() {
                     setAnimatedScore(0);
                     setAssessmentResult(null);
                   }}
-                  className="w-full h-10 bg-white/80 text-gray-700 rounded-full text-[12px] font-medium hover:bg-white active:scale-[0.97] transition-all"
+                  className="w-full h-10 bg-white/80 text-gray-700 rounded-full text-[0.75rem] font-medium hover:bg-white active:scale-[0.97] transition-all"
                 >
                   Scan pakaian lain
                 </button>
@@ -1059,7 +1059,7 @@ export default function WearwiseAIPage() {
             <h4 className="font-extrabold text-[#10284D] text-xs">
               Tips Agar Pakaian Terdeteksi Akurat oleh AI:
             </h4>
-            <div className="space-y-2 text-muted-foreground text-[11px]">
+            <div className="space-y-2 text-muted-foreground text-[0.6875rem]">
               <div className="flex items-start gap-2.5 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                 <span className="text-base">👕</span>
                 <div>
@@ -1120,7 +1120,7 @@ export default function WearwiseAIPage() {
         size="md"
       >
         <div className="space-y-3.5 text-xs text-foreground">
-          <p className="text-[11px] text-muted-foreground leading-relaxed">
+          <p className="text-[0.6875rem] text-muted-foreground leading-relaxed">
             AI Vision mendeteksi noda dan cacat visual. Tambahkan data fisik di bawah ini agar diagnosis
             dan skor GCS menjadi jauh lebih presisi.
           </p>
@@ -1145,7 +1145,7 @@ export default function WearwiseAIPage() {
                   }`}
                 >
                   <span className="block text-base mb-0.5">{opt.emoji}</span>
-                  <span className="text-[10px]">{opt.label}</span>
+                  <span className="text-[0.625rem]">{opt.label}</span>
                 </button>
               ))}
             </div>

@@ -112,7 +112,7 @@ function PembayaranContent() {
       <SlideUp delay={60} duration={350}>
         <div className="bg-card rounded-2xl p-4 border border-border shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-muted-foreground font-semibold block">Total Pembayaran</span>
+            <span className="text-[0.625rem] text-muted-foreground font-semibold block">Total Pembayaran</span>
             <span className="text-lg font-extrabold text-[#E86D50]">
               Rp {totalAmount.toLocaleString('id-ID')}
             </span>
@@ -141,7 +141,7 @@ function PembayaranContent() {
                   <span className="text-xl transition-transform duration-200 group-hover:scale-110">{opt.icon}</span>
                   <div>
                     <h4 className="text-xs font-bold text-foreground">{opt.name}</h4>
-                    <p className="text-[10px] text-muted-foreground">{opt.desc}</p>
+                    <p className="text-[0.625rem] text-muted-foreground">{opt.desc}</p>
                   </div>
                 </div>
                 <input
@@ -180,7 +180,7 @@ function PembayaranContent() {
       </SlideUp>
 
       {/* Security & Compliance Badges */}
-      <div className="pt-2 flex items-center justify-center gap-4 text-[10px] text-muted-foreground">
+      <div className="pt-2 flex items-center justify-center gap-4 text-[0.625rem] text-muted-foreground">
         <div className="flex items-center gap-1">
           <span>🔒</span>
           <span className="font-semibold">PCI-DSS Level 1 Gateway</span>

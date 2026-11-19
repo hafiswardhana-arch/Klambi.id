@@ -85,7 +85,7 @@ export default function BookingModal({ provider, onClose }: BookingModalProps) {
                   />
                   <div className="text-center">
                     <p className="text-xs font-600 text-foreground">{method.label}</p>
-                    <p className={`text-[11px] font-600 ${pickupMethod === method.key ? 'text-primary' : 'text-muted-foreground'}`}>
+                    <p className={`text-[0.6875rem] font-600 ${pickupMethod === method.key ? 'text-primary' : 'text-muted-foreground'}`}>
                       {method.fee}
                     </p>
                   </div>
@@ -251,7 +251,7 @@ export default function BookingModal({ provider, onClose }: BookingModalProps) {
                       {t.label}
                     </p>
                   </div>
-                  <span className="text-[10px] text-muted-foreground">{t.time}</span>
+                  <span className="text-[0.625rem] text-muted-foreground">{t.time}</span>
                 </div>
               ))}
             </div>

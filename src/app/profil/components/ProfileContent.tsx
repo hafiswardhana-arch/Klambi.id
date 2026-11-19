@@ -250,7 +250,7 @@ export default function ProfileContent() {
           <span className="text-xs font-semibold tracking-wider uppercase text-emerald-300 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-500/30 shadow-xs">
             Akun Terverifikasi 🛡️
           </span>
-          <span className="text-[11px] text-slate-300 font-mono bg-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-xs border border-white/10">
+          <span className="text-[0.6875rem] text-slate-300 font-mono bg-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-xs border border-white/10">
             ID: KLM-98421
           </span>
         </div>
@@ -263,7 +263,7 @@ export default function ProfileContent() {
                 {userAvatar}
               </div>
             </div>
-            <span className="absolute bottom-0 right-0 bg-emerald-500 text-white p-1 rounded-full text-[10px] shadow border-2 border-[#10284D]">
+            <span className="absolute bottom-0 right-0 bg-emerald-500 text-white p-1 rounded-full text-[0.625rem] shadow border-2 border-[#10284D]">
               <Icon name="PencilSquareIcon" size={12} />
             </span>
           </div>
@@ -310,7 +310,7 @@ export default function ProfileContent() {
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-bold uppercase tracking-wide text-emerald-800 bg-emerald-200/60 px-2 py-0.5 rounded-md">
+              <span className="text-[0.6875rem] font-bold uppercase tracking-wide text-emerald-800 bg-emerald-200/60 px-2 py-0.5 rounded-md">
                 Dampak Sirkular Anda
               </span>
             </div>
@@ -340,7 +340,7 @@ export default function ProfileContent() {
                 <span className="text-xs font-bold text-sky-900">
                   {isBiometricActive ? 'Biometrik Aktif' : 'Keamanan Login Biometrik'}
                 </span>
-                <span className="text-[10px] bg-sky-200 text-sky-800 font-semibold px-1.5 py-0.5 rounded">
+                <span className="text-[0.625rem] bg-sky-200 text-sky-800 font-semibold px-1.5 py-0.5 rounded">
                   Escrow Safe
                 </span>
               </div>
@@ -406,8 +406,8 @@ export default function ProfileContent() {
             <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-xl mb-1.5 group-hover:scale-110 transition-transform">
               <Icon name="WalletIcon" size={20} />
             </div>
-            <span className="text-[11px] font-semibold text-slate-700 leading-tight">Belum Bayar</span>
-            <span className="absolute top-1 right-2.5 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">
+            <span className="text-[0.6875rem] font-semibold text-slate-700 leading-tight">Belum Bayar</span>
+            <span className="absolute top-1 right-2.5 bg-rose-500 text-white text-[0.625rem] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">
               1
             </span>
           </button>
@@ -420,10 +420,10 @@ export default function ProfileContent() {
             <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mb-1.5 group-hover:scale-110 transition-transform">
               <Icon name="ShieldCheckIcon" size={20} />
             </div>
-            <span className="text-[11px] font-semibold text-slate-700 leading-tight">
+            <span className="text-[0.6875rem] font-semibold text-slate-700 leading-tight">
               Diproses Escrow
             </span>
-            <span className="absolute top-1 right-2.5 bg-emerald-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">
+            <span className="absolute top-1 right-2.5 bg-emerald-600 text-white text-[0.625rem] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">
               2
             </span>
           </button>
@@ -436,10 +436,10 @@ export default function ProfileContent() {
             <div className="w-10 h-10 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center text-xl mb-1.5 group-hover:scale-110 transition-transform">
               <Icon name="TruckIcon" size={20} />
             </div>
-            <span className="text-[11px] font-semibold text-slate-700 leading-tight">
+            <span className="text-[0.6875rem] font-semibold text-slate-700 leading-tight">
               Dikirim/Jemput
             </span>
-            <span className="absolute top-1 right-2.5 bg-sky-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">
+            <span className="absolute top-1 right-2.5 bg-sky-600 text-white text-[0.625rem] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">
               1
             </span>
           </button>
@@ -452,10 +452,10 @@ export default function ProfileContent() {
             <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-xl mb-1.5 group-hover:scale-110 transition-transform">
               <Icon name="StarIcon" size={20} />
             </div>
-            <span className="text-[11px] font-semibold text-slate-700 leading-tight">
+            <span className="text-[0.6875rem] font-semibold text-slate-700 leading-tight">
               Beri Penilaian
             </span>
-            <span className="absolute top-1 right-2.5 bg-purple-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">
+            <span className="absolute top-1 right-2.5 bg-purple-600 text-white text-[0.625rem] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">
               3
             </span>
           </button>
@@ -468,12 +468,12 @@ export default function ProfileContent() {
               <span className="text-lg">🎟️</span>
               <div>
                 <p className="text-xs font-bold text-rose-900">Voucher Diskon Sirkular 50%</p>
-                <p className="text-[10px] text-rose-700">Khusus belanja Thrift & Permak</p>
+                <p className="text-[0.625rem] text-rose-700">Khusus belanja Thrift & Permak</p>
               </div>
             </div>
             <button
               onClick={() => handleClaimVoucher('KLM-DISKON50')}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-[0.6875rem] font-bold shadow-xs transition-all ${
                 claimedVouchers.includes('KLM-DISKON50')
                   ? 'bg-slate-200 text-slate-500 cursor-default border border-slate-300'
                   : 'bg-rose-600 hover:bg-rose-700 text-white active:scale-95'
@@ -488,12 +488,12 @@ export default function ProfileContent() {
               <span className="text-lg">🚚</span>
               <div>
                 <p className="text-xs font-bold text-teal-900">Gratis Ongkir Pick-up</p>
-                <p className="text-[10px] text-teal-700">Penjemputan baju kurir mitra</p>
+                <p className="text-[0.625rem] text-teal-700">Penjemputan baju kurir mitra</p>
               </div>
             </div>
             <button
               onClick={() => handleClaimVoucher('KLM-ONGKIRFREE')}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-xs transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-[0.6875rem] font-bold shadow-xs transition-all ${
                 claimedVouchers.includes('KLM-ONGKIRFREE')
                   ? 'bg-slate-200 text-slate-500 cursor-default border border-slate-300'
                   : 'bg-teal-600 hover:bg-teal-700 text-white active:scale-95'
@@ -537,7 +537,7 @@ export default function ProfileContent() {
               <p className="text-sm font-extrabold text-slate-900">
                 Rp {saldoKlambi.toLocaleString('id-ID')}
               </p>
-              <span className="text-[10px] text-emerald-600 font-bold group-hover:underline">
+              <span className="text-[0.625rem] text-emerald-600 font-bold group-hover:underline">
                 Tarik Dana ➔
               </span>
             </div>
@@ -554,7 +554,7 @@ export default function ProfileContent() {
             </div>
             <div className="mt-2">
               <p className="text-sm font-extrabold text-slate-900">{poinEco.toLocaleString('id-ID')}</p>
-              <span className="text-[10px] text-amber-600 font-bold group-hover:underline">
+              <span className="text-[0.625rem] text-amber-600 font-bold group-hover:underline">
                 Tukar Reward ➔
               </span>
             </div>
@@ -571,7 +571,7 @@ export default function ProfileContent() {
             </div>
             <div className="mt-2">
               <p className="text-sm font-extrabold text-slate-900">{voucherCount} Tersedia</p>
-              <span className="text-[10px] text-rose-600 font-bold group-hover:underline">
+              <span className="text-[0.625rem] text-rose-600 font-bold group-hover:underline">
                 Lihat Voucher ➔
               </span>
             </div>
@@ -590,7 +590,7 @@ export default function ProfileContent() {
               <p className="text-sm font-extrabold text-emerald-900">
                 Rp {escrowHeld.toLocaleString('id-ID')}
               </p>
-              <span className="text-[10px] text-emerald-700 font-bold group-hover:underline">
+              <span className="text-[0.625rem] text-emerald-700 font-bold group-hover:underline">
                 Tertahan Aman ➔
               </span>
             </div>
@@ -604,7 +604,7 @@ export default function ProfileContent() {
         >
           <div className="flex items-center gap-2">
             <span className="text-base">🛡️</span>
-            <p className="text-[11px] text-slate-600">
+            <p className="text-[0.6875rem] text-slate-600">
               Rekening Bersama Escrow Klambi.id dilindungi Partner Bank Resmi (BCA, Mandiri, BRI, BNI).
             </p>
           </div>
@@ -632,7 +632,7 @@ export default function ProfileContent() {
             </div>
             <div>
               <p className="text-xs font-bold text-slate-800 group-hover:text-emerald-800">Mulai Jual</p>
-              <p className="text-[10px] text-slate-500">Trif satuan / Upcycle kiloan</p>
+              <p className="text-[0.625rem] text-slate-500">Trif satuan / Upcycle kiloan</p>
             </div>
           </button>
 
@@ -646,7 +646,7 @@ export default function ProfileContent() {
             </div>
             <div>
               <p className="text-xs font-bold text-slate-800 group-hover:text-sky-800">Riwayat Scan AI</p>
-              <p className="text-[10px] text-slate-500">18 Analisis Wearwise</p>
+              <p className="text-[0.625rem] text-slate-500">18 Analisis Wearwise</p>
             </div>
           </button>
 
@@ -660,7 +660,7 @@ export default function ProfileContent() {
             </div>
             <div>
               <p className="text-xs font-bold text-slate-800 group-hover:text-rose-800">Favorit Saya</p>
-              <p className="text-[10px] text-slate-500">{wishlist.length} Item tersimpan</p>
+              <p className="text-[0.625rem] text-slate-500">{wishlist.length} Item tersimpan</p>
             </div>
           </button>
 
@@ -674,7 +674,7 @@ export default function ProfileContent() {
             </div>
             <div>
               <p className="text-xs font-bold text-slate-800 group-hover:text-amber-800">Program Referral</p>
-              <p className="text-[10px] text-slate-500">Bonus 100 Poin/teman</p>
+              <p className="text-[0.625rem] text-slate-500">Bonus 100 Poin/teman</p>
             </div>
           </button>
 
@@ -688,7 +688,7 @@ export default function ProfileContent() {
             </div>
             <div>
               <p className="text-xs font-bold text-slate-800 group-hover:text-purple-800">Bagi Voucher</p>
-              <p className="text-[10px] text-slate-500">Kirim diskon ke teman</p>
+              <p className="text-[0.625rem] text-slate-500">Kirim diskon ke teman</p>
             </div>
           </button>
 
@@ -702,7 +702,7 @@ export default function ProfileContent() {
             </div>
             <div>
               <p className="text-xs font-bold text-slate-800 group-hover:text-indigo-800">Terakhir Dilihat</p>
-              <p className="text-[10px] text-slate-500">4 Produk sirkular</p>
+              <p className="text-[0.625rem] text-slate-500">4 Produk sirkular</p>
             </div>
           </button>
         </div>
@@ -728,7 +728,7 @@ export default function ProfileContent() {
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-800">Pusat Bantuan (FAQ)</p>
-                <p className="text-[10px] text-slate-500">Panduan Escrow & Sirkular</p>
+                <p className="text-[0.625rem] text-slate-500">Panduan Escrow & Sirkular</p>
               </div>
             </div>
             <Icon name="ChevronRightIcon" size={16} className="text-slate-400" />
@@ -744,7 +744,7 @@ export default function ProfileContent() {
               </div>
               <div>
                 <p className="text-xs font-bold text-emerald-900">Customer Service (Live Chat)</p>
-                <p className="text-[10px] text-emerald-700">Respons instan AI & Agent</p>
+                <p className="text-[0.625rem] text-emerald-700">Respons instan AI & Agent</p>
               </div>
             </div>
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -762,7 +762,7 @@ export default function ProfileContent() {
               <span>Kamu Mungkin Juga Suka</span>
               <span className="text-amber-500">✨</span>
             </h3>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[0.6875rem] text-slate-500">
               Rekomendasi kurasi AI Wearwise berdasarkan gaya & riwayat scan Anda
             </p>
           </div>
@@ -798,7 +798,7 @@ export default function ProfileContent() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
                   <div className="flex items-start justify-between relative z-10">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20">
+                    <span className="text-[0.625rem] font-bold px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20">
                       {product.category}
                     </span>
                     <button
@@ -815,7 +815,7 @@ export default function ProfileContent() {
 
                   {/* Escrow protection tag */}
                   <div className="relative z-10">
-                    <span className="inline-flex items-center gap-1 text-[9px] font-semibold bg-emerald-600/90 text-white px-1.5 py-0.5 rounded backdrop-blur-sm shadow-xs">
+                    <span className="inline-flex items-center gap-1 text-[0.5625rem] font-semibold bg-emerald-600/90 text-white px-1.5 py-0.5 rounded backdrop-blur-sm shadow-xs">
                       🛡️ Escrow Protected
                     </span>
                   </div>
@@ -824,7 +824,7 @@ export default function ProfileContent() {
                 {/* Product Details */}
                 <div className="p-3 flex-1 flex flex-col justify-between space-y-2">
                   <div>
-                    <div className="flex items-center gap-1 text-[10px] text-emerald-700 font-semibold mb-1">
+                    <div className="flex items-center gap-1 text-[0.625rem] text-emerald-700 font-semibold mb-1">
                       <span className="px-1.5 py-0.2 bg-emerald-50 border border-emerald-200 rounded">
                         {product.condition}
                       </span>
@@ -840,16 +840,16 @@ export default function ProfileContent() {
                       <span className="text-xs sm:text-sm font-extrabold text-rose-600">
                         Rp {product.price.toLocaleString('id-ID')}
                       </span>
-                      <span className="text-[10px] text-slate-400 line-through">
+                      <span className="text-[0.625rem] text-slate-400 line-through">
                         Rp {product.originalPrice.toLocaleString('id-ID')}
                       </span>
-                      <span className="text-[9px] font-bold text-rose-500 bg-rose-50 px-1 rounded">
+                      <span className="text-[0.5625rem] font-bold text-rose-500 bg-rose-50 px-1 rounded">
                         -{product.discountPercent}%
                       </span>
                     </div>
 
                     {/* Seller & Rating */}
-                    <div className="flex items-center justify-between text-[10px] text-slate-500 pt-2 border-t border-slate-100 mt-2">
+                    <div className="flex items-center justify-between text-[0.625rem] text-slate-500 pt-2 border-t border-slate-100 mt-2">
                       <span className="truncate max-w-[90px]">{product.city}</span>
                       <div className="flex items-center gap-0.5 text-amber-500 font-bold shrink-0">
                         <span>★</span>
@@ -918,7 +918,7 @@ export default function ProfileContent() {
                 />
               </div>
 
-              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-[11px] text-emerald-800">
+              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-[0.6875rem] text-emerald-800">
                 ✅ Identitas KTP & No. WhatsApp terverifikasi untuk perlindungan Rekening Escrow Klambi.id.
               </div>
             </div>
@@ -953,7 +953,7 @@ export default function ProfileContent() {
                 <span className="text-2xl">🥇</span>
                 <div>
                   <h3 className="text-base font-bold text-slate-900">Keanggotaan Kontributor Gold</h3>
-                  <p className="text-[11px] text-emerald-600 font-semibold">Tingkat Sirkular Tertinggi</p>
+                  <p className="text-[0.6875rem] text-emerald-600 font-semibold">Tingkat Sirkular Tertinggi</p>
                 </div>
               </div>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-700">
@@ -968,7 +968,7 @@ export default function ProfileContent() {
                   <span className="text-amber-600 font-bold">⚡</span>
                   <div>
                     <p className="font-bold text-amber-900">Rilis Escrow Ekspres 12 Jam</p>
-                    <p className="text-[10px] text-amber-800">Pencairan saldo hasil penjualan 2x lebih cepat setelah pesanan terverifikasi.</p>
+                    <p className="text-[0.625rem] text-amber-800">Pencairan saldo hasil penjualan 2x lebih cepat setelah pesanan terverifikasi.</p>
                   </div>
                 </div>
 
@@ -976,7 +976,7 @@ export default function ProfileContent() {
                   <span className="text-emerald-600 font-bold">🚚</span>
                   <div>
                     <p className="font-bold text-emerald-900">Free Ongkir Pick-up 4x / Bulan</p>
-                    <p className="text-[10px] text-emerald-800">Gratis penjemputan barang upcycle & servis permak langsung di depan pintu.</p>
+                    <p className="text-[0.625rem] text-emerald-800">Gratis penjemputan barang upcycle & servis permak langsung di depan pintu.</p>
                   </div>
                 </div>
 
@@ -984,7 +984,7 @@ export default function ProfileContent() {
                   <span className="text-sky-600 font-bold">🤖</span>
                   <div>
                     <p className="font-bold text-sky-900">Wearwise AI Premium Unlimited</p>
-                    <p className="text-[10px] text-sky-800">Scan dan analisis kondisi pakaian tak terbatas dengan akurasi 7 parameter.</p>
+                    <p className="text-[0.625rem] text-sky-800">Scan dan analisis kondisi pakaian tak terbatas dengan akurasi 7 parameter.</p>
                   </div>
                 </div>
               </div>
@@ -1015,7 +1015,7 @@ export default function ProfileContent() {
             </div>
 
             <div className="p-3 bg-slate-50 border rounded-xl space-y-2 text-xs">
-              <div className="flex justify-between text-[11px] text-slate-500 font-medium">
+              <div className="flex justify-between text-[0.6875rem] text-slate-500 font-medium">
                 <span>No. Pesanan: KLM-2026-0988</span>
                 <span className="text-amber-600 font-bold">Batas 23:59:00</span>
               </div>
@@ -1028,7 +1028,7 @@ export default function ProfileContent() {
                   <p className="text-emerald-700 font-extrabold text-sm">Rp 165.000</p>
                 </div>
               </div>
-              <p className="text-[11px] text-slate-600 bg-amber-50 p-2 rounded-lg border border-amber-200">
+              <p className="text-[0.6875rem] text-slate-600 bg-amber-50 p-2 rounded-lg border border-amber-200">
                 🔒 Pembayaran akan diteruskan ke Rekening Bersama Escrow Klambi sampai jaket Anda terima.
               </p>
             </div>
@@ -1054,7 +1054,7 @@ export default function ProfileContent() {
                 <span className="text-xl">🛡️</span>
                 <div>
                   <h3 className="text-base font-bold text-slate-900">Diproses Escrow (2)</h3>
-                  <p className="text-[11px] text-emerald-600 font-semibold">Dana tertahan aman di Rekber</p>
+                  <p className="text-[0.6875rem] text-emerald-600 font-semibold">Dana tertahan aman di Rekber</p>
                 </div>
               </div>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-700">
@@ -1065,8 +1065,8 @@ export default function ProfileContent() {
             <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1 text-xs">
               <div className="p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl space-y-2">
                 <div className="flex justify-between font-medium">
-                  <span className="text-slate-600 font-mono text-[11px]">#KLM-2026-0914</span>
-                  <span className="text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded text-[10px]">
+                  <span className="text-slate-600 font-mono text-[0.6875rem]">#KLM-2026-0914</span>
+                  <span className="text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded text-[0.625rem]">
                     Dana Diamankan Escrow
                   </span>
                 </div>
@@ -1075,7 +1075,7 @@ export default function ProfileContent() {
                   <span className="text-slate-500">Penjual: @vintage_jkt</span>
                   <span className="font-bold text-slate-900">Rp 245.000</span>
                 </div>
-                <div className="pt-2 border-t border-emerald-200 flex items-center justify-between text-[11px]">
+                <div className="pt-2 border-t border-emerald-200 flex items-center justify-between text-[0.6875rem]">
                   <span className="text-emerald-800">Tahap: Penjual mengemas barang</span>
                   <button
                     onClick={() => setActiveModal('detail_garansi_modal')}
@@ -1088,8 +1088,8 @@ export default function ProfileContent() {
 
               <div className="p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl space-y-2">
                 <div className="flex justify-between font-medium">
-                  <span className="text-slate-600 font-mono text-[11px]">#KLM-2026-0881</span>
-                  <span className="text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded text-[10px]">
+                  <span className="text-slate-600 font-mono text-[0.6875rem]">#KLM-2026-0881</span>
+                  <span className="text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded text-[0.625rem]">
                     Dana Diamankan Escrow
                   </span>
                 </div>
@@ -1098,7 +1098,7 @@ export default function ProfileContent() {
                   <span className="text-slate-500">Mitra: CleanCare Workshop Kemang</span>
                   <span className="font-bold text-slate-900">Rp 75.000</span>
                 </div>
-                <div className="pt-2 border-t border-emerald-200 flex items-center justify-between text-[11px]">
+                <div className="pt-2 border-t border-emerald-200 flex items-center justify-between text-[0.6875rem]">
                   <span className="text-emerald-800">Tahap: Treatment spa sedang berjalan</span>
                   <button
                     onClick={() => setActiveModal('detail_garansi_modal')}
@@ -1131,7 +1131,7 @@ export default function ProfileContent() {
                 </div>
                 <div>
                   <h3 className="text-base font-extrabold text-slate-900">Detail Garansi & Escrow Safe</h3>
-                  <p className="text-[11px] text-emerald-600 font-bold">100% Proteksi Transaksi Sirkular</p>
+                  <p className="text-[0.6875rem] text-emerald-600 font-bold">100% Proteksi Transaksi Sirkular</p>
                 </div>
               </div>
               <button onClick={() => setActiveModal('order_diproses_escrow')} className="text-slate-400 hover:text-slate-700 p-1">
@@ -1141,11 +1141,11 @@ export default function ProfileContent() {
 
             <div className="space-y-3 text-xs">
               <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200/80 space-y-1">
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block">
+                <span className="text-[0.625rem] font-black uppercase tracking-wider text-emerald-800 block">
                   Status Rekening Kustodian
                 </span>
                 <p className="font-extrabold text-emerald-950 text-sm">Dana Tertahan Aman di Rekber Resmi</p>
-                <p className="text-slate-600 leading-relaxed text-[11px]">
+                <p className="text-slate-600 leading-relaxed text-[0.6875rem]">
                   Uang pembayaran Anda tidak langsung dikirim ke penjual atau workshop mitra, melainkan tersimpan di rekening kustodian escrow Klambi.id hingga Anda menerima dan memeriksa kondisi fisik pakaian.
                 </p>
               </div>
@@ -1157,7 +1157,7 @@ export default function ProfileContent() {
                   <span className="text-base">📦</span>
                   <div>
                     <span className="font-bold text-slate-800 block">1. Garansi Kesesuaian Fisik (2x24 Jam)</span>
-                    <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                    <p className="text-[0.6875rem] text-slate-600 mt-0.5 leading-snug">
                       Jika pakaian robek, salah ukuran, atau ada noda berat yang tidak tercantum dalam deskripsi, Anda berhak retur atau klaim 100% uang kembali.
                     </p>
                   </div>
@@ -1167,7 +1167,7 @@ export default function ProfileContent() {
                   <span className="text-base">✨</span>
                   <div>
                     <span className="font-bold text-slate-800 block">2. Garansi Mutu Perawatan & Spa Tekstil</span>
-                    <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                    <p className="text-[0.6875rem] text-slate-600 mt-0.5 leading-snug">
                       Jika hasil pencucian, pewarnaan ulang, atau jahitan hemming tidak rapi, kami menyediakan gratis pengerjaan ulang (re-treatment).
                     </p>
                   </div>
@@ -1177,7 +1177,7 @@ export default function ProfileContent() {
                   <span className="text-base">⚖️</span>
                   <div>
                     <span className="font-bold text-slate-800 block">3. Mediasi Sengketa Cepat 1x24 Jam</span>
-                    <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                    <p className="text-[0.6875rem] text-slate-600 mt-0.5 leading-snug">
                       Tim resolusi Klambi.id bertindak sebagai pihak netral untuk memeriksa bukti foto/video dan menyelesaikan kendala secara adil.
                     </p>
                   </div>
@@ -1221,12 +1221,12 @@ export default function ProfileContent() {
             </div>
 
             <div className="p-3 bg-sky-50/70 border border-sky-200 rounded-xl space-y-2.5 text-xs">
-              <div className="flex justify-between text-[11px]">
+              <div className="flex justify-between text-[0.6875rem]">
                 <span className="font-mono text-slate-600">No. Resi: JNT-992144180</span>
                 <span className="text-sky-700 font-bold bg-sky-100 px-2 py-0.5 rounded">Dalam Perjalanan</span>
               </div>
               <p className="font-bold text-slate-800">Jaket Denim Vintage Levi&apos;s 501 Original</p>
-              <div className="p-2 bg-white rounded-lg border border-sky-100 text-[11px] text-slate-600 space-y-1">
+              <div className="p-2 bg-white rounded-lg border border-sky-100 text-[0.6875rem] text-slate-600 space-y-1">
                 <p>📍 <strong>08:30:</strong> Paket dibawa kurir (J&T Express Jakarta Selatan)</p>
                 <p>📍 <strong>11:15:</strong> Menuju alamat penerima (Jl. Senopati No. 42)</p>
               </div>
@@ -1254,7 +1254,7 @@ export default function ProfileContent() {
                 <span className="text-xl">⭐</span>
                 <div>
                   <h3 className="text-base font-bold text-slate-900">Beri Penilaian Pesanan</h3>
-                  <p className="text-[11px] text-slate-500">Pilih bintang 1 - 5 sesuai kepuasan Anda</p>
+                  <p className="text-[0.6875rem] text-slate-500">Pilih bintang 1 - 5 sesuai kepuasan Anda</p>
                 </div>
               </div>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-700">
@@ -1268,17 +1268,17 @@ export default function ProfileContent() {
                   <div className="flex items-center justify-between">
                     <p className="font-bold text-slate-800">Potong Panjang Celana & Hemming Chainstitch</p>
                     {reviewedOrders.includes('order-hemming-1') && (
-                      <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">
+                      <span className="text-[0.625rem] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">
                         Dinilai ✓
                       </span>
                     )}
                   </div>
-                  <p className="text-slate-500 text-[11px]">Taylor Studio Artisan Fatmawati • Selesai</p>
+                  <p className="text-slate-500 text-[0.6875rem]">Taylor Studio Artisan Fatmawati • Selesai</p>
                 </div>
 
                 {/* Interactive Star Rating Selector */}
                 <div className="bg-white p-3 rounded-xl border border-slate-200/80 space-y-2 text-center">
-                  <p className="text-[11px] text-slate-600 font-medium">Berapa bintang untuk kualitas layanan ini?</p>
+                  <p className="text-[0.6875rem] text-slate-600 font-medium">Berapa bintang untuk kualitas layanan ini?</p>
                   <div className="flex items-center justify-center gap-2">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
@@ -1305,7 +1305,7 @@ export default function ProfileContent() {
 
                 {/* Review feedback tags */}
                 <div className="space-y-1.5">
-                  <p className="text-[11px] font-semibold text-slate-700">Apa yang paling Anda suka / kritisi?</p>
+                  <p className="text-[0.6875rem] font-semibold text-slate-700">Apa yang paling Anda suka / kritisi?</p>
                   <div className="flex flex-wrap gap-1.5">
                     {['Jahitan Rapi', 'Tepat Waktu', 'Bahan Terjaga', 'Kemasan Bagus', 'Komunikasi Ramah', 'Jahitan Miring'].map((tag) => {
                       const active = selectedReviewTags.includes(tag);
@@ -1318,7 +1318,7 @@ export default function ProfileContent() {
                               active ? prev.filter((t) => t !== tag) : [...prev, tag]
                             );
                           }}
-                          className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-all ${
+                          className={`px-2.5 py-1 rounded-full text-[0.6875rem] font-medium border transition-all ${
                             active
                               ? 'bg-emerald-600 text-white border-emerald-600'
                               : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
@@ -1343,7 +1343,7 @@ export default function ProfileContent() {
                 </div>
 
                 <div className="flex items-center justify-between pt-2 border-t">
-                  <span className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+                  <span className="text-[0.6875rem] text-emerald-700 font-semibold flex items-center gap-1">
                     <span>🎁</span> Bonus +25 Poin Eco
                   </span>
                   <button
@@ -1446,7 +1446,7 @@ export default function ProfileContent() {
                 <span className="text-xl">🌿</span>
                 <div>
                   <h3 className="text-base font-bold text-slate-900">Katalog Hadiah Poin Eco</h3>
-                  <p className="text-[11px] text-amber-600 font-bold">{poinEco} Poin Tersedia</p>
+                  <p className="text-[0.6875rem] text-amber-600 font-bold">{poinEco} Poin Tersedia</p>
                 </div>
               </div>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-700">
@@ -1458,7 +1458,7 @@ export default function ProfileContent() {
               <div className="p-3 bg-slate-50 border rounded-xl flex items-center justify-between">
                 <div>
                   <p className="font-bold text-slate-800">Voucher Diskon Servis Rp 25.000</p>
-                  <p className="text-[10px] text-slate-500">Biaya: 500 Poin Eco</p>
+                  <p className="text-[0.625rem] text-slate-500">Biaya: 500 Poin Eco</p>
                 </div>
                 <button
                   onClick={() => handleRedeemReward(500, 'Voucher Diskon Servis Rp 25.000', 'voucher')}
@@ -1475,7 +1475,7 @@ export default function ProfileContent() {
               <div className="p-3 bg-slate-50 border rounded-xl flex items-center justify-between">
                 <div>
                   <p className="font-bold text-slate-800">Pohon Donasi Mangrove Sirkular</p>
-                  <p className="text-[10px] text-slate-500">Biaya: 1.000 Poin Eco (Tanam 1 Bibit)</p>
+                  <p className="text-[0.625rem] text-slate-500">Biaya: 1.000 Poin Eco (Tanam 1 Bibit)</p>
                 </div>
                 <button
                   onClick={() => handleRedeemReward(1000, 'Pohon Donasi Mangrove Sirkular', 'tree')}
@@ -1517,11 +1517,11 @@ export default function ProfileContent() {
             <div className="space-y-2.5 max-h-72 overflow-y-auto text-xs">
               <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] bg-rose-200 text-rose-800 font-bold px-1.5 py-0.5 rounded">
+                  <span className="text-[0.625rem] bg-rose-200 text-rose-800 font-bold px-1.5 py-0.5 rounded">
                     Diskon 50%
                   </span>
                   <p className="font-bold text-rose-950 mt-1">Potongan Belanja Thrift & Permak</p>
-                  <p className="text-[10px] text-rose-700">Min. Belanja Rp 50.000 • Berlaku s/d 30 Sep</p>
+                  <p className="text-[0.625rem] text-rose-700">Min. Belanja Rp 50.000 • Berlaku s/d 30 Sep</p>
                 </div>
                 <button
                   onClick={() => router.push('/cari-jasa')}
@@ -1533,11 +1533,11 @@ export default function ProfileContent() {
 
               <div className="p-3 bg-teal-50 border border-teal-200 rounded-xl flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] bg-teal-200 text-teal-800 font-bold px-1.5 py-0.5 rounded">
+                  <span className="text-[0.625rem] bg-teal-200 text-teal-800 font-bold px-1.5 py-0.5 rounded">
                     Gratis Ongkir
                   </span>
                   <p className="font-bold text-teal-950 mt-1">Pick-up Kurir Sirkular</p>
-                  <p className="text-[10px] text-teal-700">Semua wilayah Jabodetabek • Berlaku s/d 30 Sep</p>
+                  <p className="text-[0.625rem] text-teal-700">Semua wilayah Jabodetabek • Berlaku s/d 30 Sep</p>
                 </div>
                 <button
                   onClick={() => router.push('/cari-jasa')}
@@ -1577,7 +1577,7 @@ export default function ProfileContent() {
                 Klambi.id menggunakan sistem <strong>Rekening Bersama (Escrow 5 Tahap)</strong> untuk memastikan
                 setiap transaksi jual beli thrift, upcycle, maupun reparasi pakaian 100% terlindungi:
               </p>
-              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 space-y-2 text-[11px] text-emerald-950">
+              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 space-y-2 text-[0.6875rem] text-emerald-950">
                 <p>1️⃣ <strong>Pembeli Membayar:</strong> Dana masuk ke rekening penampungan resmi Klambi.id.</p>
                 <p>2️⃣ <strong>Notifikasi Mitra:</strong> Penjual / penjahit mulai memproses pesanan.</p>
                 <p>3️⃣ <strong>Pengiriman / Pick-up:</strong> Paket dikirim dengan nomor resi terverifikasi.</p>
@@ -1605,7 +1605,7 @@ export default function ProfileContent() {
                 <span className="text-xl">📸</span>
                 <div>
                   <h3 className="text-base font-bold text-slate-900">Riwayat Scan AI Wearwise</h3>
-                  <p className="text-[11px] text-slate-500">18 Analisis Tersimpan</p>
+                  <p className="text-[0.6875rem] text-slate-500">18 Analisis Tersimpan</p>
                 </div>
               </div>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-700">
@@ -1617,7 +1617,7 @@ export default function ProfileContent() {
               <div className="p-3 bg-slate-50 rounded-xl border flex items-center justify-between">
                 <div>
                   <p className="font-bold text-slate-800">Jaket Denim Vintage (Sobek Saku)</p>
-                  <p className="text-[10px] text-slate-500">Kondisi: 78% • Saran: Permak / Patch</p>
+                  <p className="text-[0.625rem] text-slate-500">Kondisi: 78% • Saran: Permak / Patch</p>
                 </div>
                 <button
                   onClick={() => router.push('/care-plan')}
@@ -1630,7 +1630,7 @@ export default function ProfileContent() {
               <div className="p-3 bg-slate-50 rounded-xl border flex items-center justify-between">
                 <div>
                   <p className="font-bold text-slate-800">Kemeja Linen Putih (Noda Kopi)</p>
-                  <p className="text-[10px] text-slate-500">Kondisi: 85% • Saran: Textile Spa Clean</p>
+                  <p className="text-[0.625rem] text-slate-500">Kondisi: 85% • Saran: Textile Spa Clean</p>
                 </div>
                 <button
                   onClick={() => router.push('/care-plan')}
@@ -1719,7 +1719,7 @@ export default function ProfileContent() {
 
               <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] text-amber-800 font-semibold">Kode Referral Anda:</p>
+                  <p className="text-[0.625rem] text-amber-800 font-semibold">Kode Referral Anda:</p>
                   <p className="text-base font-mono font-extrabold text-amber-950">HAFIZ-ECO2026</p>
                 </div>
                 <button
@@ -1767,7 +1767,7 @@ export default function ProfileContent() {
               </p>
               <div className="p-3 bg-purple-50 rounded-xl border border-purple-200 text-purple-900 text-center font-semibold">
                 Tautan Voucher: <br />
-                <span className="text-purple-700 font-mono text-[11px]">https://klambi.id/v/hafiz-gift</span>
+                <span className="text-purple-700 font-mono text-[0.6875rem]">https://klambi.id/v/hafiz-gift</span>
               </div>
             </div>
 
@@ -1845,19 +1845,19 @@ export default function ProfileContent() {
             <div className="space-y-2 max-h-72 overflow-y-auto text-xs text-slate-700">
               <details className="p-2.5 bg-slate-50 rounded-xl border cursor-pointer">
                 <summary className="font-bold text-slate-800">Bagaimana cara kerja Rekber Escrow?</summary>
-                <p className="mt-1.5 text-slate-600 text-[11px] leading-relaxed">
+                <p className="mt-1.5 text-slate-600 text-[0.6875rem] leading-relaxed">
                   Uang Anda ditahan oleh Klambi.id dan baru dibayarkan ke penjual setelah barang Anda terima dan sesuai deskripsi.
                 </p>
               </details>
               <details className="p-2.5 bg-slate-50 rounded-xl border cursor-pointer">
                 <summary className="font-bold text-slate-800">Berapa berat minimal penjualan upcycle?</summary>
-                <p className="mt-1.5 text-slate-600 text-[11px] leading-relaxed">
+                <p className="mt-1.5 text-slate-600 text-[0.6875rem] leading-relaxed">
                   Penjualan limbah tekstil upcycle kiloan memiliki kuota minimal 5 kg agar efisien untuk penjemputan mitra daur ulang.
                 </p>
               </details>
               <details className="p-2.5 bg-slate-50 rounded-xl border cursor-pointer">
                 <summary className="font-bold text-slate-800">Bagaimana jika pakaian tidak sesuai kondisi scan?</summary>
-                <p className="mt-1.5 text-slate-600 text-[11px] leading-relaxed">
+                <p className="mt-1.5 text-slate-600 text-[0.6875rem] leading-relaxed">
                   Anda dapat mengajukan klaim garansi pengembalian dana 100% dalam waktu 1x24 jam sebelum dana escrow dilepaskan.
                 </p>
               </details>
@@ -1885,7 +1885,7 @@ export default function ProfileContent() {
                 </div>
                 <div>
                   <h4 className="text-xs font-bold">Klambi Support 24/7</h4>
-                  <p className="text-[10px] text-emerald-300">Online • Siap Membantu</p>
+                  <p className="text-[0.625rem] text-emerald-300">Online • Siap Membantu</p>
                 </div>
               </div>
               <button onClick={() => setActiveModal(null)} className="text-white/70 hover:text-white">
@@ -1909,7 +1909,7 @@ export default function ProfileContent() {
                   >
                     <p className="text-xs leading-relaxed">{msg.text}</p>
                   </div>
-                  <span className="text-[9px] text-slate-400 mt-0.5 px-1">{msg.time}</span>
+                  <span className="text-[0.5625rem] text-slate-400 mt-0.5 px-1">{msg.time}</span>
                 </div>
               ))}
             </div>
@@ -1985,7 +1985,7 @@ export default function ProfileContent() {
                   Hemat Rp {(selectedProduct.originalPrice - selectedProduct.price).toLocaleString('id-ID')}
                 </span>
               </div>
-              <p className="text-slate-600 text-[11px] leading-relaxed">
+              <p className="text-slate-600 text-[0.6875rem] leading-relaxed">
                 Pakaian telah lolos verifikasi parameter AI Wearwise dan dilindungi garansi pelepasan saldo rekening bersama Escrow Klambi.id.
               </p>
             </div>
@@ -2043,7 +2043,7 @@ export default function ProfileContent() {
                 className="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl border flex items-center justify-between cursor-pointer"
               >
                 <span>Preferensi Notifikasi Sirkular</span>
-                <span className="text-emerald-600 font-semibold text-[10px]">Aktif</span>
+                <span className="text-emerald-600 font-semibold text-[0.625rem]">Aktif</span>
               </div>
               <div
                 onClick={() => toast.info('Kebijakan privasi & data terenkripsi.')}

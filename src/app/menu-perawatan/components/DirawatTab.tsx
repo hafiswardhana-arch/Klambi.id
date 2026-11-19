@@ -171,7 +171,7 @@ export default function DirawatTab() {
                 <div className="flex-1 text-left">
                   <p className="text-sm font-600 text-foreground">{plan.category}</p>
                 </div>
-                <span className={`text-[10px] font-600 px-2 py-0.5 rounded-full ${diff.bg} ${diff.color}`}>
+                <span className={`text-[0.625rem] font-600 px-2 py-0.5 rounded-full ${diff.bg} ${diff.color}`}>
                   {diff.label}
                 </span>
                 <Icon
@@ -184,7 +184,7 @@ export default function DirawatTab() {
               <div className="px-3 pb-3 space-y-1.5 border-t border-border pt-3 animate-fade-in">
                   {plan.steps.map((step, si) =>
                 <div key={`step-${plan.id}-${si}`} className="flex items-start gap-2">
-                      <span className="w-5 h-5 rounded-full bg-secondary text-primary text-[10px] font-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="w-5 h-5 rounded-full bg-secondary text-primary text-[0.625rem] font-700 flex items-center justify-center flex-shrink-0 mt-0.5">
                         {si + 1}
                       </span>
                       <p className="text-xs text-muted-foreground leading-relaxed">{step}</p>
@@ -295,7 +295,7 @@ export default function DirawatTab() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-700 text-foreground truncate">{product.name}</p>
                 <p className="text-xs text-muted-foreground">{product.brand} · {product.category}</p>
-                <p className="text-[11px] text-accent mt-0.5">{product.relevance}</p>
+                <p className="text-[0.6875rem] text-accent mt-0.5">{product.relevance}</p>
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="text-sm font-700 text-primary font-tabular">

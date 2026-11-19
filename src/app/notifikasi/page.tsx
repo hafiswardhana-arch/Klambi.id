@@ -234,7 +234,7 @@ export default function NotifikasiPage() {
           {unreadTotal > 0 && (
             <button
               onClick={markAllAsRead}
-              className="text-[11px] font-extrabold text-[#10284D] bg-secondary hover:bg-muted px-2.5 py-1.5 rounded-xl transition-all active:scale-95 shadow-xs"
+              className="text-[0.6875rem] font-extrabold text-[#10284D] bg-secondary hover:bg-muted px-2.5 py-1.5 rounded-xl transition-all active:scale-95 shadow-xs"
               title="Tandai semua dibaca"
             >
               Tandai Dibaca
@@ -262,11 +262,11 @@ export default function NotifikasiPage() {
           <div className="relative z-10 flex items-center justify-between">
             <div className="space-y-1 max-w-[280px] sm:max-w-md">
               <div className="flex items-center gap-2">
-                <span className="bg-white/20 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                <span className="bg-white/20 text-white text-[0.625rem] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
                   Klámbi Feed
                 </span>
                 {unreadTotal > 0 && (
-                  <span className="bg-[#E86D50] text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-pulse">
+                  <span className="bg-[#E86D50] text-white text-[0.625rem] font-black px-2 py-0.5 rounded-full animate-pulse">
                     {unreadTotal} Baru
                   </span>
                 )}
@@ -290,7 +290,7 @@ export default function NotifikasiPage() {
           <div className="relative z-10 pt-4 mt-3 border-t border-white/15 flex items-center justify-between text-xs">
             <button
               onClick={handleSimulateNewNotification}
-              className="text-cyan-200 hover:text-white font-bold flex items-center gap-1 transition-colors text-[11px]"
+              className="text-cyan-200 hover:text-white font-bold flex items-center gap-1 transition-colors text-[0.6875rem]"
             >
               <span>+ Simulasi Notif Baru</span>
             </button>
@@ -298,7 +298,7 @@ export default function NotifikasiPage() {
             {notifications.length > 0 && (
               <button
                 onClick={clearAllNotifications}
-                className="text-rose-200 hover:text-rose-100 font-bold transition-colors text-[11px]"
+                className="text-rose-200 hover:text-rose-100 font-bold transition-colors text-[0.6875rem]"
               >
                 Bersihkan Semua
               </button>
@@ -346,7 +346,7 @@ export default function NotifikasiPage() {
               >
                 <span>{tab.label}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${
+                  className={`text-[0.625rem] px-1.5 py-0.2 rounded-full font-extrabold ${
                     selectedFilter === tab.id
                       ? 'bg-white/20 text-white'
                       : 'bg-muted text-muted-foreground'
@@ -420,10 +420,10 @@ export default function NotifikasiPage() {
                   {/* Content */}
                   <div className="flex-1 min-w-0 pr-6 space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded ${n.badgeColor || 'bg-secondary text-primary'}`}>
+                      <span className={`text-[0.5625rem] font-extrabold px-1.5 py-0.5 rounded ${n.badgeColor || 'bg-secondary text-primary'}`}>
                         {n.categoryLabel}
                       </span>
-                      <span className="text-[10px] text-muted-foreground">{n.time}</span>
+                      <span className="text-[0.625rem] text-muted-foreground">{n.time}</span>
                     </div>
 
                     <h4 className="text-xs sm:text-sm font-extrabold text-[#10284D] leading-snug">
@@ -444,7 +444,7 @@ export default function NotifikasiPage() {
                           );
                           router.push(n.targetHref);
                         }}
-                        className="text-[11px] font-extrabold text-[#10284D] hover:text-[#1E4D8C] bg-secondary hover:bg-muted px-3 py-1 rounded-xl transition-all flex items-center gap-1 active:scale-95"
+                        className="text-[0.6875rem] font-extrabold text-[#10284D] hover:text-[#1E4D8C] bg-secondary hover:bg-muted px-3 py-1 rounded-xl transition-all flex items-center gap-1 active:scale-95"
                       >
                         <span>{n.actionText}</span>
                         <span>→</span>
@@ -478,7 +478,7 @@ export default function NotifikasiPage() {
                     {selectedNotification.icon}
                   </div>
                   <div>
-                    <span className="text-[10px] bg-secondary text-primary font-bold px-2 py-0.5 rounded">
+                    <span className="text-[0.625rem] bg-secondary text-primary font-bold px-2 py-0.5 rounded">
                       {selectedNotification.categoryLabel}
                     </span>
                     <h3 className="font-extrabold text-sm text-[#10284D] mt-1 leading-snug">
@@ -497,18 +497,18 @@ export default function NotifikasiPage() {
               {/* Modal Content */}
               <div className="space-y-2.5 text-xs">
                 <div className="text-gray-700 leading-relaxed bg-gray-50 p-3.5 rounded-2xl border border-gray-100">
-                  <span className="text-[10px] text-gray-400 block mb-1">
+                  <span className="text-[0.625rem] text-gray-400 block mb-1">
                     Waktu: {selectedNotification.time}
                   </span>
                   <p>{selectedNotification.desc}</p>
                 </div>
 
                 {selectedNotification.details && (
-                  <div className="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-100 text-blue-950 text-[11px] space-y-1">
+                  <div className="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-100 text-blue-950 text-[0.6875rem] space-y-1">
                     <strong className="block font-extrabold text-blue-900">Informasi Tambahan:</strong>
                     <p className="leading-relaxed">{selectedNotification.details}</p>
                     {selectedNotification.orderNumber && (
-                      <div className="mt-2 pt-2 border-t border-blue-200/60 flex items-center justify-between text-[10px] font-mono font-bold text-blue-800">
+                      <div className="mt-2 pt-2 border-t border-blue-200/60 flex items-center justify-between text-[0.625rem] font-mono font-bold text-blue-800">
                         <span>Kode Referensi:</span>
                         <span>{selectedNotification.orderNumber}</span>
                       </div>
@@ -556,7 +556,7 @@ export default function NotifikasiPage() {
                     <h3 className="font-extrabold text-sm text-[#10284D]">
                       Pengaturan Notifikasi
                     </h3>
-                    <p className="text-[10px] text-gray-500">Kelola preferensi pesan & pengingat</p>
+                    <p className="text-[0.625rem] text-gray-500">Kelola preferensi pesan & pengingat</p>
                   </div>
                 </div>
                 <button
@@ -572,7 +572,7 @@ export default function NotifikasiPage() {
                 <div className="flex items-center justify-between pt-1">
                   <div>
                     <h4 className="font-bold text-gray-800">Update Transaksi & Escrow</h4>
-                    <p className="text-[11px] text-gray-500">Notifikasi status order, pencairan saldo, dan resi</p>
+                    <p className="text-[0.6875rem] text-gray-500">Notifikasi status order, pencairan saldo, dan resi</p>
                   </div>
                   <input
                     type="checkbox"
@@ -587,7 +587,7 @@ export default function NotifikasiPage() {
                 <div className="flex items-center justify-between pt-3">
                   <div>
                     <h4 className="font-bold text-gray-800">Pengingat Perawatan Pakaian</h4>
-                    <p className="text-[11px] text-gray-500">Jadwal spa & laundry ramah serat berkala</p>
+                    <p className="text-[0.6875rem] text-gray-500">Jadwal spa & laundry ramah serat berkala</p>
                   </div>
                   <input
                     type="checkbox"
@@ -602,7 +602,7 @@ export default function NotifikasiPage() {
                 <div className="flex items-center justify-between pt-3">
                   <div>
                     <h4 className="font-bold text-gray-800">Wearwise AI Scan Updates</h4>
-                    <p className="text-[11px] text-gray-500">Hasil diagnosis kain, skor sirkular, dan tips AI</p>
+                    <p className="text-[0.6875rem] text-gray-500">Hasil diagnosis kain, skor sirkular, dan tips AI</p>
                   </div>
                   <input
                     type="checkbox"
@@ -617,7 +617,7 @@ export default function NotifikasiPage() {
                 <div className="flex items-center justify-between pt-3">
                   <div>
                     <h4 className="font-bold text-gray-800">Promo & Diskon Sirkular</h4>
-                    <p className="text-[11px] text-gray-500">Voucher hemat Kindfoam dan produk upcycle vintage</p>
+                    <p className="text-[0.6875rem] text-gray-500">Voucher hemat Kindfoam dan produk upcycle vintage</p>
                   </div>
                   <input
                     type="checkbox"

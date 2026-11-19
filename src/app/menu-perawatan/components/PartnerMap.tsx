@@ -50,7 +50,7 @@ function partnerIcon(p: MapPartner) {
         <span class="w-7 h-7 rounded-full border-[2.5px] border-white shadow-md flex items-center justify-center" style="background:${p.color}">
           <span class="w-2 h-2 rounded-full bg-white"></span>
         </span>
-        <span class="mt-0.5 px-1.5 rounded-full bg-white/95 shadow-sm text-[10px] leading-4 font-semibold text-gray-800 whitespace-nowrap">${escapeHtml(
+        <span class="mt-0.5 px-1.5 rounded-full bg-white/95 shadow-sm text-[0.625rem] leading-4 font-semibold text-gray-800 whitespace-nowrap">${escapeHtml(
           formatDistance(p.distanceKm)
         )}</span>
       </span>`,

@@ -318,7 +318,7 @@ export default function BerandaPage() {
           >
             <Icon name="ShoppingCartIcon" size={24} />
             {cartCount > 0 && (
-              <span className="absolute top-0.5 right-0 min-w-[18px] h-[18px] px-1 rounded-full bg-coral text-white text-[10px] font-semibold flex items-center justify-center ring-2 ring-background animate-scale-in">
+              <span className="absolute top-0.5 right-0 min-w-[18px] h-[18px] px-1 rounded-full bg-coral text-white text-[0.625rem] font-semibold flex items-center justify-center ring-2 ring-background animate-scale-in">
                 {cartCount}
               </span>
             )}
@@ -342,16 +342,16 @@ export default function BerandaPage() {
             className="w-full text-left bg-white rounded-2xl shadow-card px-3.5 py-3 flex items-center gap-3 hover:shadow-card-hover active:scale-[0.98] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
           >
             <span
-              className="w-11 h-11 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center flex-shrink-0 text-navy-deep text-[14px] font-bold ring-2 ring-amber-100"
+              className="w-11 h-11 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center flex-shrink-0 text-navy-deep text-[0.875rem] font-bold ring-2 ring-amber-100"
               aria-hidden="true"
             >
               {initials}
             </span>
             <span className="flex-1 min-w-0">
-              <span className="block text-[14px] font-semibold text-gray-900 leading-tight truncate">
+              <span className="block text-[0.875rem] font-semibold text-gray-900 leading-tight truncate">
                 {greeting}, {userName}
               </span>
-              <span className="block text-[12px] text-gray-700 mt-0.5 truncate">
+              <span className="block text-[0.75rem] text-gray-700 mt-0.5 truncate">
                 Kenali Kondisinya, Tentukan Langkahnya!
               </span>
             </span>
@@ -377,12 +377,12 @@ export default function BerandaPage() {
 
                   <div className="relative z-10 flex flex-col justify-between w-[62%] min-w-0">
                     <div>
-                      <span className="inline-flex items-center gap-1 bg-white/15 text-white text-[9px] font-semibold px-2 py-0.5 rounded-md uppercase tracking-wider">
+                      <span className="inline-flex items-center gap-1 bg-white/15 text-white text-[0.5625rem] font-semibold px-2 py-0.5 rounded-md uppercase tracking-wider">
                         {slide.badge}
                       </span>
-                      <h3 className="text-[22px] leading-none font-bold tracking-tight mt-1.5">{slide.title}</h3>
-                      <p className="text-[11px] font-semibold mt-1.5 leading-snug">{slide.subtitle}</p>
-                      <p className="text-[10px] text-white/90 leading-snug mt-1 line-clamp-2">{slide.description}</p>
+                      <h3 className="text-[1.375rem] leading-none font-bold tracking-tight mt-1.5">{slide.title}</h3>
+                      <p className="text-[0.6875rem] font-semibold mt-1.5 leading-snug">{slide.subtitle}</p>
+                      <p className="text-[0.625rem] text-white/90 leading-snug mt-1 line-clamp-2">{slide.description}</p>
                     </div>
                     <button
                       type="button"
@@ -390,7 +390,7 @@ export default function BerandaPage() {
                         if (slide.isKindfoam) setShowKindfoamModal(true);
                         else if (slide.link) router.push(slide.link);
                       }}
-                      className="self-start mt-3 inline-flex items-center gap-1.5 bg-navy-deep text-white rounded-full pl-3.5 pr-2.5 h-8 text-[10px] font-semibold uppercase tracking-wide border border-white/25 hover:bg-navy active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                      className="self-start mt-3 inline-flex items-center gap-1.5 bg-navy-deep text-white rounded-full pl-3.5 pr-2.5 h-8 text-[0.625rem] font-semibold uppercase tracking-wide border border-white/25 hover:bg-navy active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                     >
                       {slide.cta.replace(' →', '')}
                       <Icon name="ArrowRightIcon" size={12} aria-hidden="true" />
@@ -401,10 +401,10 @@ export default function BerandaPage() {
                   <div className="relative z-10 flex-1 flex items-center justify-center" aria-hidden="true">
                     <div className="relative w-full h-full">
                       <div className="absolute right-0 top-3 w-[62px] h-[50px] rounded-lg bg-gradient-to-br from-pink-100 to-pink-300 shadow-lg rotate-6 border-2 border-white/80 flex items-center justify-center">
-                        <span className="text-[11px] font-bold text-[#E2558A]">{slide.isKindfoam ? 'kindfoam' : 'klámbi'}</span>
+                        <span className="text-[0.6875rem] font-bold text-[#E2558A]">{slide.isKindfoam ? 'kindfoam' : 'klámbi'}</span>
                       </div>
                       <div className="absolute left-0 bottom-3 w-[66px] h-[54px] rounded-lg bg-gradient-to-br from-sky-50 to-sky-200 shadow-lg -rotate-6 border-2 border-white/80 flex items-center justify-center">
-                        <span className="text-[11px] font-bold text-[#1A6FD1]">{slide.isKindfoam ? 'kindfoam' : 'klámbi'}</span>
+                        <span className="text-[0.6875rem] font-bold text-[#1A6FD1]">{slide.isKindfoam ? 'kindfoam' : 'klámbi'}</span>
                       </div>
                     </div>
                   </div>
@@ -456,7 +456,7 @@ export default function BerandaPage() {
                   transform="rotate(-90 38 38)"
                   className="transition-all duration-300 ease-out"
                 />
-                <text x="38" y="38" textAnchor="middle" dy="0.36em" className="text-[19px] font-bold fill-[#1B5FB8]">
+                <text x="38" y="38" textAnchor="middle" dy="0.36em" className="text-[1.1875rem] font-bold fill-[#1B5FB8]">
                   {countProgress}%
                 </text>
               </svg>
@@ -470,8 +470,8 @@ export default function BerandaPage() {
             ].map((stat) => (
               <div key={stat.label} className="flex flex-col items-center justify-center border-l border-gray-300 px-1">
                 <span className="h-6 flex items-center" aria-hidden="true">{stat.icon}</span>
-                <span className="text-[14px] font-semibold text-gray-900 leading-tight mt-1 font-tabular">{stat.value}</span>
-                <span className="text-[10px] text-gray-700">{stat.label}</span>
+                <span className="text-[0.875rem] font-semibold text-gray-900 leading-tight mt-1 font-tabular">{stat.value}</span>
+                <span className="text-[0.625rem] text-gray-700">{stat.label}</span>
               </div>
             ))}
           </div>
@@ -511,8 +511,8 @@ export default function BerandaPage() {
               <span className={`w-11 h-11 rounded-xl ${f.tint} mx-auto mb-1.5 flex items-center justify-center`} aria-hidden="true">
                 {f.icon}
               </span>
-              <span className="block font-semibold text-[12.5px] text-gray-900 leading-tight">{f.title}</span>
-              <span className="block text-[9.5px] text-gray-600 mt-0.5 leading-tight">{f.sub}</span>
+              <span className="block font-semibold text-[0.7813rem] text-gray-900 leading-tight">{f.title}</span>
+              <span className="block text-[0.5938rem] text-gray-600 mt-0.5 leading-tight">{f.sub}</span>
             </button>
           ))}
         </nav>
@@ -527,7 +527,7 @@ export default function BerandaPage() {
                 role="tab"
                 aria-selected={active}
                 onClick={() => setSelectedCategory(cat)}
-                className={`h-9 px-4 rounded-full text-[12.5px] whitespace-nowrap border transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-navy ${
+                className={`h-9 px-4 rounded-full text-[0.7813rem] whitespace-nowrap border transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-navy ${
                   active
                     ? 'bg-navy border-navy text-white shadow-md'
                     : 'bg-white border-gray-300 text-gray-800 hover:border-navy/60 active:scale-95'
@@ -542,10 +542,10 @@ export default function BerandaPage() {
         {/* 6. FEATURED DROPS */}
         <section className="space-y-3" aria-labelledby="featured-drops">
           <div className="flex items-end justify-between">
-            <h3 id="featured-drops" className="text-[15px] font-semibold text-gray-900">Featured Drops</h3>
+            <h3 id="featured-drops" className="text-[0.9375rem] font-semibold text-gray-900">Featured Drops</h3>
             <button
               onClick={() => router.push('/trift-marketplace')}
-              className="text-coral text-[12px] font-normal py-1 hover:underline underline-offset-2 active:opacity-75 transition-opacity"
+              className="text-coral text-[0.75rem] font-normal py-1 hover:underline underline-offset-2 active:opacity-75 transition-opacity"
             >
               Lihat lainnya
             </button>
@@ -572,16 +572,16 @@ export default function BerandaPage() {
                     </span>
                   </span>
                   <span className="block px-3 pt-2 pb-3">
-                    <span className="block text-[10px] text-gray-600 truncate">{product.categoryTitle}</span>
-                    <span className="block text-[12.5px] font-semibold text-gray-900 truncate leading-tight">{product.name}</span>
-                    <span className="block text-coral text-[13px] font-semibold mt-1.5 leading-none">
+                    <span className="block text-[0.625rem] text-gray-600 truncate">{product.categoryTitle}</span>
+                    <span className="block text-[0.7813rem] font-semibold text-gray-900 truncate leading-tight">{product.name}</span>
+                    <span className="block text-coral text-[0.8125rem] font-semibold mt-1.5 leading-none">
                       Rp{product.priceNow.toLocaleString('id-ID')},00
                     </span>
                     <span className="flex items-center justify-between gap-1 mt-1">
-                      <span className="text-[9.5px] text-gray-500 line-through truncate">
+                      <span className="text-[0.5938rem] text-gray-500 line-through truncate">
                         Rp{product.priceOrig.toLocaleString('id-ID')},00
                       </span>
-                      <span className="bg-[#B9F5CF] text-gray-900 text-[9px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap">
+                      <span className="bg-[#B9F5CF] text-gray-900 text-[0.5625rem] font-medium px-2 py-0.5 rounded-full whitespace-nowrap">
                         {product.condition}
                       </span>
                     </span>
@@ -609,7 +609,7 @@ export default function BerandaPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
                 <div className="absolute top-3 left-3">
-                  <span className="text-[10px] font-extrabold text-white bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20">
+                  <span className="text-[0.625rem] font-extrabold text-white bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20">
                     {selectedProduct.category}
                   </span>
                 </div>
@@ -620,12 +620,12 @@ export default function BerandaPage() {
                   <Icon name="XMarkIcon" size={18} />
                 </button>
                 <div className="absolute bottom-3 left-3 right-3 text-white">
-                  <span className="text-[10px] text-white/80 block">{selectedProduct.categoryTitle}</span>
+                  <span className="text-[0.625rem] text-white/80 block">{selectedProduct.categoryTitle}</span>
                   <h3 className="font-extrabold text-base text-white leading-tight drop-shadow">
                     {selectedProduct.name}
                   </h3>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[10px] text-emerald-300 bg-emerald-950/70 border border-emerald-500/40 px-2 py-0.5 rounded font-bold backdrop-blur-xs">
+                    <span className="text-[0.625rem] text-emerald-300 bg-emerald-950/70 border border-emerald-500/40 px-2 py-0.5 rounded font-bold backdrop-blur-xs">
                       {selectedProduct.condition} • Skor {selectedProduct.score}/100
                     </span>
                   </div>
@@ -635,7 +635,7 @@ export default function BerandaPage() {
               {/* Price & Seller */}
               <div className="flex items-baseline justify-between bg-slate-50 p-3 rounded-2xl border border-slate-100">
                 <div>
-                  <span className="text-[10px] text-gray-500 block">Harga Spesial</span>
+                  <span className="text-[0.625rem] text-gray-500 block">Harga Spesial</span>
                   <div className="flex items-baseline gap-2">
                     <span className="text-base font-black text-[#E86D50]">
                       Rp{selectedProduct.priceNow.toLocaleString('id-ID')},00
@@ -646,9 +646,9 @@ export default function BerandaPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] text-gray-500 block">Mitra Penjual</span>
+                  <span className="text-[0.625rem] text-gray-500 block">Mitra Penjual</span>
                   <span className="text-xs font-bold text-gray-800">{selectedProduct.seller}</span>
-                  <span className="text-[9px] text-gray-400 block">{selectedProduct.location}</span>
+                  <span className="text-[0.5625rem] text-gray-400 block">{selectedProduct.location}</span>
                 </div>
               </div>
 
@@ -658,7 +658,7 @@ export default function BerandaPage() {
                 <p className="text-xs text-gray-600 leading-relaxed bg-gray-50 p-3 rounded-xl">
                   {selectedProduct.description}
                 </p>
-                <p className="text-[11px] text-gray-500 pt-1">
+                <p className="text-[0.6875rem] text-gray-500 pt-1">
                   <strong>Bahan:</strong> {selectedProduct.fabric}
                 </p>
               </div>
@@ -722,7 +722,7 @@ export default function BerandaPage() {
                     <h3 className="font-extrabold text-sm text-[#10284D]">
                       {userName}
                     </h3>
-                    <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                    <span className="text-[0.625rem] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
                       Eco Champion Level 3
                     </span>
                   </div>
@@ -738,11 +738,11 @@ export default function BerandaPage() {
               {/* Status metrics */}
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                  <span className="text-gray-400 block text-[10px]">Saldo Escrow Aman</span>
+                  <span className="text-gray-400 block text-[0.625rem]">Saldo Escrow Aman</span>
                   <span className="font-black text-sm text-emerald-600">Rp 450.000</span>
                 </div>
                 <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                  <span className="text-gray-400 block text-[10px]">Baju Terawat</span>
+                  <span className="text-gray-400 block text-[0.625rem]">Baju Terawat</span>
                   <span className="font-black text-sm text-[#10284D]">12 Pakaian</span>
                 </div>
               </div>
@@ -787,7 +787,7 @@ export default function BerandaPage() {
                     <h3 className="font-extrabold text-sm text-[#10284D]">
                       Dampak Lingkungan Sirkularmu
                     </h3>
-                    <p className="text-[10px] text-gray-500">Pencapaian Bulan Ini</p>
+                    <p className="text-[0.625rem] text-gray-500">Pencapaian Bulan Ini</p>
                   </div>
                 </div>
                 <button
@@ -800,22 +800,22 @@ export default function BerandaPage() {
 
               <div className="space-y-3">
                 <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 space-y-1">
-                  <span className="text-[10px] text-emerald-800 font-bold block uppercase tracking-wider">
+                  <span className="text-[0.625rem] text-emerald-800 font-bold block uppercase tracking-wider">
                     Limbah Tekstil Diselamatkan
                   </span>
                   <span className="text-2xl font-black text-emerald-900 block">12.5 kg</span>
-                  <p className="text-[11px] text-emerald-700">
+                  <p className="text-[0.6875rem] text-emerald-700">
                     Setara dengan mencegah 150 kg emisi karbon pembakaran kain!
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="bg-blue-50 border border-blue-100 p-3 rounded-2xl">
-                    <span className="text-blue-600 block text-[10px]">Air Dihemat</span>
+                    <span className="text-blue-600 block text-[0.625rem]">Air Dihemat</span>
                     <span className="font-extrabold text-sm text-blue-900">2.450 Liter</span>
                   </div>
                   <div className="bg-amber-50 border border-amber-100 p-3 rounded-2xl">
-                    <span className="text-amber-800 block text-[10px]">Peringkat Komunitas</span>
+                    <span className="text-amber-800 block text-[0.625rem]">Peringkat Komunitas</span>
                     <span className="font-extrabold text-sm text-amber-900">Top #8 Nasional</span>
                   </div>
                 </div>
@@ -846,7 +846,7 @@ export default function BerandaPage() {
                     <Icon name="SparklesIcon" variant="solid" size={24} className="text-cyan-700" />
                   </div>
                   <div>
-                    <span className="text-[10px] bg-cyan-100 text-cyan-800 font-extrabold px-2 py-0.5 rounded">
+                    <span className="text-[0.625rem] bg-cyan-100 text-cyan-800 font-extrabold px-2 py-0.5 rounded">
                       Official Product
                     </span>
                     <h3 className="font-extrabold text-base text-[#10284D] mt-0.5">

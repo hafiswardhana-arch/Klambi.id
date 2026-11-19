@@ -109,7 +109,7 @@ export default function TransactionHistoryTab({
           <div className="bg-card border border-border rounded-xl p-8 text-center">
             <Icon name="ShoppingBagIcon" size={32} className="mx-auto text-muted-foreground/60 mb-2" />
             <p className="text-xs font-semibold text-foreground">Belum ada transaksi di kategori ini</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">Semua riwayat pemesanan akan otomatis tercatat di sini</p>
+            <p className="text-[0.6875rem] text-muted-foreground mt-0.5">Semua riwayat pemesanan akan otomatis tercatat di sini</p>
           </div>
         ) : (
           filtered.map((item) => (
@@ -124,7 +124,7 @@ export default function TransactionHistoryTab({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-secondary px-2 py-0.5 rounded">
+                    <span className="text-[0.625rem] font-bold uppercase tracking-wider text-primary bg-secondary px-2 py-0.5 rounded">
                       {item.moduleLabel}
                     </span>
                     <span className="text-xs font-mono text-muted-foreground">
@@ -147,7 +147,7 @@ export default function TransactionHistoryTab({
                     Rp {item.amount.toLocaleString('id-ID')}
                   </span>
                   <span
-                    className={`text-[11px] px-2.5 py-0.5 rounded-full font-bold border ${getStatusBadgeClass(
+                    className={`text-[0.6875rem] px-2.5 py-0.5 rounded-full font-bold border ${getStatusBadgeClass(
                       item.status
                     )}`}
                   >
@@ -158,7 +158,7 @@ export default function TransactionHistoryTab({
 
               {/* Escrow note & Action Button */}
               <div className="mt-3 pt-3 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                <div className="text-[0.6875rem] text-muted-foreground flex items-center gap-1.5">
                   <Icon
                     name="ShieldCheckIcon"
                     size={14}

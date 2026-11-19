@@ -140,7 +140,7 @@ export default function ChatPage() {
                     <h4 className="text-xs font-extrabold text-foreground truncate">
                       {conv.sellerName}
                     </h4>
-                    <span className="text-[10px] text-muted-foreground">{conv.time}</span>
+                    <span className="text-[0.625rem] text-muted-foreground">{conv.time}</span>
                   </div>
                   <p className="text-xs text-muted-foreground truncate mt-0.5">
                     {conv.lastMessage}
@@ -164,7 +164,7 @@ export default function ChatPage() {
                 <Icon name="ArrowLeftIcon" size={16} />
                 Kembali ke Daftar Chat
               </button>
-              <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+              <span className="text-[0.625rem] text-emerald-600 font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
                 Online
               </span>
             </div>
@@ -187,7 +187,7 @@ export default function ChatPage() {
                   >
                     {msg.text}
                   </div>
-                  <span className="text-[9px] text-muted-foreground mt-1 px-1">
+                  <span className="text-[0.5625rem] text-muted-foreground mt-1 px-1">
                     {msg.timestamp}
                   </span>
                 </div>
@@ -200,7 +200,7 @@ export default function ChatPage() {
                 <button
                   key={chip}
                   onClick={() => handleSendMessage(chip)}
-                  className="px-3 py-1.5 rounded-full bg-secondary border border-border text-[#10284D] text-[11px] font-bold whitespace-nowrap hover:bg-[#10284D] hover:text-white active:scale-95 transition-all shadow-sm"
+                  className="px-3 py-1.5 rounded-full bg-secondary border border-border text-[#10284D] text-[0.6875rem] font-bold whitespace-nowrap hover:bg-[#10284D] hover:text-white active:scale-95 transition-all shadow-sm"
                 >
                   ⚡ {chip}
                 </button>

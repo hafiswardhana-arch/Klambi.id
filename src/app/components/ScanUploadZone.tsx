@@ -188,7 +188,7 @@ export default function ScanUploadZone() {
                   fill
                   className="object-cover"
                 />
-                <div className={`absolute bottom-1 right-1 w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-700 ${
+                <div className={`absolute bottom-1 right-1 w-5 h-5 rounded-full flex items-center justify-center text-[0.5625rem] font-700 ${
                   scan.score >= 75 ? 'bg-accent text-white' :
                   scan.score >= 50 ? 'bg-warning text-white' : 'bg-danger text-white'
                 }`}>
@@ -196,8 +196,8 @@ export default function ScanUploadZone() {
                 </div>
               </div>
               <div className="p-1.5">
-                <p className="text-[10px] font-600 text-foreground truncate">{scan.category}</p>
-                <p className="text-[9px] text-muted-foreground">{scan.date}</p>
+                <p className="text-[0.625rem] font-600 text-foreground truncate">{scan.category}</p>
+                <p className="text-[0.5625rem] text-muted-foreground">{scan.date}</p>
               </div>
             </div>
           ))}

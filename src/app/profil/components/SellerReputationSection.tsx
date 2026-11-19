@@ -58,12 +58,12 @@ export default function SellerReputationSection() {
           </div>
           <div>
             <h3 className="text-sm font-bold text-foreground">Reputasi & Ulasan Penjual Trift</h3>
-            <p className="text-[11px] text-muted-foreground">Kepercayaan komunitas pembeli di pasar sirkular Klámbi</p>
+            <p className="text-[0.6875rem] text-muted-foreground">Kepercayaan komunitas pembeli di pasar sirkular Klámbi</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-primary bg-secondary px-2.5 py-1 rounded-full border border-accent/30">
+          <span className="inline-flex items-center gap-1 text-[0.6875rem] font-bold text-primary bg-secondary px-2.5 py-1 rounded-full border border-accent/30">
             <Icon name="CheckBadgeIcon" size={13} variant="solid" />
             Verified Trusted Seller
           </span>
@@ -73,30 +73,30 @@ export default function SellerReputationSection() {
       {/* Seller Scorecard */}
       <div className="p-4 bg-secondary/50 rounded-xl border border-border/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
         <div className="p-2 bg-card rounded-lg border border-border/60">
-          <span className="text-[10px] text-muted-foreground block">Rating Penjual</span>
+          <span className="text-[0.625rem] text-muted-foreground block">Rating Penjual</span>
           <div className="flex items-center justify-center gap-1 mt-0.5">
             <span className="text-base font-extrabold text-foreground">4.9</span>
             <Icon name="StarIcon" size={14} variant="solid" className="text-warning fill-warning" />
           </div>
-          <span className="text-[10px] text-muted-foreground">32 Ulasan Pembeli</span>
+          <span className="text-[0.625rem] text-muted-foreground">32 Ulasan Pembeli</span>
         </div>
 
         <div className="p-2 bg-card rounded-lg border border-border/60">
-          <span className="text-[10px] text-muted-foreground block">Tingkat Respon</span>
+          <span className="text-[0.625rem] text-muted-foreground block">Tingkat Respon</span>
           <span className="text-base font-extrabold text-primary block mt-0.5">98%</span>
-          <span className="text-[10px] text-muted-foreground">&lt; 15 Menit</span>
+          <span className="text-[0.625rem] text-muted-foreground">&lt; 15 Menit</span>
         </div>
 
         <div className="p-2 bg-card rounded-lg border border-border/60">
-          <span className="text-[10px] text-muted-foreground block">Barang Terjual</span>
+          <span className="text-[0.625rem] text-muted-foreground block">Barang Terjual</span>
           <span className="text-base font-extrabold text-foreground block mt-0.5">14 Helai</span>
-          <span className="text-[10px] text-muted-foreground">100% Terkirim</span>
+          <span className="text-[0.625rem] text-muted-foreground">100% Terkirim</span>
         </div>
 
         <div className="p-2 bg-card rounded-lg border border-border/60">
-          <span className="text-[10px] text-muted-foreground block">Pembatalan</span>
+          <span className="text-[0.625rem] text-muted-foreground block">Pembatalan</span>
           <span className="text-base font-extrabold text-accent block mt-0.5">0%</span>
-          <span className="text-[10px] text-muted-foreground">Sangat Andal</span>
+          <span className="text-[0.625rem] text-muted-foreground">Sangat Andal</span>
         </div>
       </div>
 
@@ -114,7 +114,7 @@ export default function SellerReputationSection() {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full gradient-green flex items-center justify-center text-white text-[10px] font-bold">
+                  <div className="w-6 h-6 rounded-full gradient-green flex items-center justify-center text-white text-[0.625rem] font-bold">
                     {rev.buyerAvatar}
                   </div>
                   <div>
@@ -122,7 +122,7 @@ export default function SellerReputationSection() {
                       {rev.buyerName}
                     </span>
                     {rev.isVerifiedPurchase && (
-                      <span className="text-[10px] text-accent ml-1.5 font-medium">
+                      <span className="text-[0.625rem] text-accent ml-1.5 font-medium">
                         ✓ Pembeli Terverifikasi
                       </span>
                     )}
@@ -139,7 +139,7 @@ export default function SellerReputationSection() {
                       className={i < rev.rating ? 'text-warning fill-warning' : 'text-muted-foreground'}
                     />
                   ))}
-                  <span className="text-[10px] text-muted-foreground ml-1">{rev.date}</span>
+                  <span className="text-[0.625rem] text-muted-foreground ml-1">{rev.date}</span>
                 </div>
               </div>
 
@@ -147,7 +147,7 @@ export default function SellerReputationSection() {
                 "{rev.comment}"
               </p>
 
-              <p className="text-[11px] text-primary/90 font-medium">
+              <p className="text-[0.6875rem] text-primary/90 font-medium">
                 🛍️ Produk: {rev.productName}
               </p>
             </div>

@@ -280,7 +280,7 @@ export default function MenuPerawatanPage() {
             <div className="pointer-events-none absolute top-2 inset-x-0 z-[1000] flex justify-center">
               <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm pl-2.5 pr-3 h-7 rounded-full shadow-md">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse motion-reduce:animate-none" aria-hidden="true" />
-                <span className="text-[11px] font-semibold text-navy">
+                <span className="text-[0.6875rem] font-semibold text-navy">
                   {filteredPartners.length} mitra aktif {isOutsideCoverage ? 'di Jakarta Selatan' : 'di sekitarmu'}
                 </span>
               </div>
@@ -310,22 +310,22 @@ export default function MenuPerawatanPage() {
 
           <div className="flex items-center gap-2 min-h-[32px] px-0.5" aria-live="polite">
             {geoStatus === 'granted' && userPos && !isOutsideCoverage && (
-              <p className="flex items-center gap-1.5 text-[11px] text-gray-700">
+              <p className="flex items-center gap-1.5 text-[0.6875rem] text-gray-700">
                 <Icon name="CheckCircleIcon" variant="solid" size={14} className="text-emerald-600 flex-shrink-0" aria-hidden="true" />
                 Jarak dihitung dari lokasimu
                 {userPos.accuracy < 5000 && <span className="text-gray-500">(±{Math.round(userPos.accuracy)} m)</span>}
               </p>
             )}
             {geoStatus === 'granted' && isOutsideCoverage && (
-              <p className="flex items-start gap-1.5 text-[11px] text-amber-800">
+              <p className="flex items-start gap-1.5 text-[0.6875rem] text-amber-800">
                 <Icon name="InformationCircleIcon" variant="solid" size={14} className="text-amber-500 flex-shrink-0 mt-px" aria-hidden="true" />
                 Mitra terdekat {formatDistance(nearestKm)} dari lokasimu. Saat ini mitra Klámbi baru tersedia di Jakarta Selatan.
               </p>
             )}
-            {geoStatus === 'locating' && <p className="text-[11px] text-gray-600">Mencari lokasimu…</p>}
+            {geoStatus === 'locating' && <p className="text-[0.6875rem] text-gray-600">Mencari lokasimu…</p>}
             {(geoStatus === 'idle' || geoStatus === 'denied' || geoStatus === 'unavailable') && (
               <>
-                <p className="flex-1 text-[11px] leading-snug text-gray-600">
+                <p className="flex-1 text-[0.6875rem] leading-snug text-gray-600">
                   {geoStatus === 'denied'
                     ? 'Izin lokasi ditolak. Aktifkan di pengaturan browser; sementara jarak dihitung dari Blok M.'
                     : geoStatus === 'unavailable'
@@ -336,7 +336,7 @@ export default function MenuPerawatanPage() {
                   <button
                     type="button"
                     onClick={requestLocation}
-                    className="flex-shrink-0 h-8 px-3 rounded-full bg-navy text-white text-[11px] font-medium flex items-center gap-1 active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
+                    className="flex-shrink-0 h-8 px-3 rounded-full bg-navy text-white text-[0.6875rem] font-medium flex items-center gap-1 active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
                   >
                     <Icon name="MapPinIcon" variant="solid" size={13} aria-hidden="true" />
                     {geoStatus === 'unavailable' ? 'Coba lagi' : 'Pakai lokasiku'}
@@ -361,7 +361,7 @@ export default function MenuPerawatanPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari tailor, kancing, recolor, spa..."
-            className="w-full h-10 bg-white rounded-full pl-10 pr-10 text-[13px] text-gray-900 placeholder:text-gray-500 shadow-card outline-none focus:ring-2 focus:ring-navy"
+            className="w-full h-10 bg-white rounded-full pl-10 pr-10 text-[0.8125rem] text-gray-900 placeholder:text-gray-500 shadow-card outline-none focus:ring-2 focus:ring-navy"
           />
           {searchQuery && (
             <button
@@ -384,7 +384,7 @@ export default function MenuPerawatanPage() {
                 role="tab"
                 aria-selected={active}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`flex items-center gap-1.5 h-9 px-3.5 rounded-full text-[12px] whitespace-nowrap border transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy ${
+                className={`flex items-center gap-1.5 h-9 px-3.5 rounded-full text-[0.75rem] whitespace-nowrap border transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy ${
                   active
                     ? 'bg-navy border-navy text-white font-medium shadow-sm'
                     : 'bg-white border-gray-300 text-gray-800 hover:border-navy/60'
@@ -399,7 +399,7 @@ export default function MenuPerawatanPage() {
 
         {/* Sort segmented control */}
         <div>
-          <p className="text-[11px] text-gray-600 mb-1.5">Urutkan berdasarkan</p>
+          <p className="text-[0.6875rem] text-gray-600 mb-1.5">Urutkan berdasarkan</p>
           <div className="grid grid-cols-4 bg-white rounded-xl shadow-card p-1" role="radiogroup" aria-label="Urutkan">
             {sortOptions.map((opt) => {
               const active = sortBy === opt.id;
@@ -409,7 +409,7 @@ export default function MenuPerawatanPage() {
                   role="radio"
                   aria-checked={active}
                   onClick={() => setSortBy(opt.id)}
-                  className={`h-9 rounded-lg flex items-center justify-center gap-1 text-[11px] transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy ${
+                  className={`h-9 rounded-lg flex items-center justify-center gap-1 text-[0.6875rem] transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy ${
                     active ? 'bg-navy text-white font-medium' : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -421,7 +421,7 @@ export default function MenuPerawatanPage() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-[11px] text-gray-600">
+        <div className="flex items-center justify-between text-[0.6875rem] text-gray-600">
           <span>Menampilkan {filteredPartners.length} mitra</span>
           {sortBy === 'sesuai' && (
             <span className="flex items-center gap-1 text-emerald-700 font-medium">
@@ -456,7 +456,7 @@ export default function MenuPerawatanPage() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                      <h4 className="text-[13px] font-semibold text-gray-900 truncate">{partner.name}</h4>
+                      <h4 className="text-[0.8125rem] font-semibold text-gray-900 truncate">{partner.name}</h4>
                       {partner.isVerified && (
                         <Icon
                           name="CheckBadgeIcon"
@@ -467,11 +467,11 @@ export default function MenuPerawatanPage() {
                         />
                       )}
                     </div>
-                    <p className="text-[11px] text-gray-600 truncate mt-0.5">
+                    <p className="text-[0.6875rem] text-gray-600 truncate mt-0.5">
                       {partner.categoryLabel} • {partner.address}
                     </p>
                     {partner.badge && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-coral mt-0.5">
+                      <span className="inline-flex items-center gap-1 text-[0.625rem] font-medium text-coral mt-0.5">
                         <Icon name="SparklesIcon" variant="solid" size={11} aria-hidden="true" />
                         {partner.badge}
                       </span>
@@ -483,7 +483,7 @@ export default function MenuPerawatanPage() {
                   {partner.services.map((srv, i) => (
                     <span
                       key={i}
-                      className={`text-[10px] px-2 py-0.5 rounded-full ${categoryColors[partner.category] ?? 'bg-gray-100 text-gray-800'}`}
+                      className={`text-[0.625rem] px-2 py-0.5 rounded-full ${categoryColors[partner.category] ?? 'bg-gray-100 text-gray-800'}`}
                     >
                       {srv}
                     </span>
@@ -491,7 +491,7 @@ export default function MenuPerawatanPage() {
                 </div>
 
                 <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                  <div className="flex items-center gap-2.5 text-[11px] text-gray-700">
+                  <div className="flex items-center gap-2.5 text-[0.6875rem] text-gray-700">
                     <span className="flex items-center gap-0.5">
                       <Icon name="MapPinIcon" variant="solid" size={13} className="text-coral" aria-hidden="true" />
                       {formatDistance(partner.distanceKm)}
@@ -502,7 +502,7 @@ export default function MenuPerawatanPage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[12px] font-semibold text-coral">
+                    <span className="text-[0.75rem] font-semibold text-coral">
                       Rp{partner.estimatedPrice.toLocaleString('id-ID')}
                     </span>
                     <button
@@ -510,7 +510,7 @@ export default function MenuPerawatanPage() {
                         e.stopPropagation();
                         goOrder(partner.name);
                       }}
-                      className="h-8 px-4 rounded-full bg-navy text-white text-[12px] font-medium hover:bg-navy-deep active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-1"
+                      className="h-8 px-4 rounded-full bg-navy text-white text-[0.75rem] font-medium hover:bg-navy-deep active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-1"
                     >
                       Pesan
                     </button>
@@ -522,7 +522,7 @@ export default function MenuPerawatanPage() {
         </StaggerContainer>
 
         {filteredPartners.length === 0 && (
-          <div className="text-center py-10 text-[12px] text-gray-600">
+          <div className="text-center py-10 text-[0.75rem] text-gray-600">
             Tidak ada mitra yang cocok. Coba ubah kata kunci atau kategori.
           </div>
         )}
@@ -550,10 +550,10 @@ export default function MenuPerawatanPage() {
                   <Icon name={categoryIcon[selectedPartner.category]} size={24} />
                 </span>
                 <div className="min-w-0">
-                  <h3 className="text-[14px] font-semibold text-navy leading-snug">{selectedPartner.name}</h3>
-                  <p className="text-[11px] text-gray-600">{selectedPartner.categoryLabel}</p>
+                  <h3 className="text-[0.875rem] font-semibold text-navy leading-snug">{selectedPartner.name}</h3>
+                  <p className="text-[0.6875rem] text-gray-600">{selectedPartner.categoryLabel}</p>
                   {selectedPartner.isVerified && (
-                    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-medium mt-0.5">
+                    <span className="inline-flex items-center gap-1 text-[0.625rem] text-emerald-700 font-medium mt-0.5">
                       <Icon name="CheckBadgeIcon" variant="solid" size={12} aria-hidden="true" />
                       Mitra Terpercaya Klámbi
                     </span>
@@ -571,20 +571,20 @@ export default function MenuPerawatanPage() {
 
             <div className="grid grid-cols-3 bg-gray-50 rounded-xl py-2.5">
               <div className="text-center">
-                <div className="text-[15px] font-semibold text-navy">{selectedPartner.rating}</div>
-                <div className="text-[10px] text-gray-600">Rating</div>
+                <div className="text-[0.9375rem] font-semibold text-navy">{selectedPartner.rating}</div>
+                <div className="text-[0.625rem] text-gray-600">Rating</div>
               </div>
               <div className="text-center border-x border-gray-200">
-                <div className="text-[15px] font-semibold text-navy">{formatDistance(selectedPartner.distanceKm)}</div>
-                <div className="text-[10px] text-gray-600">Jarak</div>
+                <div className="text-[0.9375rem] font-semibold text-navy">{formatDistance(selectedPartner.distanceKm)}</div>
+                <div className="text-[0.625rem] text-gray-600">Jarak</div>
               </div>
               <div className="text-center">
-                <div className="text-[15px] font-semibold text-coral">{selectedPartner.reviewsCount}</div>
-                <div className="text-[10px] text-gray-600">Ulasan</div>
+                <div className="text-[0.9375rem] font-semibold text-coral">{selectedPartner.reviewsCount}</div>
+                <div className="text-[0.625rem] text-gray-600">Ulasan</div>
               </div>
             </div>
 
-            <ul className="space-y-1.5 text-[12px] text-gray-700">
+            <ul className="space-y-1.5 text-[0.75rem] text-gray-700">
               <li className="flex items-center gap-2">
                 <Icon name="MapPinIcon" size={15} className="text-navy flex-shrink-0" aria-hidden="true" />
                 <span className="flex-1">{selectedPartner.address}</span>
@@ -592,7 +592,7 @@ export default function MenuPerawatanPage() {
                   href={`https://www.google.com/maps/dir/?api=1&destination=${selectedPartner.lat},${selectedPartner.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-shrink-0 inline-flex items-center gap-1 h-8 px-2.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-medium hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                  className="flex-shrink-0 inline-flex items-center gap-1 h-8 px-2.5 rounded-full bg-blue-50 text-blue-700 text-[0.6875rem] font-medium hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                 >
                   <Icon name="ArrowTopRightOnSquareIcon" size={13} aria-hidden="true" />
                   Rute
@@ -609,12 +609,12 @@ export default function MenuPerawatanPage() {
             </ul>
 
             <div>
-              <p className="text-[12px] font-semibold text-gray-900 mb-1.5">Layanan tersedia</p>
+              <p className="text-[0.75rem] font-semibold text-gray-900 mb-1.5">Layanan tersedia</p>
               <div className="flex flex-wrap gap-1.5">
                 {selectedPartner.services.map((srv, i) => (
                   <span
                     key={i}
-                    className={`text-[11px] px-2.5 py-1 rounded-full ${categoryColors[selectedPartner.category]}`}
+                    className={`text-[0.6875rem] px-2.5 py-1 rounded-full ${categoryColors[selectedPartner.category]}`}
                   >
                     {srv}
                   </span>
@@ -625,13 +625,13 @@ export default function MenuPerawatanPage() {
             <div className="grid grid-cols-2 gap-2.5 pt-1">
               <button
                 onClick={() => setSelectedPartner(null)}
-                className="h-11 rounded-full border border-gray-300 text-[13px] font-medium text-gray-700 hover:bg-gray-50 active:scale-95 transition-all"
+                className="h-11 rounded-full border border-gray-300 text-[0.8125rem] font-medium text-gray-700 hover:bg-gray-50 active:scale-95 transition-all"
               >
                 Kembali
               </button>
               <button
                 onClick={() => goOrder(selectedPartner.name)}
-                className="h-11 rounded-full bg-navy text-white text-[13px] font-medium hover:bg-navy-deep active:scale-95 transition-all"
+                className="h-11 rounded-full bg-navy text-white text-[0.8125rem] font-medium hover:bg-navy-deep active:scale-95 transition-all"
               >
                 Pesan Jasa
               </button>

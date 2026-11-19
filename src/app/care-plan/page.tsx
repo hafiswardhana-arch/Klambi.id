@@ -70,7 +70,7 @@ export default function CarePlanPage() {
         {/* Banner Hero */}
         <FadeIn>
           <div className="bg-gradient-to-r from-[#10284D] via-[#163768] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
-            <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+            <span className="bg-white/20 text-white text-[0.625rem] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
               Alur 5.6.1: Care Plan
             </span>
             <h2 className="text-base sm:text-lg font-black tracking-tight">
@@ -95,7 +95,7 @@ export default function CarePlanPage() {
           </div>
 
           <div className="text-right">
-            <span className="text-[10px] text-muted-foreground font-semibold block mb-0.5">
+            <span className="text-[0.625rem] text-muted-foreground font-semibold block mb-0.5">
               Tingkat Kesulitan:
             </span>
             <span
@@ -141,7 +141,7 @@ export default function CarePlanPage() {
                   <span className="text-2xl mt-0.5">{tip.icon}</span>
                   <div className="space-y-0.5">
                     <h5 className="text-xs font-extrabold text-[#10284D]">{tip.title}</h5>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">{tip.desc}</p>
+                    <p className="text-[0.6875rem] text-muted-foreground leading-relaxed">{tip.desc}</p>
                   </div>
                 </div>
               </StaggerItem>

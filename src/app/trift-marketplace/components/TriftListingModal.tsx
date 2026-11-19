@@ -215,7 +215,7 @@ export default function TriftListingModal({ listing, onClose }: TriftListingModa
               {listing.tags.map((tag) => (
                 <span
                   key={`tag-${listing.id}-${tag}`}
-                  className="text-[11px] bg-muted text-muted-foreground px-2.5 py-1 rounded-full border border-border font-500"
+                  className="text-[0.6875rem] bg-muted text-muted-foreground px-2.5 py-1 rounded-full border border-border font-500"
                 >
                   #{tag}
                 </span>
@@ -377,7 +377,7 @@ export default function TriftListingModal({ listing, onClose }: TriftListingModa
                   }`}
                 >
                   <p>{msg.text}</p>
-                  <p className={`text-[10px] mt-1 ${msg.sender === 'buyer' ? 'text-white/60' : 'text-muted-foreground'}`}>
+                  <p className={`text-[0.625rem] mt-1 ${msg.sender === 'buyer' ? 'text-white/60' : 'text-muted-foreground'}`}>
                     {msg.time}
                   </p>
                 </div>
@@ -454,9 +454,9 @@ export default function TriftListingModal({ listing, onClose }: TriftListingModa
                   <p className={`text-xs font-600 ${t.done ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {t.label}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">{t.sub}</p>
+                  <p className="text-[0.6875rem] text-muted-foreground">{t.sub}</p>
                 </div>
-                <span className="text-[10px] text-muted-foreground flex-shrink-0">{t.time}</span>
+                <span className="text-[0.625rem] text-muted-foreground flex-shrink-0">{t.time}</span>
               </div>
             ))}
           </div>
@@ -471,7 +471,7 @@ export default function TriftListingModal({ listing, onClose }: TriftListingModa
             </button>
           )}
 
-          <p className="text-center text-[11px] text-muted-foreground">
+          <p className="text-center text-[0.6875rem] text-muted-foreground">
             Masalah dengan pesanan?{' '}
             <button className="text-primary font-600 hover:underline">Hubungi Bantuan</button>
           </p>

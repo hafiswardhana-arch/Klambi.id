@@ -62,7 +62,7 @@ export default function EditProfileModal({
             <div className="w-20 h-20 rounded-2xl gradient-green flex items-center justify-center text-white text-2xl font-bold border-2 border-white shadow-md">
               {profile.avatarText}
             </div>
-            <div className="absolute inset-0 bg-black/40 rounded-2xl flex flex-col items-center justify-center text-white text-[10px] font-bold opacity-90 group-hover:opacity-100 transition-opacity">
+            <div className="absolute inset-0 bg-black/40 rounded-2xl flex flex-col items-center justify-center text-white text-[0.625rem] font-bold opacity-90 group-hover:opacity-100 transition-opacity">
               <Icon name="CameraIcon" size={20} className="mb-0.5" />
               Ganti Foto
             </div>

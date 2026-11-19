@@ -40,7 +40,7 @@ export default function DiagnosisCard() {
         </div>
         <div>
           <p className="text-sm font-700 text-foreground">Diagnosis AI</p>
-          <p className="text-[11px] text-muted-foreground">3 masalah terdeteksi</p>
+          <p className="text-[0.6875rem] text-muted-foreground">3 masalah terdeteksi</p>
         </div>
       </div>
 
@@ -60,11 +60,11 @@ export default function DiagnosisCard() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <p className="text-xs font-700 text-foreground">{item.problem}</p>
-                  <span className={`text-[10px] font-600 ${cfg.color} bg-white/50 px-1.5 py-0.5 rounded-full`}>
+                  <span className={`text-[0.625rem] font-600 ${cfg.color} bg-white/50 px-1.5 py-0.5 rounded-full`}>
                     {cfg.label}
                   </span>
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">{item.cause}</p>
+                <p className="text-[0.6875rem] text-muted-foreground mt-0.5 leading-relaxed">{item.cause}</p>
               </div>
             </div>
           );

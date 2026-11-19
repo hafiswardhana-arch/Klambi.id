@@ -63,7 +63,7 @@ export default function TrifSellPage() {
         {/* Banner */}
         <FadeIn>
           <div className="bg-gradient-to-r from-[#10284D] via-[#163768] to-[#1E4D8C] text-white rounded-3xl p-5 shadow-md space-y-1">
-            <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+            <span className="bg-white/20 text-white text-[0.625rem] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
               Alur 5.5.1a: Thrift Satuan
             </span>
             <h2 className="text-base sm:text-lg font-black tracking-tight">
@@ -122,7 +122,7 @@ export default function TrifSellPage() {
           <div className="space-y-1">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-foreground block">Deskripsi Hasil Scan AI:</label>
-              <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded">
+              <span className="text-[0.625rem] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded">
                 ✨ Auto-Generated
               </span>
             </div>
@@ -140,14 +140,14 @@ export default function TrifSellPage() {
               <span className="text-xl">💬</span>
               <div>
                 <strong className="block">Fitur Chat In-App Aktif</strong>
-                <span className="text-[11px] text-blue-900/80">
+                <span className="text-[0.6875rem] text-blue-900/80">
                   Calon pembeli dapat bernegosiasi & bertanya langsung lewat pesan.
                 </span>
               </div>
             </div>
             <button
               onClick={() => router.push('/chat')}
-              className="text-[10px] font-bold bg-white text-[#10284D] px-2.5 py-1.5 rounded-xl border border-blue-200 hover:bg-blue-50 shadow-xs"
+              className="text-[0.625rem] font-bold bg-white text-[#10284D] px-2.5 py-1.5 rounded-xl border border-blue-200 hover:bg-blue-50 shadow-xs"
             >
               Buka Chat
             </button>
@@ -161,7 +161,7 @@ export default function TrifSellPage() {
               <Icon name="ShieldCheckIcon" size={16} className="text-emerald-600" />
               <span>Alur Transaksi Escrow Klámbi</span>
             </h4>
-            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+            <span className="text-[0.625rem] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
               100% Aman
             </span>
           </div>
@@ -169,12 +169,12 @@ export default function TrifSellPage() {
           <div className="space-y-2.5">
             {escrowSteps.map((step) => (
               <div key={step.num} className="flex items-start gap-3 text-xs">
-                <div className="w-6 h-6 rounded-full bg-[#10284D] text-white flex items-center justify-center text-[10px] font-extrabold flex-shrink-0 mt-0.5 shadow-xs">
+                <div className="w-6 h-6 rounded-full bg-[#10284D] text-white flex items-center justify-center text-[0.625rem] font-extrabold flex-shrink-0 mt-0.5 shadow-xs">
                   {step.num}
                 </div>
                 <div>
                   <h5 className="font-extrabold text-[#10284D]">{step.label}</h5>
-                  <p className="text-[11px] text-muted-foreground">{step.desc}</p>
+                  <p className="text-[0.6875rem] text-muted-foreground">{step.desc}</p>
                 </div>
               </div>
             ))}
