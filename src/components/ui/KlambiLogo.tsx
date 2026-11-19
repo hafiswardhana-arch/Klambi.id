@@ -86,10 +86,10 @@ export default function KlambiLogo({
     >
       {imgEl}
       <div className="flex items-baseline tracking-tight">
-        <span className={`font-black ${dark ? 'text-white' : 'text-[#10284D]'} ${textSize}`}>
+        <span className={`font-semibold ${dark ? 'text-white' : 'text-[#0E3567]'} ${textSize}`}>
           Klámbi
         </span>
-        <span className={`font-medium ${dark ? 'text-cyan-300' : 'text-[#3A7BF7]'} ${textSize}`}>
+        <span className={`font-medium text-[0.7em] ${dark ? 'text-cyan-300' : 'text-[#3A7BF7]'}`}>
           .id
         </span>
       </div>

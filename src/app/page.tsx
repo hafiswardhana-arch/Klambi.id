@@ -177,6 +177,32 @@ function getGreeting(): string {
   return 'Malam';
 }
 
+function LeafIcon() {
+  return (
+    <svg width="34" height="30" viewBox="0 0 34 30" fill="none" aria-hidden="true">
+      <path d="M32 2C17 2 6 7 4 20c-.4 2.6 0 5 1 7 2-6 7-11 14-14-6 4-10 9-12 15 15 1 24-10 25-26Z" fill="#2E7D4F" />
+    </svg>
+  );
+}
+
+function HangerIcon() {
+  return (
+    <svg width="40" height="28" viewBox="0 0 40 28" fill="none" stroke="#E2725B" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M16.5 6.5a3.5 3.5 0 1 1 5 3.2c-1 .5-1.5 1.3-1.5 2.3v1.5" />
+      <path d="M20 13.5 3.5 23a1.6 1.6 0 0 0 .8 3h31.4a1.6 1.6 0 0 0 .8-3L20 13.5Z" />
+    </svg>
+  );
+}
+
+function StandingFigureIcon() {
+  return (
+    <svg width="40" height="44" viewBox="0 0 40 44" fill="#163B2E" aria-hidden="true">
+      <circle cx="20" cy="5.5" r="4.5" />
+      <path d="M4 12.5c0-1.4 1.1-2.5 2.5-2.5h27c1.4 0 2.5 1.1 2.5 2.5S34.9 15 33.5 15H25v27a2 2 0 0 1-4 0V29h-2v13a2 2 0 0 1-4 0V15H6.5A2.5 2.5 0 0 1 4 12.5Z" />
+    </svg>
+  );
+}
+
 export default function BerandaPage() {
   const router = useRouter();
   const [activeSlide, setActiveSlide] = useState(0);
@@ -247,6 +273,22 @@ export default function BerandaPage() {
   }, []);
 
   const greeting = getGreeting();
+  const [userName, setUserName] = useState('Muhammad Hafiz Maulana');
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('klambi_user');
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (parsed?.name) setUserName(String(parsed.name));
+    } catch {
+      // keep default
+    }
+  }, []);
+  const initials = userName
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join('');
 
   const filteredProducts = productsData.filter((p) => {
     if (selectedCategory === 'Semua') return true;
@@ -255,336 +297,300 @@ export default function BerandaPage() {
 
   const handleAddToCart = (product: ProductItem) => {
     setCartCount((prev) => prev + 1);
-    toast.success(`"${product.name}" (Ukuran ${selectedSize}) ditambahkan ke keranjang! 🛒`);
+    toast.success(`"${product.name}" (Ukuran ${selectedSize}) ditambahkan ke keranjang! `);
     setSelectedProduct(null);
   };
 
   const handleBuyKindfoam = () => {
     setCartCount((prev) => prev + kindfoamPacks);
-    toast.success(`${kindfoamPacks} Pack Kindfoam Eco-Detergent ditambahkan ke keranjang! 🧼`);
+    toast.success(`${kindfoamPacks} Pack Kindfoam Eco-Detergent ditambahkan ke keranjang!`);
     setShowKindfoamModal(false);
   };
 
   return (
     <AppLayout
       headerRight={
-        <div className="flex items-center gap-2">
-          {/* Icon Keranjang -> /keranjang (PRD AN-02: 100-180ms press feedback) */}
+        <div className="flex items-center gap-1">
           <button
             onClick={() => router.push('/keranjang')}
-            className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-muted hover:bg-secondary transition-all active:scale-[0.97] duration-150 shadow-xs"
-            aria-label="Keranjang"
+            className="relative flex items-center justify-center w-11 h-11 rounded-full text-gray-900 hover:bg-navy/5 active:scale-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+            aria-label={`Keranjang, ${cartCount} item`}
           >
-            <Icon name="ShoppingCartIcon" size={20} className="text-[#10284D]" />
+            <Icon name="ShoppingCartIcon" size={30} />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#E86D50] text-white text-[9px] font-extrabold flex items-center justify-center shadow-sm animate-scale-in">
+              <span className="absolute top-0.5 right-0 min-w-[18px] h-[18px] px-1 rounded-full bg-coral text-white text-[10px] font-semibold flex items-center justify-center ring-2 ring-background animate-scale-in">
                 {cartCount}
               </span>
             )}
           </button>
-
-          {/* Icon Chat -> /chat (PRD AN-02: 100-180ms press feedback) */}
           <button
             onClick={() => router.push('/chat')}
-            className="flex items-center justify-center w-9 h-9 rounded-xl bg-muted hover:bg-secondary transition-all active:scale-[0.97] duration-150 shadow-xs"
+            className="flex items-center justify-center w-11 h-11 rounded-full text-gray-900 hover:bg-navy/5 active:scale-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
             aria-label="Chat"
           >
-            <Icon name="ChatBubbleLeftRightIcon" size={20} className="text-[#10284D]" />
+            <Icon name="ChatBubbleLeftRightIcon" size={30} />
           </button>
         </div>
       }
     >
-      <div className="max-w-2xl mx-auto space-y-4 pb-24 select-none">
-        {/* ========================================================================= */}
-        {/* 1. KARTU SAPAAN USER (PRD AN-03: Entrance Animation) */}
-        {/* ========================================================================= */}
+      <div className="max-w-md mx-auto space-y-5 pb-24 select-none">
+        {/* 1. GREETING CARD */}
         <FadeIn>
-          <div
+          <button
+            type="button"
             onClick={() => setShowProfileModal(true)}
-            className="bg-card rounded-2xl shadow-sm border border-border p-4 flex items-center gap-3.5 cursor-pointer hover:shadow-md active:scale-[0.97] transition-all duration-150"
+            className="w-full text-left bg-white rounded-2xl shadow-card px-4 py-3.5 flex items-center gap-4 hover:shadow-card-hover active:scale-[0.98] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
           >
-            {/* Avatar Illustration (Young man with wavy dark hair in amber circle) */}
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-base flex-shrink-0 shadow-inner overflow-hidden border-2 border-white ring-2 ring-amber-200">
-              <span className="text-xl">🧑‍🦱</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <h2 className="text-sm sm:text-base font-extrabold text-[#10284D] truncate">
-                {greeting}, Muhammad Hafiz Maulana
-              </h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
+            <span
+              className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center flex-shrink-0 text-navy-deep text-lg font-bold ring-4 ring-amber-100"
+              aria-hidden="true"
+            >
+              {initials}
+            </span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-[16px] font-bold text-gray-900 leading-tight truncate">
+                {greeting}, {userName}
+              </span>
+              <span className="block text-[13px] text-gray-800 mt-1 truncate">
                 Kenali Kondisinya, Tentukan Langkahnya!
-              </p>
-            </div>
-            <span className="text-xs text-muted-foreground">👉</span>
-          </div>
+              </span>
+            </span>
+          </button>
         </FadeIn>
 
-        {/* ========================================================================= */}
-        {/* 2. PROMO BANNER CAROUSEL (PRD AN-03: Stagger 1) */}
-        {/* ========================================================================= */}
-        <div className="animate-card-reveal stagger-1">
-          <div className="relative overflow-hidden rounded-3xl shadow-sm border border-blue-900/10">
+        {/* 2. PROMO BANNER CAROUSEL */}
+        <section aria-label="Promo" className="animate-card-reveal stagger-1">
+          <div className="relative overflow-hidden rounded-[20px] shadow-card">
             <div
-              className="flex transition-transform duration-500 ease-in-out"
+              className="flex transition-transform duration-500"
               style={{ transform: `translateX(-${activeSlide * 100}%)` }}
             >
-              {promoSlides.map((slide, i) => (
+              {promoSlides.map((slide) => (
                 <div
                   key={slide.id}
-                  className="w-full flex-shrink-0 bg-gradient-to-r from-[#0C3B7A] via-[#1A5EA8] to-[#3891E6] rounded-3xl p-5 min-h-[160px] flex flex-col justify-between text-white relative overflow-hidden"
+                  className="w-full flex-shrink-0 bg-gradient-to-br from-[#0A3274] via-[#1559B0] to-[#4BA3E8] p-4 min-h-[176px] flex text-white relative overflow-hidden"
                 >
-                  {/* Decorative bubble & cloud effect matching Image 3 */}
-                  <div className="absolute -right-4 -bottom-4 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none" />
-                  <div className="absolute right-20 top-2 w-20 h-20 rounded-full bg-cyan-300/20 blur-lg pointer-events-none" />
+                  {/* soft bubbles */}
+                  <span className="absolute right-6 top-4 w-8 h-8 rounded-full border border-white/40 bg-white/10" aria-hidden="true" />
+                  <span className="absolute right-[42%] bottom-6 w-4 h-4 rounded-full border border-white/40 bg-white/10" aria-hidden="true" />
+                  <span className="absolute -right-6 -bottom-10 w-40 h-24 rounded-full bg-white/25 blur-xl" aria-hidden="true" />
 
-                  {/* Top content */}
-                  <div className="relative z-10 space-y-1.5 max-w-[280px]">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-cyan-400/30 text-cyan-200 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider border border-cyan-300/40">
+                  <div className="relative z-10 flex flex-col justify-between w-[62%] min-w-0">
+                    <div>
+                      <span className="inline-flex items-center gap-1 bg-white/15 text-white text-[9px] font-semibold px-2 py-0.5 rounded-md uppercase tracking-wider">
                         {slide.badge}
                       </span>
-                      <span className="text-xl font-black tracking-tight">{slide.title}</span>
+                      <h3 className="text-[28px] leading-none font-bold tracking-tight mt-1.5">{slide.title}</h3>
+                      <p className="text-[12px] font-semibold mt-1.5 leading-snug">{slide.subtitle}</p>
+                      <p className="text-[10px] text-white/85 leading-snug mt-1 line-clamp-2">{slide.description}</p>
                     </div>
-                    <h3 className="text-xs sm:text-sm font-extrabold text-white/95">
-                      {slide.subtitle}
-                    </h3>
-                    <p className="text-[11px] text-white/80 leading-relaxed line-clamp-2">
-                      {slide.description}
-                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (slide.isKindfoam) setShowKindfoamModal(true);
+                        else if (slide.link) router.push(slide.link);
+                      }}
+                      className="self-start mt-3 inline-flex items-center gap-1.5 bg-navy-deep text-white rounded-full pl-3.5 pr-2.5 h-8 text-[10px] font-semibold uppercase tracking-wide border border-white/25 hover:bg-navy active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    >
+                      {slide.cta.replace(' →', '')}
+                      <Icon name="ArrowRightIcon" size={12} aria-hidden="true" />
+                    </button>
                   </div>
 
-                  {/* CTA & Product Imagery representation */}
-                  <div className="relative z-10 pt-3 flex items-center justify-between">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (slide.isKindfoam) {
-                          setShowKindfoamModal(true);
-                        } else if (slide.link) {
-                          router.push(slide.link);
-                        }
-                      }}
-                      className="bg-white text-[#10284D] rounded-full px-4 py-2 text-[11px] font-black hover:bg-white/90 active:scale-95 transition-all shadow-md flex items-center gap-1.5"
-                    >
-                      <span>{slide.cta}</span>
-                    </button>
-
-                    {/* Kindfoam visual pack box indicators */}
-                    {slide.isKindfoam && (
-                      <div className="flex items-center gap-1.5 opacity-90">
-                        <div className="bg-white/20 backdrop-blur-sm border border-white/30 px-2 py-1 rounded-xl text-[9px] font-bold">
-                          🧼 30 Lembar
-                        </div>
+                  {/* product visual */}
+                  <div className="relative z-10 flex-1 flex items-center justify-center" aria-hidden="true">
+                    <div className="relative w-full h-full">
+                      <div className="absolute right-0 top-3 w-[78px] h-[64px] rounded-xl bg-gradient-to-br from-pink-100 to-pink-300 shadow-lg rotate-6 border-2 border-white/80 flex items-center justify-center">
+                        <span className="text-[11px] font-bold text-[#E2558A]">{slide.isKindfoam ? 'kindfoam' : 'klámbi'}</span>
                       </div>
-                    )}
+                      <div className="absolute left-0 bottom-3 w-[84px] h-[68px] rounded-xl bg-gradient-to-br from-sky-50 to-sky-200 shadow-lg -rotate-6 border-2 border-white/80 flex items-center justify-center">
+                        <span className="text-[11px] font-bold text-[#1A6FD1]">{slide.isKindfoam ? 'kindfoam' : 'klámbi'}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Dot Indicators */}
           <div className="flex items-center justify-center gap-1.5 mt-2.5">
             {promoSlides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setActiveSlide(i)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === activeSlide ? 'bg-[#10284D] w-6' : 'bg-[#10284D]/25 w-2 hover:bg-[#10284D]/40'
-                }`}
+                className="h-4 flex items-center"
                 aria-label={`Slide ${i + 1}`}
-              />
+                aria-current={i === activeSlide}
+              >
+                <span
+                  className={`block h-1.5 rounded-full transition-all duration-300 ${
+                    i === activeSlide ? 'bg-navy w-6' : 'bg-navy/25 w-2'
+                  }`}
+                />
+              </button>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* ========================================================================= */}
-        {/* 3. KARTU IMPACT TRACKER (PRD AN-03 & AN-04: Animated Counter) */}
-        {/* ========================================================================= */}
-        <div
+        {/* 3. IMPACT TRACKER */}
+        <button
+          type="button"
           onClick={() => setShowImpactModal(true)}
-          className="bg-card rounded-2xl shadow-sm border border-border p-4 cursor-pointer hover:shadow-md active:scale-[0.97] transition-all duration-150 animate-card-reveal stagger-2"
+          className="w-full bg-white rounded-[28px] shadow-card px-3 py-5 hover:shadow-card-hover active:scale-[0.98] transition-all duration-150 animate-card-reveal stagger-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+          aria-label="Lihat detail dampak lingkungan"
         >
-          <div className="grid grid-cols-4 gap-0 divide-x divide-border">
-            {/* Donut Chart Target */}
-            <div className="flex flex-col items-center justify-center pr-2">
-              <svg width="44" height="44" viewBox="0 0 44 44" className="mb-1">
-                <circle cx="22" cy="22" r="18" fill="none" stroke="#ECEEF3" strokeWidth="5" />
+          <div className="grid grid-cols-[1.15fr_1fr_1fr_1fr] items-center">
+            <div className="flex items-center justify-center pr-2">
+              <svg width="76" height="76" viewBox="0 0 76 76" aria-hidden="true">
+                <circle cx="38" cy="38" r="32" fill="none" stroke="#B9BCC2" strokeWidth="3" />
                 <circle
-                  cx="22"
-                  cy="22"
-                  r="18"
+                  cx="38"
+                  cy="38"
+                  r="32"
                   fill="none"
-                  stroke="#10284D"
+                  stroke="#1B5FB8"
                   strokeWidth="5"
-                  strokeDasharray="113.1"
-                  strokeDashoffset={113.1 * (1 - countProgress / 100)}
+                  strokeDasharray="201.06"
+                  strokeDashoffset={201.06 * (1 - countProgress / 100)}
                   strokeLinecap="round"
-                  transform="rotate(-90 22 22)"
+                  transform="rotate(-90 38 38)"
                   className="transition-all duration-300 ease-out"
                 />
-                <text
-                  x="22"
-                  y="22"
-                  textAnchor="middle"
-                  dy="0.35em"
-                  className="text-[10px] font-extrabold fill-[#10284D]"
-                >
+                <text x="38" y="38" textAnchor="middle" dy="0.36em" className="text-[19px] font-bold fill-[#1B5FB8]">
                   {countProgress}%
                 </text>
               </svg>
-              <span className="text-[10px] text-muted-foreground font-medium">Target</span>
+              <span className="sr-only">Target {countProgress}%</span>
             </div>
 
-            {/* Weight Saved */}
-            <div className="flex flex-col items-center justify-center px-2">
-              <span className="text-emerald-600 text-sm mb-0.5">🍃</span>
-              <span className="text-sm sm:text-base font-extrabold text-[#10284D]">{countKg} kg</span>
-              <span className="text-[10px] text-muted-foreground">Diselamatkan</span>
-            </div>
-
-            {/* Ranking */}
-            <div className="flex flex-col items-center justify-center px-2">
-              <span className="text-amber-500 text-sm mb-0.5">🏆</span>
-              <span className="text-sm sm:text-base font-extrabold text-[#10284D]">#{countRank}</span>
-              <span className="text-[10px] text-muted-foreground">Peringkat</span>
-            </div>
-
-            {/* Scan Count */}
-            <div className="flex flex-col items-center justify-center pl-2">
-              <span className="text-primary text-sm mb-0.5">👔</span>
-              <span className="text-sm sm:text-base font-extrabold text-[#10284D]">{countScan}</span>
-              <span className="text-[10px] text-muted-foreground">Discan</span>
-            </div>
+            {[
+              { icon: <LeafIcon />, value: `${countKg} kg`, label: 'Diselamatkan' },
+              { icon: <Icon name="TrophyIcon" variant="solid" size={30} className="text-[#F2B705]" />, value: `#${countRank}`, label: 'Peringkat' },
+              { icon: <HangerIcon />, value: `${countScan}`, label: 'Discan' },
+            ].map((stat) => (
+              <div key={stat.label} className="flex flex-col items-center justify-center border-l border-gray-300 px-1">
+                <span className="h-8 flex items-center" aria-hidden="true">{stat.icon}</span>
+                <span className="text-lg font-bold text-gray-900 leading-tight mt-1.5 font-tabular">{stat.value}</span>
+                <span className="text-[12px] text-gray-800">{stat.label}</span>
+              </div>
+            ))}
           </div>
-        </div>
+        </button>
 
-        {/* ========================================================================= */}
-        {/* 4. 3 KARTU FITUR UTAMA (PRD AN-03: Stagger 3 + AN-02: Press Feedback) */}
-        {/* ========================================================================= */}
-        <div className="grid grid-cols-3 gap-3 animate-card-reveal stagger-3">
-          {/* 1. Styliss AI */}
-          <div
-            onClick={() => router.push('/styliss-ai')}
-            className="bg-[#D1FAE5]/60 border border-[#D1FAE5] rounded-3xl p-3.5 text-center cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-150 shadow-xs"
-          >
-            <div className="w-11 h-11 rounded-2xl bg-[#D1FAE5] mx-auto mb-2 flex items-center justify-center shadow-inner">
-              <span className="text-xl">🧍</span>
-            </div>
-            <h4 className="font-extrabold text-xs text-[#10284D]">Styliss AI</h4>
-            <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">See Your Style in 3D</p>
-          </div>
-
-          {/* 2. Care Plan */}
-          <div
-            onClick={() => router.push('/care-plan')}
-            className="bg-[#FCE4EC]/60 border border-[#FCE4EC] rounded-3xl p-3.5 text-center cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-150 shadow-xs"
-          >
-            <div className="w-11 h-11 rounded-2xl bg-[#FCE4EC] mx-auto mb-2 flex items-center justify-center shadow-inner">
-              <span className="text-xl">❤️</span>
-            </div>
-            <h4 className="font-extrabold text-xs text-[#10284D]">Care Plan</h4>
-            <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">Your Guide to Better Care</p>
-          </div>
-
-          {/* 3. Wearwise AI */}
-          <div
-            onClick={() => router.push('/wearwise-ai')}
-            className="bg-[#FFF3E0]/60 border border-[#FFF3E0] rounded-3xl p-3.5 text-center cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-150 shadow-xs ring-1 ring-amber-300/40"
-          >
-            <div className="w-11 h-11 rounded-2xl bg-[#FFF3E0] mx-auto mb-2 flex items-center justify-center shadow-inner">
-              <Icon name="QrCodeIcon" size={22} className="text-amber-800" />
-            </div>
-            <h4 className="font-extrabold text-xs text-[#10284D]">Wearwise AI</h4>
-            <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">Know Before You Decide</p>
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* 5. FILTER KATEGORI PILLS (PRD AN-05: Category Selection Fill + Scale) */}
-        {/* ========================================================================= */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
-          {categories.map((cat) => (
+        {/* 4. FEATURE CARDS */}
+        <nav aria-label="Fitur utama" className="grid grid-cols-3 gap-3 animate-card-reveal stagger-3">
+          {[
+            {
+              title: 'Styliss AI',
+              sub: 'See Your Style in 3D',
+              href: '/styliss-ai',
+              tint: 'bg-[#D6EFE0]',
+              icon: <StandingFigureIcon />,
+            },
+            {
+              title: 'Care Plan',
+              sub: 'Your Guide to Better Care',
+              href: '/care-plan',
+              tint: 'bg-[#FCE1E3]',
+              icon: <Icon name="HeartIcon" variant="solid" size={40} className="text-[#E3121F]" />,
+            },
+            {
+              title: 'Wearwise AI',
+              sub: 'Know Before You Decide',
+              href: '/wearwise-ai',
+              tint: 'bg-[#F1E4D6]',
+              icon: <Icon name="QrCodeIcon" size={40} className="text-gray-900" />,
+            },
+          ].map((f) => (
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 ease-in-out ${
-                selectedCategory === cat
-                  ? 'bg-[#10284D] text-white shadow-md scale-105'
-                  : 'bg-white text-gray-700 border border-gray-200 hover:border-[#10284D]/40 active:scale-95'
-              }`}
+              key={f.href}
+              type="button"
+              onClick={() => router.push(f.href)}
+              className="bg-white rounded-2xl shadow-card px-2 pt-3.5 pb-3 text-center hover:shadow-card-hover hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
             >
-              {cat}
+              <span className={`w-16 h-16 rounded-2xl ${f.tint} mx-auto mb-2 flex items-center justify-center`} aria-hidden="true">
+                {f.icon}
+              </span>
+              <span className="block font-bold text-[15px] text-gray-900 leading-tight">{f.title}</span>
+              <span className="block text-[10px] text-gray-700 mt-1 leading-tight">{f.sub}</span>
             </button>
           ))}
+        </nav>
+
+        {/* 5. CATEGORY PILLS */}
+        <div className="-mx-4 px-4 flex gap-3 overflow-x-auto scrollbar-hide pb-1" role="tablist" aria-label="Kategori">
+          {categories.map((cat) => {
+            const active = selectedCategory === cat;
+            return (
+              <button
+                key={cat}
+                role="tab"
+                aria-selected={active}
+                onClick={() => setSelectedCategory(cat)}
+                className={`min-w-[104px] h-11 px-6 rounded-full text-[16px] whitespace-nowrap border-2 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-navy ${
+                  active
+                    ? 'bg-navy border-navy text-white shadow-md'
+                    : 'bg-white border-gray-400 text-gray-900 hover:border-navy/60 active:scale-95'
+                }`}
+              >
+                {cat}
+              </button>
+            );
+          })}
         </div>
 
-        {/* ========================================================================= */}
-        {/* 6. FEATURED DROPS SECTION (PRD AN-06: Product Card Motion) */}
-        {/* ========================================================================= */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-extrabold text-[#10284D]">Featured Drops</h3>
+        {/* 6. FEATURED DROPS */}
+        <section className="space-y-3" aria-labelledby="featured-drops">
+          <div className="flex items-end justify-between">
+            <h3 id="featured-drops" className="text-xl font-bold text-gray-900">Featured Drops</h3>
             <button
               onClick={() => router.push('/trift-marketplace')}
-              className="text-[#E86D50] text-xs font-bold hover:underline active:opacity-75 transition-opacity"
+              className="text-coral text-base font-normal py-1 hover:underline underline-offset-2 active:opacity-75 transition-opacity"
             >
               Lihat lainnya
             </button>
           </div>
 
-          <StaggerContainer className="flex gap-3.5 overflow-x-auto scrollbar-hide pb-2" staggerDelay={50}>
+          <StaggerContainer className="-mx-4 px-4 flex gap-3.5 overflow-x-auto scrollbar-hide pb-3" staggerDelay={50}>
             {filteredProducts.map((product) => (
               <StaggerItem key={product.id} className="flex-shrink-0">
-                <div
+                <button
+                  type="button"
                   onClick={() => setSelectedProduct(product)}
-                  className="w-[165px] bg-card rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200 cursor-pointer flex flex-col justify-between"
+                  className="w-[160px] text-left bg-white rounded-2xl shadow-card overflow-hidden hover:shadow-card-hover hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200 flex flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
                 >
-                  {/* Visual Image Representation */}
-                  <div className="w-full h-[135px] relative overflow-hidden bg-slate-100 group">
-                    <Image
-                      src={product.imageUrl}
-                      alt={product.name}
-                      fill
-                      unoptimized
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
-                    <span className="absolute top-2 right-2 bg-black/60 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-sm shadow-sm">
-                      ⭐ {product.score}
+                  <span className="block p-2 pb-0">
+                    <span className="block w-full h-[128px] relative overflow-hidden rounded-xl bg-gray-50">
+                      <Image
+                        src={product.imageUrl}
+                        alt={product.name}
+                        fill
+                        unoptimized
+                        sizes="160px"
+                        className="object-cover"
+                      />
                     </span>
-                    <span className="absolute bottom-2 left-2 text-xs font-bold text-white bg-[#10284D]/80 px-2 py-0.5 rounded-md backdrop-blur-xs">
-                      {product.iconText} {product.category}
+                  </span>
+                  <span className="block px-3 pt-2 pb-3">
+                    <span className="block text-[11px] text-gray-800 truncate">{product.categoryTitle}</span>
+                    <span className="block text-[15px] font-bold text-gray-900 truncate leading-tight">{product.name}</span>
+                    <span className="block text-coral text-[15px] font-bold mt-1.5 leading-none">
+                      Rp{product.priceNow.toLocaleString('id-ID')},00
                     </span>
-                  </div>
-
-                  {/* Card Content */}
-                  <div className="p-3 space-y-1 bg-white">
-                    <span className="text-[10px] text-muted-foreground block truncate">
-                      {product.categoryTitle}
-                    </span>
-                    <h4 className="text-xs font-extrabold text-[#10284D] truncate">
-                      {product.name}
-                    </h4>
-                    <div className="flex items-baseline gap-1 pt-0.5">
-                      <span className="text-[#E86D50] text-xs font-extrabold">
-                        Rp{product.priceNow.toLocaleString('id-ID')},00
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between pt-1 border-t border-gray-100">
-                      <span className="text-[9px] text-muted-foreground line-through">
+                    <span className="flex items-center justify-between gap-1 mt-1">
+                      <span className="text-[10px] text-gray-500 line-through truncate">
                         Rp{product.priceOrig.toLocaleString('id-ID')},00
                       </span>
-                      <span className="bg-[#D1FAE5] text-[#166534] text-[9px] font-extrabold px-1.5 py-0.5 rounded">
+                      <span className="bg-[#B9F5CF] text-gray-900 text-[9px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap">
                         {product.condition}
                       </span>
-                    </div>
-                  </div>
-                </div>
+                    </span>
+                  </span>
+                </button>
               </StaggerItem>
             ))}
           </StaggerContainer>
-        </div>
+        </section>
 
         {/* ========================================================================= */}
         {/* INTERACTIVE BUBBLE POP-UP 1: PRODUCT DETAILS MODAL */}
@@ -642,7 +648,7 @@ export default function BerandaPage() {
                 <div className="text-right">
                   <span className="text-[10px] text-gray-500 block">Mitra Penjual</span>
                   <span className="text-xs font-bold text-gray-800">{selectedProduct.seller}</span>
-                  <span className="text-[9px] text-gray-400 block">📍 {selectedProduct.location}</span>
+                  <span className="text-[9px] text-gray-400 block">{selectedProduct.location}</span>
                 </div>
               </div>
 
@@ -653,7 +659,7 @@ export default function BerandaPage() {
                   {selectedProduct.description}
                 </p>
                 <p className="text-[11px] text-gray-500 pt-1">
-                  🌿 <strong>Bahan:</strong> {selectedProduct.fabric}
+                  <strong>Bahan:</strong> {selectedProduct.fabric}
                 </p>
               </div>
 
@@ -694,7 +700,7 @@ export default function BerandaPage() {
                   }}
                   className="bg-[#10284D] text-white py-3 rounded-2xl text-xs font-bold shadow-md hover:bg-[#152248] active:scale-95 transition-all text-center"
                 >
-                  Beli Sekarang ⚡
+                  Beli Sekarang
                 </button>
               </div>
             </div>
@@ -709,15 +715,15 @@ export default function BerandaPage() {
             <div className="bg-white rounded-3xl p-6 w-full max-w-md text-gray-800 space-y-4 animate-scale-in shadow-2xl">
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-2xl shadow-inner">
-                    🧑‍🦱
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center text-navy-deep text-base font-bold" aria-hidden="true">
+                    {initials}
                   </div>
                   <div>
                     <h3 className="font-extrabold text-sm text-[#10284D]">
-                      Muhammad Hafiz Maulana
+                      {userName}
                     </h3>
                     <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
-                      🌱 Eco Champion Level 3
+                      Eco Champion Level 3
                     </span>
                   </div>
                 </div>
@@ -776,7 +782,7 @@ export default function BerandaPage() {
             <div className="bg-white rounded-3xl p-6 w-full max-w-md text-gray-800 space-y-4 animate-scale-in shadow-2xl">
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-2xl">🌍</span>
+                  <Icon name="GlobeAsiaAustraliaIcon" variant="solid" size={28} className="text-emerald-600" aria-hidden="true" />
                   <div>
                     <h3 className="font-extrabold text-sm text-[#10284D]">
                       Dampak Lingkungan Sirkularmu
@@ -795,7 +801,7 @@ export default function BerandaPage() {
               <div className="space-y-3">
                 <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 space-y-1">
                   <span className="text-[10px] text-emerald-800 font-bold block uppercase tracking-wider">
-                    🍃 Limbah Tekstil Diselamatkan
+                    Limbah Tekstil Diselamatkan
                   </span>
                   <span className="text-2xl font-black text-emerald-900 block">12.5 kg</span>
                   <p className="text-[11px] text-emerald-700">
@@ -806,11 +812,11 @@ export default function BerandaPage() {
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="bg-blue-50 border border-blue-100 p-3 rounded-2xl">
                     <span className="text-blue-600 block text-[10px]">Air Dihemat</span>
-                    <span className="font-extrabold text-sm text-blue-900">💧 2.450 Liter</span>
+                    <span className="font-extrabold text-sm text-blue-900">2.450 Liter</span>
                   </div>
                   <div className="bg-amber-50 border border-amber-100 p-3 rounded-2xl">
                     <span className="text-amber-800 block text-[10px]">Peringkat Komunitas</span>
-                    <span className="font-extrabold text-sm text-amber-900">🏆 Top #8 Nasional</span>
+                    <span className="font-extrabold text-sm text-amber-900">Top #8 Nasional</span>
                   </div>
                 </div>
               </div>
@@ -836,8 +842,8 @@ export default function BerandaPage() {
             <div className="bg-white rounded-3xl p-6 w-full max-w-md text-gray-800 space-y-4 animate-scale-in shadow-2xl">
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-cyan-100 flex items-center justify-center text-2xl">
-                    🧼
+                  <div className="w-12 h-12 rounded-2xl bg-cyan-100 flex items-center justify-center" aria-hidden="true">
+                    <Icon name="SparklesIcon" variant="solid" size={24} className="text-cyan-700" />
                   </div>
                   <div>
                     <span className="text-[10px] bg-cyan-100 text-cyan-800 font-extrabold px-2 py-0.5 rounded">
@@ -902,7 +908,7 @@ export default function BerandaPage() {
                   }}
                   className="bg-[#10284D] text-white py-3 rounded-2xl text-xs font-bold shadow-md hover:bg-[#152248] active:scale-95 transition-all text-center"
                 >
-                  Beli Langsung ⚡
+                  Beli Langsung
                 </button>
               </div>
             </div>

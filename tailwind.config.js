@@ -54,6 +54,14 @@ module.exports = {
         mint: 'var(--mint)',
         'pink-pastel': 'var(--pink-pastel)',
         'tan-pastel': 'var(--tan-pastel)',
+        // Hex (not CSS vars) so Tailwind opacity modifiers like bg-navy/90 work
+        navy: {
+          DEFAULT: '#0E3567',
+          deep: '#0B2A52',
+          soft: '#143F73',
+        },
+        'brand-yellow': '#FFE600',
+        'success-green': '#2DB52F',
       },
       borderRadius: {
         DEFAULT: 'var(--radius)',
@@ -64,7 +72,7 @@ module.exports = {
         '2xl': 'calc(var(--radius) + 8px)',
       },
       fontFamily: {
-        sans: ['var(--font-plus-jakarta-sans)', 'sans-serif'],
+        sans: ['var(--font-poppins)', 'var(--font-plus-jakarta-sans)', 'sans-serif'],
       },
       boxShadow: {
         card: '0 1px 3px rgba(26,43,92,0.08), 0 1px 2px rgba(26,43,92,0.04)',

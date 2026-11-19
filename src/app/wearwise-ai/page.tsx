@@ -122,10 +122,10 @@ export default function WearwiseAIPage() {
 
   // Analysis Checklist State
   const [steps, setSteps] = useState<AnalysisStep[]>([
-    { id: 1, label: 'Mendeteksi pakaian & kejernihan kamera', isComplete: false, iconName: 'ViewfinderCircleIcon' },
-    { id: 2, label: 'Menganalisis 7 dimensi kondisi pakaian', isComplete: false, iconName: 'SparklesIcon' },
-    { id: 3, label: 'Menghitung Garment Condition Score (GCS)', isComplete: false, iconName: 'ArrowPathIcon' },
-    { id: 4, label: 'Menentukan rekomendasi tindakan sirkular', isComplete: false, iconName: 'CheckBadgeIcon' },
+    { id: 1, label: 'Mendeteksi jenis pakaian', isComplete: false, iconName: 'ViewfinderCircleIcon' },
+    { id: 2, label: 'Menganalisis kondisi kain', isComplete: false, iconName: 'PresentationChartBarIcon' },
+    { id: 3, label: 'Mengevaluasi jahitan', isComplete: false, iconName: 'DocumentMagnifyingGlassIcon' },
+    { id: 4, label: 'Menghitung skor dan rekomendasi', isComplete: false, iconName: 'CheckBadgeIcon' },
   ]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
@@ -610,272 +610,236 @@ export default function WearwiseAIPage() {
     }
   }, [stage, assessmentResult]);
 
+  const frameClipOuter =
+    'polygon(0 0, 100% 0, 100% calc(100% - 48px), calc(100% - 48px) 100%, 48px 100%, 0 calc(100% - 48px))';
+  const frameClipInner =
+    'polygon(0 0, 100% 0, 100% calc(100% - 46.8px), calc(100% - 46.8px) 100%, 46.8px 100%, 0 calc(100% - 46.8px))';
+
   return (
     <AppLayout
-      title="Kenali Kondisi Pakaianmu"
-      showBack
-      backHref="/"
-      headerRight={
-        <button
-          onClick={() => setShowContextModal(true)}
-          className="relative flex items-center justify-center px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#10284D] active:scale-95 transition-all text-xs font-bold gap-1"
-          title="Input Tambahan Bau & Bahan"
-        >
-          <span>✨</span>
-          <span className="hidden sm:inline">Data Fisik</span>
-        </button>
-      }
+      hideTopHeader
+      mutedNav={stage !== 'result'}
+      className="bg-gradient-to-b from-[#F1F1F1] via-[#C9C9C9] to-[#8A8A8A] bg-fixed"
     >
       {/* Hidden canvas for capturing frame */}
       <canvas ref={canvasRef} className="hidden" />
 
-      <div className="max-w-md mx-auto space-y-4 pb-24 select-none font-sans">
-        {/* ========================================================================= */}
-        {/* STAGE 1 & 2: SCANNING & ANALYZING VIEW */}
-        {/* ========================================================================= */}
+      <div className="max-w-md mx-auto pb-28 select-none font-sans">
+        {/* HEADER: back + menu floating buttons, centered title */}
+        <div className="flex items-center justify-between pt-3">
+          <button
+            type="button"
+            onClick={() => router.push('/')}
+            className="w-12 h-12 rounded-full bg-white/90 shadow-card flex items-center justify-center text-navy-deep active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+            aria-label="Kembali ke beranda"
+          >
+            <Icon name="ArrowLeftIcon" size={26} strokeWidth={1.6} />
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowContextModal(true)}
+            className="w-12 h-12 rounded-full bg-white/90 shadow-card flex items-center justify-center text-navy-deep active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+            aria-label="Tambah data fisik pakaian (bau & bahan)"
+          >
+            <Icon name="EllipsisVerticalIcon" size={28} strokeWidth={2.6} />
+          </button>
+        </div>
+
+        <h1 className="text-center text-[19px] font-medium text-navy mt-2 mb-1">Kenali Kondisi Pakaianmu</h1>
+
+        {/* STAGE 1 & 2: CAMERA + ANALYZING */}
         {stage !== 'result' && (
-          <div className="space-y-4 animate-fade-in">
-            {/* 1. CLOTHING PREVIEW FRAME WITH SCANLINE & CORNER LOCK GUIDES */}
-            <div className="relative bg-slate-900 rounded-3xl h-[280px] sm:h-[300px] overflow-hidden shadow-md border-2 border-slate-200/80 transition-transform duration-300">
-              {/* Media Display: Keep video element mounted in DOM so videoRef remains valid */}
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className={`w-full h-full object-cover transition-transform duration-300 ${
-                  facingMode === 'user' ? 'scale-x-[-1]' : ''
-                } ${flash ? 'brightness-125 contrast-105' : ''} ${
-                  stage === 'camera' && cameraStatus === 'active' ? 'block' : 'hidden'
-                }`}
-              />
-
-              {!(stage === 'camera' && cameraStatus === 'active') && (
-                <div className="relative w-full h-full overflow-hidden bg-slate-100">
-                  <Image
-                    src={selectedImage || DEFAULT_JACKET_IMAGE}
-                    alt="Pakaian yang di-scan"
-                    fill
-                    unoptimized
-                    className="object-cover"
-                  />
-                  {stage === 'analyzing' && <div className="absolute inset-0 bg-[#10284D]/30" />}
-                  {stage === 'camera' && cameraStatus === 'requesting' && (
-                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center text-white gap-2 z-10">
-                      <div className="w-8 h-8 border-3 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-                      <span className="text-xs font-semibold">Mengakses kamera...</span>
-                    </div>
-                  )}
-                  {stage === 'camera' && cameraStatus === 'error' && (
-                    <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center text-white gap-2 p-4 text-center z-10">
-                      <Icon name="ExclamationTriangleIcon" size={28} className="text-amber-400" />
-                      <span className="text-xs font-semibold">{cameraError || 'Kamera tidak dapat diakses'}</span>
-                      <span className="text-[10px] text-white/70">Pilih foto dari galeri dengan tombol di bawah</span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Corner Lock Brackets & Framing Overlay */}
+          <div className="animate-fade-in">
+            {/* Viewfinder frame (rounded top, chamfered bottom, mint border) */}
+            <div
+              className="relative mx-auto w-full h-[220px] bg-[#DDF2E3] p-[3px] rounded-t-[34px]"
+              style={{ clipPath: frameClipOuter }}
+            >
               <div
-                className={`absolute inset-4 pointer-events-none transition-opacity duration-300 ${
-                  isObjectLocked || stage === 'camera' ? 'opacity-100 animate-corner-lock' : 'opacity-40'
-                }`}
+                className="relative w-full h-full overflow-hidden rounded-t-[31px] bg-slate-800"
+                style={{ clipPath: frameClipInner }}
               >
-                <div className="absolute top-0 left-0 w-7 h-7 border-t-3 border-l-3 border-cyan-400 rounded-tl-lg shadow-sm" />
-                <div className="absolute top-0 right-0 w-7 h-7 border-t-3 border-r-3 border-cyan-400 rounded-tr-lg shadow-sm" />
-                <div className="absolute bottom-0 left-0 w-7 h-7 border-b-3 border-l-3 border-cyan-400 rounded-bl-lg shadow-sm" />
-                <div className="absolute bottom-0 right-0 w-7 h-7 border-b-3 border-r-3 border-cyan-400 rounded-br-lg shadow-sm" />
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className={`w-full h-full object-cover ${facingMode === 'user' ? 'scale-x-[-1]' : ''} ${
+                    flash ? 'brightness-125 contrast-105' : ''
+                  } ${stage === 'camera' && cameraStatus === 'active' ? 'block' : 'hidden'}`}
+                />
 
-                {/* Subtitle guidance inside viewfinder */}
-                {stage === 'camera' && (
-                  <div className="absolute inset-x-0 bottom-2 text-center">
-                    <span className="bg-black/50 backdrop-blur-sm text-white/90 text-[10px] font-semibold px-3 py-1 rounded-full border border-white/20">
-                      Posisikan pakaian rata & fokuskan kamera
-                    </span>
+                {!(stage === 'camera' && cameraStatus === 'active') && (
+                  <div className="absolute inset-0 bg-slate-200">
+                    <Image
+                      src={selectedImage || DEFAULT_JACKET_IMAGE}
+                      alt="Pakaian yang dipindai"
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                    {stage === 'camera' && cameraStatus === 'requesting' && (
+                      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center text-white gap-2">
+                        <div className="w-8 h-8 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+                        <span className="text-sm font-medium">Mengakses kamera...</span>
+                      </div>
+                    )}
+                    {stage === 'camera' && cameraStatus === 'error' && (
+                      <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center text-white gap-2 p-6 text-center">
+                        <Icon name="ExclamationTriangleIcon" size={30} className="text-amber-400" aria-hidden="true" />
+                        <span className="text-sm font-medium">{cameraError || 'Kamera tidak dapat diakses'}</span>
+                        <span className="text-xs text-white/75">Pilih foto dari galeri dengan tombol di bawah</span>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
 
-              {/* Horizontal Moving Scan Laser Line */}
-              {(isScanLineActive || stage === 'analyzing') && (
-                <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_14px_#38bdf8] animate-scan-laser z-20 pointer-events-none" />
-              )}
+                {/* Scan line */}
+                {(isScanLineActive || stage === 'analyzing') && !isCompletionPhase && (
+                  <div
+                    className="absolute inset-x-0 h-[3px] bg-navy-deep shadow-[0_0_10px_rgba(11,42,82,0.55)] animate-scan-laser z-20 pointer-events-none"
+                    aria-hidden="true"
+                  />
+                )}
 
-              {/* Top Status Capsule */}
-              <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 text-white text-[10px] font-bold">
-                <span className={`w-2 h-2 rounded-full ${stage === 'analyzing' ? 'bg-amber-400 animate-ping' : 'bg-emerald-400'}`} />
-                <span>{stage === 'analyzing' ? 'DeepSeek Vision AI Active' : 'Kamera Siap'}</span>
-              </div>
-
-              {/* Camera Switch Pill (Rear / Front) */}
-              {stage === 'camera' && (
-                <button
-                  onClick={handleSwitchCamera}
-                  className="absolute top-3 right-3 z-20 bg-black/60 hover:bg-black/80 backdrop-blur-md p-2 rounded-full border border-white/20 text-white active:scale-90 transition-all"
-                  title="Ganti Kamera Depan/Belakang"
-                  aria-label="Switch Camera"
-                >
-                  <Icon name="ArrowPathIcon" size={16} />
-                </button>
-              )}
-            </div>
-
-            {/* Label below preview frame */}
-            <div className="text-center pt-0.5">
-              <h3 className="text-base font-extrabold text-[#10284D] tracking-tight">
-                {isCompletionPhase
-                  ? 'Diagnosis Selesai 🎉'
-                  : stage === 'analyzing'
-                  ? 'Menilai 7 Dimensi Pakaian...'
-                  : 'AI Garment Condition Assessment'}
-              </h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {stage === 'analyzing'
-                  ? 'Wearwise AI sedang mendiagnosis serat, noda, dan keutuhan pakaian...'
-                  : 'Arahkan kamera ke pakaian secara rata & tekan tombol scan.'}
-              </p>
-            </div>
-
-            {/* User Context Banner Tag (If Provided) */}
-            {(userContext.odour !== 'none' || userContext.knownFabric) && (
-              <div className="bg-blue-50 border border-blue-200 rounded-2xl px-3.5 py-2 flex items-center justify-between text-xs text-blue-900">
-                <div className="flex items-center gap-2">
-                  <span>ℹ️</span>
-                  <span>
-                    Input Fisik: {userContext.knownFabric || 'Bahan umum'} • Bau:{' '}
-                    {userContext.odour === 'strong' ? 'Menyengat' : 'Apek'}
+                {/* Camera guidance + switch */}
+                {stage === 'camera' && cameraStatus === 'active' && (
+                  <span className="absolute top-4 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap bg-black/45 backdrop-blur-sm text-white text-[11px] font-medium px-3 py-1 rounded-full">
+                    Bentangkan pakaian & fokuskan kamera
                   </span>
-                </div>
-                <button
-                  onClick={() => setShowContextModal(true)}
-                  className="text-xs font-bold text-[#10284D] hover:underline"
-                >
+                )}
+                {stage === 'camera' && hasMultipleCameras && (
+                  <button
+                    onClick={handleSwitchCamera}
+                    className="absolute top-3 right-4 z-20 w-10 h-10 rounded-full bg-black/45 backdrop-blur-sm text-white flex items-center justify-center active:scale-90 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    aria-label="Ganti kamera depan/belakang"
+                  >
+                    <Icon name="ArrowPathIcon" size={18} />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Status label */}
+            <p className="text-center text-[20px] font-medium text-navy mt-1" aria-live="polite">
+              {isCompletionPhase
+                ? 'Diagnosis Selesai'
+                : stage === 'analyzing'
+                ? 'Scanning...'
+                : 'Siap Memindai'}
+            </p>
+
+            {/* User context tag */}
+            {(userContext.odour !== 'none' || userContext.knownFabric) && (
+              <div className="mt-3 mx-1 bg-white/80 backdrop-blur-sm rounded-2xl px-4 py-2 flex items-center justify-between text-xs text-navy-deep">
+                <span className="flex items-center gap-2 min-w-0">
+                  <Icon name="InformationCircleIcon" size={16} aria-hidden="true" />
+                  <span className="truncate">
+                    {userContext.knownFabric || 'Bahan umum'} • Bau:{' '}
+                    {userContext.odour === 'strong' ? 'Menyengat' : userContext.odour === 'musty' ? 'Apek' : 'Normal'}
+                  </span>
+                </span>
+                <button onClick={() => setShowContextModal(true)} className="font-semibold underline underline-offset-2 py-1">
                   Ubah
                 </button>
               </div>
             )}
 
-            {/* 2. FLOATING PROCESS CARD */}
-            <div className="bg-white rounded-3xl p-5 shadow-lg border border-slate-100 space-y-3.5 relative overflow-hidden">
-              <div className="flex items-center justify-between">
-                <span className="bg-[#10284D] text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-                  PROSES DIAGNOSIS
-                </span>
-                <span className="text-[11px] font-extrabold text-[#3A7BF7]">
-                  {currentStepIndex}/4 Selesai
-                </span>
-              </div>
+            {/* Process card */}
+            <div className="mt-5 mx-2 bg-white rounded-[20px] px-4 pt-4 pb-3 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+              <span className="inline-block bg-navy-deep text-white text-[13px] font-medium px-4 py-1.5 rounded-full tracking-wide">
+                PROSES ANALISIS
+              </span>
 
               {isCompletionPhase ? (
                 <div className="py-4 flex flex-col items-center justify-center animate-checkmark-reveal">
                   <SignatureCircularMotion size="md" showCheckmark={true} />
-                  <p className="text-xs font-black text-[#10284D] mt-3">
-                    Diagnosis Kondisi Pakaian Sempurna!
-                  </p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                    Membuka Garment Condition Score (GCS) dan rekomendasi sirkular...
-                  </p>
+                  <p className="text-sm font-semibold text-navy mt-3">Diagnosis kondisi pakaian selesai</p>
+                  <p className="text-xs text-gray-600 mt-0.5">Membuka skor & rekomendasi sirkular...</p>
                 </div>
               ) : (
-                <div className="space-y-3 pt-1">
+                <ol className="mt-2 space-y-0.5">
                   {steps.map((step) => {
                     const isDone = step.isComplete;
                     const isCurrent = currentStepIndex + 1 === step.id && stage === 'analyzing';
-
                     return (
-                      <div
-                        key={step.id}
-                        className={`flex items-center justify-between text-xs transition-all duration-300 ${
-                          isDone
-                            ? 'text-[#2F9E67] font-extrabold'
-                            : isCurrent
-                            ? 'text-[#10284D] font-extrabold scale-102'
-                            : 'text-slate-400 font-medium'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-                              isDone
-                                ? 'bg-emerald-50 text-emerald-600'
-                                : isCurrent
-                                ? 'bg-blue-50 text-[#10284D] animate-pulse'
-                                : 'text-slate-300'
-                            }`}
-                          >
-                            <Icon name={step.iconName} size={16} />
-                          </div>
-                          <span>{step.label}</span>
-                        </div>
-
+                      <li key={step.id} className="flex items-center gap-2.5 min-h-[44px]">
+                        <span
+                          className={`w-9 h-9 flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
+                            isDone ? 'text-success-green' : isCurrent ? 'text-navy' : 'text-gray-400'
+                          }`}
+                          aria-hidden="true"
+                        >
+                          <Icon name={step.iconName} size={32} strokeWidth={1.4} />
+                        </span>
+                        <span
+                          className={`text-[14.5px] leading-snug transition-colors duration-300 ${
+                            isDone
+                              ? 'text-success-green'
+                              : isCurrent
+                              ? 'text-navy font-medium'
+                              : 'text-gray-400 line-through decoration-gray-400'
+                          }`}
+                        >
+                          {step.label}
+                        </span>
                         {isDone ? (
-                          <div className="w-5 h-5 rounded-full bg-[#2F9E67] text-white flex items-center justify-center flex-shrink-0 shadow-xs animate-scale-in">
-                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
+                          <Icon
+                            name="CheckCircleIcon"
+                            variant="solid"
+                            size={24}
+                            className="text-success-green flex-shrink-0 animate-scale-in"
+                            aria-label="Selesai"
+                          />
                         ) : isCurrent ? (
-                          <div className="w-4 h-4 border-2 border-[#10284D] border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          <div className="w-4 h-4 rounded-full border border-slate-200" />
-                        )}
-                      </div>
+                          <span
+                            className="w-5 h-5 border-2 border-navy border-t-transparent rounded-full animate-spin flex-shrink-0"
+                            aria-label="Sedang diproses"
+                          />
+                        ) : null}
+                      </li>
                     );
                   })}
-                </div>
+                </ol>
               )}
-
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-muted-foreground">
-                <span>Model AI: DeepSeek Vision Chat (V3)</span>
-                <button
-                  onClick={() => setShowContextModal(true)}
-                  className="font-bold text-[#10284D] hover:underline flex items-center gap-1"
-                >
-                  <span>+ Data Bau & Bahan</span>
-                </button>
-              </div>
             </div>
 
-            {/* 3. BOTTOM CONTROL ROW (GALLERY, PROMINENT SHUTTER, FLASH) */}
-            <div className="flex items-center justify-center gap-6 pt-2">
-              {/* Left Gallery Icon Button */}
+            <p className="text-center text-[13px] text-white mt-2 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
+              Analisis biasanya memakan waktu 30 detik
+            </p>
+
+            {/* Controls: gallery / shutter / flash */}
+            <div className="flex items-center justify-center gap-8 mt-6">
               <label
-                className="w-14 h-14 rounded-full bg-[#10284D] text-white flex items-center justify-center shadow-lg hover:bg-[#163768] active:scale-[0.97] transition-all cursor-pointer border border-white/20"
-                title="Pilih dari Galeri"
+                className="w-14 h-14 rounded-full bg-navy-deep border-[3px] border-white text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform cursor-pointer focus-within:ring-2 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-navy"
+                aria-label="Pilih foto dari galeri"
               >
-                <Icon name="PhotoIcon" size={22} className="text-white" />
-                <input type="file" accept="image/*" onChange={handleGalleryUpload} className="hidden" />
+                <Icon name="PhotoIcon" variant="solid" size={28} aria-hidden="true" />
+                <input type="file" accept="image/*" onChange={handleGalleryUpload} className="sr-only" />
               </label>
 
-              {/* Center Prominent Shutter Button */}
               <button
                 onClick={handleCapture}
                 disabled={stage === 'analyzing'}
-                className="w-20 h-20 rounded-full bg-[#10284D] border-4 border-cyan-400/80 p-1 flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-75 relative group"
-                aria-label="Mulai Scan Pakaian"
+                className="w-[88px] h-[88px] rounded-full bg-navy-deep border-[5px] border-white text-white flex items-center justify-center shadow-xl hover:scale-[1.03] active:scale-95 transition-transform disabled:opacity-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/70"
+                aria-label="Mulai scan pakaian"
               >
-                <div className="w-full h-full rounded-full border-2 border-white/40 flex items-center justify-center bg-gradient-to-tr from-[#0C2952] to-[#1E4D8A]">
-                  {stage === 'analyzing' ? (
-                    <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <Icon name="QrCodeIcon" size={28} className="text-white" />
-                  )}
-                </div>
+                {stage === 'analyzing' ? (
+                  <span className="w-8 h-8 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Icon name="QrCodeIcon" size={46} strokeWidth={1.4} aria-hidden="true" />
+                )}
               </button>
 
-              {/* Right Flash Icon Button */}
               <button
                 onClick={handleToggleFlash}
-                className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg active:scale-[0.97] transition-all border border-white/20 ${
-                  flash
-                    ? 'bg-amber-400 text-slate-900 shadow-amber-300/40'
-                    : 'bg-[#10284D] text-white hover:bg-[#163768]'
+                className={`w-14 h-14 rounded-full border-[3px] border-white flex items-center justify-center shadow-lg active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                  flash ? 'bg-brand-yellow text-navy-deep' : 'bg-navy-deep text-white'
                 }`}
-                title="Toggle Lampu Flash"
-                aria-label="Flashlight"
+                aria-label={flash ? 'Matikan flash' : 'Nyalakan flash'}
+                aria-pressed={flash}
               >
-                <Icon name="BoltIcon" size={22} className={flash ? 'text-slate-900' : 'text-white'} />
+                <Icon name="BoltIcon" size={28} strokeWidth={1.5} aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -916,7 +880,7 @@ export default function WearwiseAIPage() {
                   {assessmentResult.garmentType}
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  🌿 <strong>Bahan:</strong> {assessmentResult.estimatedFabric} • {assessmentResult.colorSummary}
+                  <strong>Bahan:</strong> {assessmentResult.estimatedFabric} • {assessmentResult.colorSummary}
                 </p>
               </div>
             </div>
@@ -925,7 +889,8 @@ export default function WearwiseAIPage() {
             <div className="bg-[#10284D] text-white rounded-3xl p-5 shadow-md space-y-2.5 animate-card-reveal stagger-1">
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
                 <div className="flex items-center gap-2 text-[#E8C547] text-xs font-black uppercase tracking-wider">
-                  <span>💡 REKOMENDASI TINDAKAN:</span>
+                  <Icon name="LightBulbIcon" variant="solid" size={16} aria-hidden="true" />
+                  <span>Rekomendasi Tindakan</span>
                 </div>
                 <span className="bg-emerald-500 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                   {assessmentResult.actionBadge}
@@ -939,7 +904,7 @@ export default function WearwiseAIPage() {
 
               {assessmentResult.estimatedPriceRange && (
                 <div className="text-[11px] text-cyan-200 pt-1">
-                  💰 Estimasi Nilai: <strong>{assessmentResult.estimatedPriceRange}</strong>
+                  Estimasi nilai: <strong>{assessmentResult.estimatedPriceRange}</strong>
                 </div>
               )}
             </div>
@@ -948,7 +913,8 @@ export default function WearwiseAIPage() {
             <div className="bg-card rounded-3xl p-5 border border-border shadow-sm space-y-3 animate-card-reveal stagger-2">
               <div className="flex items-center justify-between border-b border-border pb-2">
                 <h4 className="text-xs font-black text-[#10284D] uppercase tracking-wider flex items-center gap-1.5">
-                  <span>🔬 7 Dimensi Penilaian Kondisi Pakaian</span>
+                  <Icon name="BeakerIcon" size={16} aria-hidden="true" />
+                  <span>7 Dimensi Penilaian</span>
                 </h4>
                 <span className="text-[10px] text-muted-foreground font-semibold">Skala 1 - 5</span>
               </div>
@@ -978,7 +944,7 @@ export default function WearwiseAIPage() {
                           </span>
                         </div>
                         <span className="text-xs text-muted-foreground">
-                          {isExpanded ? '▲' : '▼'}
+                          <Icon name="ChevronDownIcon" size={16} className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} aria-hidden="true" />
                         </span>
                       </div>
 
@@ -1015,7 +981,7 @@ export default function WearwiseAIPage() {
             <div className="space-y-2.5">
               <div className="flex items-center justify-between px-1">
                 <h4 className="text-xs font-extrabold text-[#10284D] uppercase tracking-wider">
-                  PILIH TINDAKAN SIRKULAR (DECISION LAYER):
+                  Pilih Tindakan Sirkular
                 </h4>
                 <span className="text-[10px] text-muted-foreground">Pilih salah satu</span>
               </div>
@@ -1031,7 +997,7 @@ export default function WearwiseAIPage() {
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-lg">🧼</span>
+                    <Icon name="SparklesIcon" variant="solid" size={20} className="text-rose-500" aria-hidden="true" />
                     <span className="text-xs font-black text-rose-950">Rawat (Care)</span>
                   </div>
                   <p className="text-[10px] text-muted-foreground leading-tight">
@@ -1049,7 +1015,7 @@ export default function WearwiseAIPage() {
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-lg">✂️</span>
+                    <Icon name="ScissorsIcon" size={20} className="text-amber-600" aria-hidden="true" />
                     <span className="text-xs font-black text-amber-950">Permak (Alter)</span>
                   </div>
                   <p className="text-[10px] text-muted-foreground leading-tight">
@@ -1072,7 +1038,7 @@ export default function WearwiseAIPage() {
                     </span>
                   )}
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-lg">🏷️</span>
+                    <Icon name="TagIcon" variant="solid" size={20} className="text-emerald-600" aria-hidden="true" />
                     <span className="text-xs font-black text-emerald-950">Jual (Trif)</span>
                   </div>
                   <p className="text-[10px] text-muted-foreground leading-tight">
@@ -1090,7 +1056,7 @@ export default function WearwiseAIPage() {
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-lg">♻️</span>
+                    <Icon name="ArrowPathRoundedSquareIcon" size={20} className="text-blue-600" aria-hidden="true" />
                     <span className="text-xs font-black text-blue-950">Upcycle / Daur Ulang</span>
                   </div>
                   <p className="text-[10px] text-muted-foreground leading-tight">
@@ -1132,7 +1098,7 @@ export default function WearwiseAIPage() {
                 }}
                 className="w-full bg-slate-100 text-slate-700 py-3 rounded-full font-bold text-xs hover:bg-slate-200 active:scale-[0.97] transition-all duration-150"
               >
-                🔄 Scan Pakaian Lain
+                Scan Pakaian Lain
               </button>
             </div>
           </div>
@@ -1145,7 +1111,7 @@ export default function WearwiseAIPage() {
       <Modal
         isOpen={showFocusGuidance}
         onClose={() => setShowFocusGuidance(false)}
-        title="⚠️ Pakaian Tidak Terdeteksi Jelas"
+        title="Pakaian Tidak Terdeteksi Jelas"
         size="md"
       >
         <div className="space-y-4 text-xs text-foreground">
@@ -1214,7 +1180,7 @@ export default function WearwiseAIPage() {
       <Modal
         isOpen={showContextModal}
         onClose={() => setShowContextModal(false)}
-        title="✨ Input Tambahan Kondisi Pakaian"
+        title="Data Fisik Pakaian"
         size="md"
       >
         <div className="space-y-3.5 text-xs text-foreground">
