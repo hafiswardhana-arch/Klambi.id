@@ -41,7 +41,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(self), microphone=(), geolocation=(), browsing-topics=()',
+            value: 'camera=(self), microphone=(), geolocation=(self), browsing-topics=()',
           },
           {
             key: 'X-XSS-Protection',
@@ -53,7 +53,7 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.rocket.new https://app.sandbox.midtrans.com https://app.midtrans.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https://images.unsplash.com https://images.pexels.com https://images.pixabay.com https://img.rocket.new",
+              "img-src 'self' data: blob: https://images.unsplash.com https://images.pexels.com https://images.pixabay.com https://img.rocket.new https://tile.openstreetmap.org",
               "font-src 'self' https://fonts.gstatic.com data:",
               "connect-src 'self' https://* http://localhost:* ws://localhost:* wss://*",
               "frame-src 'self' https://app.sandbox.midtrans.com https://app.midtrans.com",

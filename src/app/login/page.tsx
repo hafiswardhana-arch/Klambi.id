@@ -200,14 +200,14 @@ export default function LoginPage() {
   };
 
   const fieldShell =
-    'relative flex items-center h-14 bg-white rounded-full pl-5 pr-4 shadow-[inset_0_1px_2px_rgba(0,0,0,0.06)] focus-within:ring-[3px] focus-within:ring-brand-yellow/80 transition-shadow duration-200';
+    'relative flex items-center h-12 bg-white rounded-full pl-4 pr-3 shadow-[inset_0_1px_2px_rgba(0,0,0,0.06)] focus-within:ring-[3px] focus-within:ring-brand-yellow/80 transition-shadow duration-200';
   const fieldInput =
-    'w-full h-full bg-transparent text-[15px] text-gray-900 placeholder:text-gray-500 outline-none';
+    'w-full h-full bg-transparent text-[14px] text-gray-900 placeholder:text-gray-500 outline-none';
 
   return (
     <div className="min-h-screen bg-white flex flex-col max-w-md mx-auto relative overflow-hidden select-none font-sans">
       {/* TOP: LOGO & WELCOME */}
-      <div className="pt-14 pb-7 px-6 flex flex-col items-center text-center animate-fade-in">
+      <div className="pt-10 pb-5 px-6 flex flex-col items-center text-center animate-fade-in">
         <Image
           src="/assets/images/app_icon.png"
           alt="Logo Klámbi.id"
@@ -215,16 +215,16 @@ export default function LoginPage() {
           height={120}
           priority
           unoptimized
-          className="w-44 h-auto object-contain mb-8"
+          className="w-28 h-auto object-contain mb-4"
         />
-        <h1 className="text-[26px] leading-tight font-normal text-gray-900 tracking-tight animate-slide-up">
+        <h1 className="text-[20px] leading-tight font-normal text-gray-900 tracking-tight animate-slide-up">
           Welcome to <span className="font-bold text-navy">Klámbi.id</span>
         </h1>
       </div>
 
       {/* NAVY CARD */}
-      <div className="mx-4 sm:mx-6 bg-navy-soft rounded-t-[44px] px-6 sm:px-8 pt-9 pb-8 text-white flex-1 flex flex-col animate-slide-up">
-        <p className="text-center text-[17px] leading-snug font-normal text-white max-w-[290px] mx-auto">
+      <div className="mx-4 sm:mx-6 bg-navy-soft rounded-t-[36px] px-5 sm:px-6 pt-7 pb-6 text-white flex-1 flex flex-col animate-slide-up">
+        <p className="text-center text-[14px] leading-snug font-normal text-white max-w-[260px] mx-auto">
           {isRegisterMode ? (
             <>
               Daftar akun <span className="font-medium text-brand-yellow">Klámbi.id</span> baru untuk
@@ -240,13 +240,13 @@ export default function LoginPage() {
 
         <form
           onSubmit={isRegisterMode ? handleRegister : handleLogin}
-          className={`mt-8 space-y-5 w-full ${isShaking ? 'animate-shake' : ''}`}
+          className={`mt-6 space-y-3.5 w-full ${isShaking ? 'animate-shake' : ''}`}
           noValidate
         >
           {isRegisterMode && (
             <div className={fieldShell}>
               <label htmlFor="fullName" className="sr-only">Nama lengkap</label>
-              <Icon name="UserIcon" variant="solid" size={22} className="text-gray-900 mr-3 flex-shrink-0" aria-hidden="true" />
+              <Icon name="UserIcon" variant="solid" size={18} className="text-gray-900 mr-2.5 flex-shrink-0" aria-hidden="true" />
               <input
                 id="fullName"
                 type="text"
@@ -262,7 +262,7 @@ export default function LoginPage() {
 
           <div className={fieldShell}>
             <label htmlFor="username" className="sr-only">Username atau email</label>
-            <Icon name="EnvelopeIcon" variant="solid" size={22} className="text-gray-900 mr-3 flex-shrink-0" aria-hidden="true" />
+            <Icon name="EnvelopeIcon" variant="solid" size={18} className="text-gray-900 mr-2.5 flex-shrink-0" aria-hidden="true" />
             <input
               id="username"
               type="text"
@@ -277,7 +277,7 @@ export default function LoginPage() {
 
           <div className={fieldShell}>
             <label htmlFor="password" className="sr-only">Password</label>
-            <Icon name="LockClosedIcon" variant="solid" size={22} className="text-gray-900 mr-3 flex-shrink-0" aria-hidden="true" />
+            <Icon name="LockClosedIcon" variant="solid" size={18} className="text-gray-900 mr-2.5 flex-shrink-0" aria-hidden="true" />
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -294,14 +294,14 @@ export default function LoginPage() {
               className="ml-2 -mr-1 w-10 h-10 flex items-center justify-center rounded-full text-gray-900 hover:bg-gray-100 active:scale-90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
               aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
             >
-              <Icon name={showPassword ? 'EyeIcon' : 'EyeSlashIcon'} size={22} />
+              <Icon name={showPassword ? 'EyeIcon' : 'EyeSlashIcon'} size={19} />
             </button>
           </div>
 
           {isRegisterMode && (
             <div className={fieldShell}>
               <label htmlFor="confirmPassword" className="sr-only">Konfirmasi password</label>
-              <Icon name="LockClosedIcon" variant="solid" size={22} className="text-gray-900 mr-3 flex-shrink-0" aria-hidden="true" />
+              <Icon name="LockClosedIcon" variant="solid" size={18} className="text-gray-900 mr-2.5 flex-shrink-0" aria-hidden="true" />
               <input
                 id="confirmPassword"
                 type={showPassword ? 'text' : 'password'}
@@ -322,18 +322,18 @@ export default function LoginPage() {
                 onClick={() =>
                   toast.info('Untuk demo, gunakan username "admin" dan password "admin"')
                 }
-                className="text-sm font-medium text-brand-yellow underline underline-offset-2 py-1 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow rounded"
+                className="text-[12px] font-medium text-brand-yellow underline underline-offset-2 py-1 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow rounded"
               >
                 Forgot Password?
               </button>
             </div>
           )}
 
-          <div className="pt-4 px-2 sm:px-4">
+          <div className="pt-2 px-2 sm:px-4">
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full h-[52px] bg-white text-[#163B2E] font-bold text-xl tracking-wide rounded-xl shadow-[0_6px_16px_rgba(0,0,0,0.18)] hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 ease-out uppercase flex items-center justify-center gap-2 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
+              className="w-full h-11 bg-white text-[#163B2E] font-bold text-[16px] tracking-wide rounded-xl shadow-[0_6px_16px_rgba(0,0,0,0.18)] hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 ease-out uppercase flex items-center justify-center gap-2 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
             >
               {isLoading ? (
                 <>
@@ -349,19 +349,19 @@ export default function LoginPage() {
           </div>
         </form>
 
-        <p className="text-center text-sm font-medium text-white my-4">OR</p>
+        <p className="text-center text-[12px] font-medium text-white my-3">OR</p>
 
         <div className="grid grid-cols-2 gap-3 px-1 sm:px-3">
           <button
             type="button"
             onClick={() => handleSocialLogin('google')}
             disabled={socialLoading !== null}
-            className="h-12 bg-white text-gray-900 font-medium text-[15px] rounded-full flex items-center justify-center gap-2.5 hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
+            className="h-10 bg-white text-gray-900 font-medium text-[13px] rounded-full flex items-center justify-center gap-2.5 hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
           >
             {socialLoading === 'google' ? (
               <span className="w-5 h-5 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
             ) : (
-              <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
                 <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" />
                 <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.04 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
@@ -375,12 +375,12 @@ export default function LoginPage() {
             type="button"
             onClick={() => handleSocialLogin('facebook')}
             disabled={socialLoading !== null}
-            className="h-12 bg-white text-gray-900 font-medium text-[15px] rounded-full flex items-center justify-center gap-2.5 hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
+            className="h-10 bg-white text-gray-900 font-medium text-[13px] rounded-full flex items-center justify-center gap-2.5 hover:bg-gray-50 active:scale-[0.97] transition-transform duration-150 disabled:opacity-80 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-yellow"
           >
             {socialLoading === 'facebook' ? (
               <span className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
             ) : (
-              <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
             )}
@@ -388,8 +388,8 @@ export default function LoginPage() {
           </button>
         </div>
 
-        <div className="mt-auto pt-10 text-center">
-          <p className="text-[15px] text-white">
+        <div className="pt-7 text-center">
+          <p className="text-[13px] text-white">
             {isRegisterMode ? 'Sudah punya akun?' : 'Belum punya akun?'}{' '}
             <button
               type="button"

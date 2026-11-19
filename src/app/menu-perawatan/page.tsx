@@ -1,17 +1,28 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
 import { StaggerContainer, StaggerItem } from '@/components/motion';
+import { distanceKm, formatDistance, type LatLng } from '@/lib/geo';
+import type { MapUserPosition } from './components/PartnerMap';
 
-interface ServicePartner {
+// Leaflet touches `window` on import, so the map only renders in the browser.
+const PartnerMap = dynamic(() => import('./components/PartnerMap'), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0 bg-slate-100 animate-pulse" aria-hidden="true" />,
+});
+
+interface PartnerData {
   id: string;
   name: string;
   category: 'permak' | 'cuci' | 'recolor' | 'upcycle';
   categoryLabel: string;
-  distanceKm: number;
+  /** Real coordinates of the workshop (WGS84). */
+  lat: number;
+  lng: number;
   rating: number;
   reviewsCount: number;
   estimatedPrice: number;
@@ -23,13 +34,16 @@ interface ServicePartner {
   badge?: string;
 }
 
-const servicePartners: ServicePartner[] = [
+type ServicePartner = PartnerData & { distanceKm: number };
+
+const servicePartners: PartnerData[] = [
   {
     id: 'sp-1',
     name: 'Taylor Studio Artisan Fatmawati',
     category: 'permak',
     categoryLabel: 'Permak & Jahit',
-    distanceKm: 1.2,
+    lat: -6.2661,
+    lng: 106.7973,
     rating: 4.9,
     reviewsCount: 128,
     estimatedPrice: 45000,
@@ -45,7 +59,8 @@ const servicePartners: ServicePartner[] = [
     name: 'CleanCare Signature Workshop Kemang',
     category: 'cuci',
     categoryLabel: 'Cuci & Spa Tekstil',
-    distanceKm: 2.5,
+    lat: -6.2604,
+    lng: 106.8137,
     rating: 4.8,
     reviewsCount: 94,
     estimatedPrice: 75000,
@@ -60,7 +75,8 @@ const servicePartners: ServicePartner[] = [
     name: 'Jahit Kilat Express Senopati',
     category: 'permak',
     categoryLabel: 'Permak & Jahit',
-    distanceKm: 0.8,
+    lat: -6.2316,
+    lng: 106.8085,
     rating: 4.6,
     reviewsCount: 52,
     estimatedPrice: 35000,
@@ -69,14 +85,14 @@ const servicePartners: ServicePartner[] = [
     services: ['Permak Cepat 1 Hari', 'Ganti Kancing', 'Jahit Robekan Ringan'],
     openHours: 'Senin–Jumat, 09.00–17.00',
     minOrder: 'Mulai 1 item',
-    badge: 'Terdekat',
   },
   {
     id: 'sp-4',
     name: 'Textile Color Restorer & Dyeing',
     category: 'recolor',
     categoryLabel: 'Re-Colour & Celup',
-    distanceKm: 3.1,
+    lat: -6.2526,
+    lng: 106.7858,
     rating: 4.9,
     reviewsCount: 76,
     estimatedPrice: 120000,
@@ -92,7 +108,8 @@ const servicePartners: ServicePartner[] = [
     name: 'Sirkular Upcycle Lab Mampang',
     category: 'upcycle',
     categoryLabel: 'Upcycle & Rework',
-    distanceKm: 2.8,
+    lat: -6.2457,
+    lng: 106.8233,
     rating: 5.0,
     reviewsCount: 41,
     estimatedPrice: 150000,
@@ -107,14 +124,19 @@ const servicePartners: ServicePartner[] = [
 
 type SortMode = 'terdekat' | 'termurah' | 'rating' | 'sesuai';
 
-const mapPins = [
-  { top: '58%', left: '45%', label: 'Kamu', color: '#3A7BF7', isUser: true },
-  { top: '50%', left: '30%', label: '0.8km', color: '#22C55E' },
-  { top: '40%', left: '60%', label: '1.2km', color: '#E86D50' },
-  { top: '60%', left: '55%', label: '2.5km', color: '#E86D50' },
-  { top: '25%', left: '70%', label: '2.8km', color: '#6366F1' },
-  { top: '65%', left: '25%', label: '3.1km', color: '#6366F1' },
-];
+/** Used until the user shares their location: Blok M, Jakarta Selatan. */
+const FALLBACK_CENTER: LatLng = { lat: -6.2443, lng: 106.7985 };
+/** Beyond this, the user is outside our partner coverage area. */
+const COVERAGE_RADIUS_KM = 30;
+
+const categoryMapColor: Record<PartnerData['category'], string> = {
+  permak: '#2563EB',
+  cuci: '#0891B2',
+  recolor: '#7C3AED',
+  upcycle: '#059669',
+};
+
+type GeoStatus = 'idle' | 'locating' | 'granted' | 'denied' | 'unavailable';
 
 export default function MenuPerawatanPage() {
   const router = useRouter();
@@ -122,6 +144,50 @@ export default function MenuPerawatanPage() {
   const [sortBy, setSortBy] = useState<SortMode>('terdekat');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPartner, setSelectedPartner] = useState<ServicePartner | null>(null);
+  const [userPos, setUserPos] = useState<MapUserPosition | null>(null);
+  const [geoStatus, setGeoStatus] = useState<GeoStatus>('idle');
+
+  const requestLocation = useCallback(() => {
+    if (typeof navigator === 'undefined' || !('geolocation' in navigator)) {
+      setGeoStatus('unavailable');
+      return;
+    }
+    setGeoStatus('locating');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserPos({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy });
+        setGeoStatus('granted');
+      },
+      (err) => setGeoStatus(err.code === err.PERMISSION_DENIED ? 'denied' : 'unavailable'),
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 }
+    );
+  }, []);
+
+  // Only locate automatically when permission was already given; otherwise wait for a tap.
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !navigator.permissions?.query) return;
+    navigator.permissions
+      .query({ name: 'geolocation' as PermissionName })
+      .then((status) => {
+        if (status.state === 'granted') requestLocation();
+        else if (status.state === 'denied') setGeoStatus('denied');
+      })
+      .catch(() => undefined);
+  }, [requestLocation]);
+
+  const origin: LatLng = userPos ?? FALLBACK_CENTER;
+
+  const partnersWithDistance = useMemo<ServicePartner[]>(() => {
+    const list = servicePartners.map((p) => ({
+      ...p,
+      distanceKm: Math.round(distanceKm(origin, p) * 10) / 10,
+    }));
+    const nearest = list.reduce((min, p) => (p.distanceKm < min.distanceKm ? p : min), list[0]);
+    return list.map((p) => (p.id === nearest.id && !p.badge ? { ...p, badge: 'Terdekat' } : p));
+  }, [origin.lat, origin.lng]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const nearestKm = Math.min(...partnersWithDistance.map((p) => p.distanceKm));
+  const isOutsideCoverage = userPos !== null && nearestKm > COVERAGE_RADIUS_KM;
 
   const categories = [
     { id: 'all', label: 'Semua Jasa', icon: 'Squares2X2Icon' },
@@ -139,7 +205,7 @@ export default function MenuPerawatanPage() {
   };
 
   const filteredPartners = useMemo(() => {
-    let result = [...servicePartners];
+    let result = [...partnersWithDistance];
 
     if (selectedCategory !== 'all') {
       result = result.filter((p) => p.category === selectedCategory);
@@ -161,7 +227,7 @@ export default function MenuPerawatanPage() {
     else if (sortBy === 'sesuai') result = result.filter((p) => p.isVerified);
 
     return result;
-  }, [selectedCategory, searchQuery, sortBy]);
+  }, [partnersWithDistance, selectedCategory, searchQuery, sortBy]);
 
   const sortOptions: { id: SortMode; label: string; icon: string }[] = [
     { id: 'terdekat', label: 'Terdekat', icon: 'MapPinIcon' },
@@ -177,60 +243,109 @@ export default function MenuPerawatanPage() {
     upcycle: 'bg-emerald-50 text-emerald-800',
   };
 
+  const mapPartners = useMemo(
+    () =>
+      filteredPartners.map((p) => ({
+        id: p.id,
+        name: p.name,
+        lat: p.lat,
+        lng: p.lng,
+        distanceKm: p.distanceKm,
+        color: categoryMapColor[p.category],
+      })),
+    [filteredPartners]
+  );
+
+  const openPartnerFromMap = useCallback(
+    (id: string) => setSelectedPartner(partnersWithDistance.find((p) => p.id === id) ?? null),
+    [partnersWithDistance]
+  );
+
   const goOrder = (name: string) => router.push(`/pemesanan-jasa?provider=${encodeURIComponent(name)}`);
 
   return (
     <AppLayout title="Jasa & Perawatan" showBack backHref="/">
       <div className="space-y-3 pb-4 animate-fade-in">
-        {/* Map placeholder */}
-        <div className="relative rounded-2xl h-36 shadow-card overflow-hidden bg-slate-200" role="img" aria-label="Peta mitra jasa di sekitarmu">
-          <div className="absolute inset-0 bg-gradient-to-tr from-slate-200 via-blue-100 to-emerald-100" />
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                'linear-gradient(#94a3b8 1px, transparent 1px), linear-gradient(90deg, #94a3b8 1px, transparent 1px)',
-              backgroundSize: '28px 28px',
-            }}
-          />
-          <div className="absolute top-[45%] left-0 right-0 h-[3px] bg-white/70 rounded-full" />
-          <div className="absolute top-0 bottom-0 left-[40%] w-[3px] bg-white/70 rounded-full" />
+        {/* Real map + geolocation */}
+        <section className="space-y-1.5" aria-label="Peta mitra jasa">
+          <div className="relative isolate h-52 rounded-2xl shadow-card overflow-hidden bg-slate-100">
+            <PartnerMap
+              partners={mapPartners}
+              user={userPos}
+              fallbackCenter={FALLBACK_CENTER}
+              includeUserInView={!isOutsideCoverage}
+              onSelectPartner={openPartnerFromMap}
+            />
 
-          {mapPins.map((pin, i) => (
-            <div
-              key={i}
-              className="absolute flex flex-col items-center animate-scale-in"
-              style={{ top: pin.top, left: pin.left, transform: 'translate(-50%, -100%)' }}
+            <div className="pointer-events-none absolute top-2 inset-x-0 z-[1000] flex justify-center">
+              <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm pl-2.5 pr-3 h-7 rounded-full shadow-md">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse motion-reduce:animate-none" aria-hidden="true" />
+                <span className="text-[11px] font-semibold text-navy">
+                  {filteredPartners.length} mitra aktif {isOutsideCoverage ? 'di Jakarta Selatan' : 'di sekitarmu'}
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={requestLocation}
+              disabled={geoStatus === 'locating'}
+              className="absolute top-2 right-2 z-[1000] w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-navy hover:bg-gray-50 active:scale-95 transition-transform disabled:cursor-wait focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+              aria-label="Gunakan lokasiku saat ini"
+              title="Gunakan lokasiku"
             >
-              <span
-                className={`${pin.isUser ? 'w-7 h-7' : 'w-5 h-5'} rounded-full border-2 border-white shadow-md flex items-center justify-center text-white`}
-                style={{ backgroundColor: pin.color }}
-                aria-hidden="true"
-              >
+              {geoStatus === 'locating' ? (
+                <span className="w-4 h-4 border-2 border-navy border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+              ) : (
                 <Icon
-                  name={pin.isUser ? 'MapPinIcon' : 'ScissorsIcon'}
-                  variant="solid"
-                  size={pin.isUser ? 14 : 10}
+                  name="MapPinIcon"
+                  variant={geoStatus === 'granted' ? 'solid' : 'outline'}
+                  size={20}
+                  className={geoStatus === 'granted' ? 'text-blue-600' : ''}
+                  aria-hidden="true"
                 />
-              </span>
-              <span
-                className="text-[9px] font-semibold bg-white/90 px-1.5 rounded-full shadow-sm mt-0.5 leading-4"
-                style={{ color: pin.isUser ? '#3A7BF7' : '#374151' }}
-              >
-                {pin.label}
-              </span>
-            </div>
-          ))}
-
-          <div className="absolute top-2 left-0 right-0 flex justify-center">
-            <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm pl-2.5 pr-3 h-7 rounded-full shadow-md">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[11px] font-semibold text-navy">
-                {filteredPartners.length} mitra aktif di sekitarmu
-              </span>
-            </div>
+              )}
+            </button>
           </div>
-        </div>
+
+          <div className="flex items-center gap-2 min-h-[32px] px-0.5" aria-live="polite">
+            {geoStatus === 'granted' && userPos && !isOutsideCoverage && (
+              <p className="flex items-center gap-1.5 text-[11px] text-gray-700">
+                <Icon name="CheckCircleIcon" variant="solid" size={14} className="text-emerald-600 flex-shrink-0" aria-hidden="true" />
+                Jarak dihitung dari lokasimu
+                {userPos.accuracy < 5000 && <span className="text-gray-500">(±{Math.round(userPos.accuracy)} m)</span>}
+              </p>
+            )}
+            {geoStatus === 'granted' && isOutsideCoverage && (
+              <p className="flex items-start gap-1.5 text-[11px] text-amber-800">
+                <Icon name="InformationCircleIcon" variant="solid" size={14} className="text-amber-500 flex-shrink-0 mt-px" aria-hidden="true" />
+                Mitra terdekat {formatDistance(nearestKm)} dari lokasimu. Saat ini mitra Klámbi baru tersedia di Jakarta Selatan.
+              </p>
+            )}
+            {geoStatus === 'locating' && <p className="text-[11px] text-gray-600">Mencari lokasimu…</p>}
+            {(geoStatus === 'idle' || geoStatus === 'denied' || geoStatus === 'unavailable') && (
+              <>
+                <p className="flex-1 text-[11px] leading-snug text-gray-600">
+                  {geoStatus === 'denied'
+                    ? 'Izin lokasi ditolak. Aktifkan di pengaturan browser; sementara jarak dihitung dari Blok M.'
+                    : geoStatus === 'unavailable'
+                    ? 'Lokasi tidak ditemukan. Jarak sementara dihitung dari Blok M.'
+                    : 'Jarak dihitung dari Blok M, Jakarta Selatan.'}
+                </p>
+                {geoStatus !== 'denied' && (
+                  <button
+                    type="button"
+                    onClick={requestLocation}
+                    className="flex-shrink-0 h-8 px-3 rounded-full bg-navy text-white text-[11px] font-medium flex items-center gap-1 active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2"
+                  >
+                    <Icon name="MapPinIcon" variant="solid" size={13} aria-hidden="true" />
+                    {geoStatus === 'unavailable' ? 'Coba lagi' : 'Pakai lokasiku'}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        </section>
 
         {/* Search */}
         <div className="relative">
@@ -379,7 +494,7 @@ export default function MenuPerawatanPage() {
                   <div className="flex items-center gap-2.5 text-[11px] text-gray-700">
                     <span className="flex items-center gap-0.5">
                       <Icon name="MapPinIcon" variant="solid" size={13} className="text-coral" aria-hidden="true" />
-                      {partner.distanceKm} km
+                      {formatDistance(partner.distanceKm)}
                     </span>
                     <span className="flex items-center gap-0.5">
                       <Icon name="StarIcon" variant="solid" size={13} className="text-amber-400" aria-hidden="true" />
@@ -460,7 +575,7 @@ export default function MenuPerawatanPage() {
                 <div className="text-[10px] text-gray-600">Rating</div>
               </div>
               <div className="text-center border-x border-gray-200">
-                <div className="text-[15px] font-semibold text-navy">{selectedPartner.distanceKm} km</div>
+                <div className="text-[15px] font-semibold text-navy">{formatDistance(selectedPartner.distanceKm)}</div>
                 <div className="text-[10px] text-gray-600">Jarak</div>
               </div>
               <div className="text-center">
@@ -472,7 +587,16 @@ export default function MenuPerawatanPage() {
             <ul className="space-y-1.5 text-[12px] text-gray-700">
               <li className="flex items-center gap-2">
                 <Icon name="MapPinIcon" size={15} className="text-navy flex-shrink-0" aria-hidden="true" />
-                <span>{selectedPartner.address}</span>
+                <span className="flex-1">{selectedPartner.address}</span>
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${selectedPartner.lat},${selectedPartner.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-shrink-0 inline-flex items-center gap-1 h-8 px-2.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-medium hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                >
+                  <Icon name="ArrowTopRightOnSquareIcon" size={13} aria-hidden="true" />
+                  Rute
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <Icon name="ClockIcon" size={15} className="text-navy flex-shrink-0" aria-hidden="true" />

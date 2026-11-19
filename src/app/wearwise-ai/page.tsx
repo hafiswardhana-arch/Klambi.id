@@ -112,7 +112,7 @@ export default function WearwiseAIPage() {
   const [animatedScore, setAnimatedScore] = useState(0);
   const [selectedAction, setSelectedAction] = useState<ActionType>('sell');
 
-  // Active Assessment Result from DeepSeek Vision API
+  // Active Assessment Result from Wearwise AI (Gemini Vision)
   const [assessmentResult, setAssessmentResult] = useState<GarmentAssessmentResult | null>(null);
   const [expandedDimension, setExpandedDimension] = useState<string | null>(null);
 
@@ -550,7 +550,7 @@ export default function WearwiseAIPage() {
           'Pakaian tidak terdeteksi dengan jelas. Harap pastikan pencahayaan cukup, posisikan pakaian rata dan terbentang penuh di permukaan datar atau digantung, dan fokuskan lensa kamera ke area pakaian.'
       );
       setShowFocusGuidance(true);
-      toast.warning('Pakaian tidak terdeteksi jelas. Silakan periksa fokus kamera.');
+      toast.warning('Foto tidak menampilkan pakaian dengan jelas.');
       return;
     }
 
@@ -577,7 +577,7 @@ export default function WearwiseAIPage() {
     }
 
     setIsCompletionPhase(true);
-    toast.success('Pemeriksaan DeepSeek AI 7-Dimensi Selesai!');
+    toast.success('Analisis Wearwise AI selesai');
 
     // Transition to Result Screen
     setTimeout(() => {
@@ -626,33 +626,33 @@ export default function WearwiseAIPage() {
 
       <div className="max-w-md mx-auto pb-28 select-none font-sans">
         {/* HEADER: back + menu floating buttons, centered title */}
-        <div className="flex items-center justify-between pt-3">
+        <div className="flex items-center justify-between pt-1">
           <button
             type="button"
             onClick={() => router.push('/')}
-            className="w-12 h-12 rounded-full bg-white/90 shadow-card flex items-center justify-center text-navy-deep active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+            className="w-10 h-10 rounded-full bg-white/90 shadow-card flex items-center justify-center text-navy-deep active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
             aria-label="Kembali ke beranda"
           >
-            <Icon name="ArrowLeftIcon" size={26} strokeWidth={1.6} />
+            <Icon name="ArrowLeftIcon" size={20} strokeWidth={1.8} />
           </button>
           <button
             type="button"
             onClick={() => setShowContextModal(true)}
-            className="w-12 h-12 rounded-full bg-white/90 shadow-card flex items-center justify-center text-navy-deep active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+            className="w-10 h-10 rounded-full bg-white/90 shadow-card flex items-center justify-center text-navy-deep active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
             aria-label="Tambah data fisik pakaian (bau & bahan)"
           >
-            <Icon name="EllipsisVerticalIcon" size={28} strokeWidth={2.6} />
+            <Icon name="EllipsisVerticalIcon" size={22} strokeWidth={2.4} />
           </button>
         </div>
 
-        <h1 className="text-center text-[19px] font-medium text-navy mt-2 mb-1">Kenali Kondisi Pakaianmu</h1>
+        <h1 className="text-center text-[15px] font-semibold text-navy -mt-8 mb-3 pointer-events-none">Kenali Kondisi Pakaianmu</h1>
 
         {/* STAGE 1 & 2: CAMERA + ANALYZING */}
         {stage !== 'result' && (
           <div className="animate-fade-in">
             {/* Viewfinder frame (rounded top, chamfered bottom, mint border) */}
             <div
-              className="relative mx-auto w-full h-[220px] bg-[#DDF2E3] p-[3px] rounded-t-[34px]"
+              className="relative mx-auto w-full h-[200px] bg-[#DDF2E3] p-[3px] rounded-t-[34px]"
               style={{ clipPath: frameClipOuter }}
             >
               <div
@@ -721,7 +721,7 @@ export default function WearwiseAIPage() {
             </div>
 
             {/* Status label */}
-            <p className="text-center text-[20px] font-medium text-navy mt-1" aria-live="polite">
+            <p className="text-center text-[15px] font-medium text-navy mt-1" aria-live="polite">
               {isCompletionPhase
                 ? 'Diagnosis Selesai'
                 : stage === 'analyzing'
@@ -746,8 +746,8 @@ export default function WearwiseAIPage() {
             )}
 
             {/* Process card */}
-            <div className="mt-5 mx-2 bg-white rounded-[20px] px-4 pt-4 pb-3 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
-              <span className="inline-block bg-navy-deep text-white text-[13px] font-medium px-4 py-1.5 rounded-full tracking-wide">
+            <div className="mt-3 bg-white rounded-2xl px-3.5 pt-3 pb-2 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+              <span className="inline-block bg-navy-deep text-white text-[10.5px] font-medium px-3 py-1 rounded-full tracking-wide">
                 PROSES ANALISIS
               </span>
 
@@ -758,22 +758,22 @@ export default function WearwiseAIPage() {
                   <p className="text-xs text-gray-600 mt-0.5">Membuka skor & rekomendasi sirkular...</p>
                 </div>
               ) : (
-                <ol className="mt-2 space-y-0.5">
+                <ol className="mt-1.5">
                   {steps.map((step) => {
                     const isDone = step.isComplete;
                     const isCurrent = currentStepIndex + 1 === step.id && stage === 'analyzing';
                     return (
-                      <li key={step.id} className="flex items-center gap-2.5 min-h-[44px]">
+                      <li key={step.id} className="flex items-center gap-2 min-h-[34px]">
                         <span
-                          className={`w-9 h-9 flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
+                          className={`w-7 h-7 flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
                             isDone ? 'text-success-green' : isCurrent ? 'text-navy' : 'text-gray-400'
                           }`}
                           aria-hidden="true"
                         >
-                          <Icon name={step.iconName} size={32} strokeWidth={1.4} />
+                          <Icon name={step.iconName} size={22} strokeWidth={1.5} />
                         </span>
                         <span
-                          className={`text-[14.5px] leading-snug transition-colors duration-300 ${
+                          className={`text-[12.5px] leading-snug transition-colors duration-300 ${
                             isDone
                               ? 'text-success-green'
                               : isCurrent
@@ -787,13 +787,13 @@ export default function WearwiseAIPage() {
                           <Icon
                             name="CheckCircleIcon"
                             variant="solid"
-                            size={24}
+                            size={17}
                             className="text-success-green flex-shrink-0 animate-scale-in"
                             aria-label="Selesai"
                           />
                         ) : isCurrent ? (
                           <span
-                            className="w-5 h-5 border-2 border-navy border-t-transparent rounded-full animate-spin flex-shrink-0"
+                            className="w-4 h-4 border-2 border-navy border-t-transparent rounded-full animate-spin flex-shrink-0"
                             aria-label="Sedang diproses"
                           />
                         ) : null}
@@ -804,42 +804,42 @@ export default function WearwiseAIPage() {
               )}
             </div>
 
-            <p className="text-center text-[13px] text-white mt-2 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
-              Analisis biasanya memakan waktu 30 detik
+            <p className="text-center text-[11px] text-white mt-1.5 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
+              Analisis biasanya memakan waktu 10–20 detik
             </p>
 
             {/* Controls: gallery / shutter / flash */}
-            <div className="flex items-center justify-center gap-8 mt-6">
+            <div className="flex items-center justify-center gap-7 mt-4">
               <label
-                className="w-14 h-14 rounded-full bg-navy-deep border-[3px] border-white text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform cursor-pointer focus-within:ring-2 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-navy"
+                className="w-12 h-12 rounded-full bg-navy-deep border-[3px] border-white text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform cursor-pointer focus-within:ring-2 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-navy"
                 aria-label="Pilih foto dari galeri"
               >
-                <Icon name="PhotoIcon" variant="solid" size={28} aria-hidden="true" />
+                <Icon name="PhotoIcon" variant="solid" size={22} aria-hidden="true" />
                 <input type="file" accept="image/*" onChange={handleGalleryUpload} className="sr-only" />
               </label>
 
               <button
                 onClick={handleCapture}
                 disabled={stage === 'analyzing'}
-                className="w-[88px] h-[88px] rounded-full bg-navy-deep border-[5px] border-white text-white flex items-center justify-center shadow-xl hover:scale-[1.03] active:scale-95 transition-transform disabled:opacity-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/70"
+                className="w-[72px] h-[72px] rounded-full bg-navy-deep border-4 border-white text-white flex items-center justify-center shadow-xl hover:scale-[1.03] active:scale-95 transition-transform disabled:opacity-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/70"
                 aria-label="Mulai scan pakaian"
               >
                 {stage === 'analyzing' ? (
-                  <span className="w-8 h-8 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+                  <span className="w-6 h-6 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <Icon name="QrCodeIcon" size={46} strokeWidth={1.4} aria-hidden="true" />
+                  <Icon name="QrCodeIcon" size={34} strokeWidth={1.5} aria-hidden="true" />
                 )}
               </button>
 
               <button
                 onClick={handleToggleFlash}
-                className={`w-14 h-14 rounded-full border-[3px] border-white flex items-center justify-center shadow-lg active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                className={`w-12 h-12 rounded-full border-[3px] border-white flex items-center justify-center shadow-lg active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
                   flash ? 'bg-brand-yellow text-navy-deep' : 'bg-navy-deep text-white'
                 }`}
                 aria-label={flash ? 'Matikan flash' : 'Nyalakan flash'}
                 aria-pressed={flash}
               >
-                <Icon name="BoltIcon" size={28} strokeWidth={1.5} aria-hidden="true" />
+                <Icon name="BoltIcon" size={22} strokeWidth={1.6} aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -848,261 +848,197 @@ export default function WearwiseAIPage() {
         {/* ========================================================================= */}
         {/* STAGE 3: RESULT SCREEN (7 DIMENSIONS + GCS SCORE + DECISION LAYER) */}
         {/* ========================================================================= */}
-        {stage === 'result' && assessmentResult && (
-          <div className="space-y-4 animate-scale-in">
-            {/* Top Score Banner with GCS Count-Up Animation */}
-            <div className="bg-card rounded-3xl p-5 border border-border shadow-sm flex items-center gap-4">
-              {/* Circular Score Badge with Count-Up */}
-              <div className="w-22 h-22 rounded-3xl bg-gradient-to-br from-[#0B2545] to-[#163768] text-white flex flex-col items-center justify-center flex-shrink-0 shadow-md border-2 border-cyan-400/50 p-2">
-                <span className="text-2xl font-black text-white font-tabular">{animatedScore}</span>
-                <span className="text-[9px] font-extrabold text-cyan-200 uppercase tracking-wider text-center">
-                  GCS SCORE
-                </span>
-                <span className="text-[8px] text-white/70">Skala 100</span>
-              </div>
+        {stage === 'result' && assessmentResult && (() => {
+          const recommendedKey: ActionType =
+            assessmentResult.primaryAction === 'CIRCULATE'
+              ? 'sell'
+              : assessmentResult.primaryAction === 'CARE'
+              ? 'care'
+              : assessmentResult.primaryAction === 'ALTER'
+              ? 'alter'
+              : 'circulate';
+          const scoreTone =
+            assessmentResult.gcsScore >= 80
+              ? 'bg-emerald-50 text-emerald-700'
+              : assessmentResult.gcsScore >= 60
+              ? 'bg-amber-50 text-amber-800'
+              : 'bg-rose-50 text-rose-700';
+          const actions: { key: ActionType; title: string; desc: string; icon: string; tint: string; cta: string; href: string }[] = [
+            { key: 'care', title: 'Rawat', desc: 'Cuci, hapus noda, deep clean', icon: 'SparklesIcon', tint: 'text-rose-500 bg-rose-50', cta: 'Buka Care Plan', href: '/care-plan' },
+            { key: 'alter', title: 'Permak', desc: 'Jahit, kancing, resleting', icon: 'ScissorsIcon', tint: 'text-amber-600 bg-amber-50', cta: 'Pilih Mitra Permak', href: '/menu-perawatan' },
+            { key: 'sell', title: 'Jual', desc: 'Thrift Marketplace', icon: 'TagIcon', tint: 'text-emerald-600 bg-emerald-50', cta: 'Jual di Marketplace', href: '/jual/trif' },
+            { key: 'circulate', title: 'Upcycle', desc: 'Rework / daur ulang', icon: 'ArrowPathRoundedSquareIcon', tint: 'text-blue-600 bg-blue-50', cta: 'Upcycle / Daur Ulang', href: '/jual/upcycle' },
+          ];
+          const chosen = actions.find((a) => a.key === selectedAction) ?? actions[0];
 
-              <div className="space-y-1 min-w-0 flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span
-                    className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                      assessmentResult.gcsScore >= 80
-                        ? 'bg-[#D1FAE5] text-[#166534]'
-                        : assessmentResult.gcsScore >= 60
-                        ? 'bg-amber-100 text-amber-900'
-                        : 'bg-rose-100 text-rose-900'
-                    }`}
-                  >
-                    {assessmentResult.conditionGrade} • {assessmentResult.conditionStatus}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground">{assessmentResult.category}</span>
-                </div>
-                <h3 className="text-sm sm:text-base font-extrabold text-[#10284D] truncate">
-                  {assessmentResult.garmentType}
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  <strong>Bahan:</strong> {assessmentResult.estimatedFabric} • {assessmentResult.colorSummary}
-                </p>
-              </div>
-            </div>
-
-            {/* AI Recommendation Engine Card (5 Categories) */}
-            <div className="bg-[#10284D] text-white rounded-3xl p-5 shadow-md space-y-2.5 animate-card-reveal stagger-1">
-              <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                <div className="flex items-center gap-2 text-[#E8C547] text-xs font-black uppercase tracking-wider">
-                  <Icon name="LightBulbIcon" variant="solid" size={16} aria-hidden="true" />
-                  <span>Rekomendasi Tindakan</span>
-                </div>
-                <span className="bg-emerald-500 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                  {assessmentResult.actionBadge}
-                </span>
-              </div>
-
-              <h4 className="text-sm font-black text-white">{assessmentResult.actionTitle}</h4>
-              <p className="text-xs text-white/90 leading-relaxed">
-                {assessmentResult.actionReason}
-              </p>
-
-              {assessmentResult.estimatedPriceRange && (
-                <div className="text-[11px] text-cyan-200 pt-1">
-                  Estimasi nilai: <strong>{assessmentResult.estimatedPriceRange}</strong>
-                </div>
-              )}
-            </div>
-
-            {/* 7 ASSESSMENT DIMENSIONS (ACCORDION & EXPANDABLE LIST) */}
-            <div className="bg-card rounded-3xl p-5 border border-border shadow-sm space-y-3 animate-card-reveal stagger-2">
-              <div className="flex items-center justify-between border-b border-border pb-2">
-                <h4 className="text-xs font-black text-[#10284D] uppercase tracking-wider flex items-center gap-1.5">
-                  <Icon name="BeakerIcon" size={16} aria-hidden="true" />
-                  <span>7 Dimensi Penilaian</span>
-                </h4>
-                <span className="text-[10px] text-muted-foreground font-semibold">Skala 1 - 5</span>
-              </div>
-
-              <div className="space-y-2">
-                {Object.values(assessmentResult.dimensions).map((dim) => {
-                  const isExpanded = expandedDimension === dim.id;
-
-                  const scoreBg =
-                    dim.score >= 4
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : dim.score === 3
-                      ? 'bg-amber-100 text-amber-800'
-                      : 'bg-rose-100 text-rose-800';
-
-                  return (
-                    <div
-                      key={dim.id}
-                      onClick={() => setExpandedDimension(isExpanded ? null : dim.id)}
-                      className="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/80 border border-slate-100 transition-all cursor-pointer"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-extrabold text-[#10284D]">{dim.name}</span>
-                          <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md ${scoreBg}`}>
-                            {dim.score}/5 • {dim.rating}
-                          </span>
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          <Icon name="ChevronDownIcon" size={16} className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} aria-hidden="true" />
-                        </span>
-                      </div>
-
-                      {/* Summary text */}
-                      <p className="text-[11px] text-muted-foreground mt-1 line-clamp-1">
-                        {dim.details}
-                      </p>
-
-                      {/* Expanded View */}
-                      {isExpanded && (
-                        <div className="mt-2.5 pt-2 border-t border-slate-200/80 space-y-1.5 text-xs text-slate-800 animate-fade-in">
-                          <p className="text-[11px] text-foreground leading-relaxed">{dim.details}</p>
-                          {dim.findings && dim.findings.length > 0 && (
-                            <div className="flex flex-wrap gap-1 pt-1">
-                              {dim.findings.map((f, i) => (
-                                <span
-                                  key={i}
-                                  className="text-[10px] bg-white border border-slate-200 text-slate-700 px-2 py-0.5 rounded-md"
-                                >
-                                  • {f}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* 4 STAGGERED ACTION CARDS: CARE / ALTER / SELL / CIRCULATE */}
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between px-1">
-                <h4 className="text-xs font-extrabold text-[#10284D] uppercase tracking-wider">
-                  Pilih Tindakan Sirkular
-                </h4>
-                <span className="text-[10px] text-muted-foreground">Pilih salah satu</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                {/* 1. RAWAT (CARE) */}
-                <div
-                  onClick={() => setSelectedAction('care')}
-                  className={`p-3.5 rounded-3xl border cursor-pointer transition-all duration-200 active:scale-[0.97] animate-card-reveal stagger-1 ${
-                    selectedAction === 'care'
-                      ? 'bg-rose-50 border-rose-300 shadow-md ring-2 ring-rose-400'
-                      : 'bg-card border-border hover:border-rose-200'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <Icon name="SparklesIcon" variant="solid" size={20} className="text-rose-500" aria-hidden="true" />
-                    <span className="text-xs font-black text-rose-950">Rawat (Care)</span>
+          return (
+            <div className="space-y-3 animate-scale-in mt-2">
+              {/* Score summary */}
+              <div className="bg-white rounded-2xl p-3 shadow-card flex items-center gap-3">
+                {selectedImage && (
+                  <div className="relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+                    <Image src={selectedImage} alt="Foto pakaian yang dianalisis" fill unoptimized className="object-cover" />
                   </div>
-                  <p className="text-[10px] text-muted-foreground leading-tight">
-                    Pembersihan noda & perawatan deep cleaning serat.
-                  </p>
-                </div>
-
-                {/* 2. PERMAK (ALTER) */}
-                <div
-                  onClick={() => setSelectedAction('alter')}
-                  className={`p-3.5 rounded-3xl border cursor-pointer transition-all duration-200 active:scale-[0.97] animate-card-reveal stagger-2 ${
-                    selectedAction === 'alter'
-                      ? 'bg-amber-50 border-amber-300 shadow-md ring-2 ring-amber-400'
-                      : 'bg-card border-border hover:border-amber-200'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <Icon name="ScissorsIcon" size={20} className="text-amber-600" aria-hidden="true" />
-                    <span className="text-xs font-black text-amber-950">Permak (Alter)</span>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground leading-tight">
-                    Potong kelim, ubah ukuran, jahit robek, atau restyle.
-                  </p>
-                </div>
-
-                {/* 3. JUAL (SELL) */}
-                <div
-                  onClick={() => setSelectedAction('sell')}
-                  className={`p-3.5 rounded-3xl border cursor-pointer transition-all duration-200 active:scale-[0.97] animate-card-reveal stagger-3 relative ${
-                    selectedAction === 'sell'
-                      ? 'bg-emerald-50 border-emerald-400 shadow-md ring-2 ring-emerald-500'
-                      : 'bg-card border-border hover:border-emerald-200'
-                  }`}
-                >
-                  {assessmentResult.primaryAction === 'CIRCULATE' && (
-                    <span className="absolute -top-2 right-2 bg-emerald-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
-                      Rekomendasi AI
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${scoreTone}`}>
+                      {assessmentResult.conditionGrade} • {assessmentResult.conditionStatus}
                     </span>
-                  )}
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <Icon name="TagIcon" variant="solid" size={20} className="text-emerald-600" aria-hidden="true" />
-                    <span className="text-xs font-black text-emerald-950">Jual (Trif)</span>
+                    <span className="text-[10px] text-gray-500">{assessmentResult.category}</span>
                   </div>
-                  <p className="text-[10px] text-muted-foreground leading-tight">
-                    Jual langsung ke pembeli di Thrift Marketplace.
+                  <h3 className="text-[14px] font-semibold text-gray-900 truncate mt-0.5">{assessmentResult.garmentType}</h3>
+                  <p className="text-[11px] text-gray-600 truncate">
+                    {assessmentResult.estimatedFabric} • {assessmentResult.colorSummary}
                   </p>
                 </div>
-
-                {/* 4. SIRKULASIKAN / UPCYCLE */}
-                <div
-                  onClick={() => setSelectedAction('circulate')}
-                  className={`p-3.5 rounded-3xl border cursor-pointer transition-all duration-200 active:scale-[0.97] animate-card-reveal stagger-4 ${
-                    selectedAction === 'circulate'
-                      ? 'bg-blue-50 border-blue-300 shadow-md ring-2 ring-blue-400'
-                      : 'bg-card border-border hover:border-blue-200'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <Icon name="ArrowPathRoundedSquareIcon" size={20} className="text-blue-600" aria-hidden="true" />
-                    <span className="text-xs font-black text-blue-950">Upcycle / Daur Ulang</span>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground leading-tight">
-                    Rework kreatif atau daur ulang tekstil borongan.
-                  </p>
+                <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-navy text-white flex flex-col items-center justify-center" aria-label={`Skor kondisi ${animatedScore} dari 100`}>
+                  <span className="text-[20px] font-bold leading-none font-tabular">{animatedScore}</span>
+                  <span className="text-[8px] text-white/80 mt-0.5 tracking-wide">GCS /100</span>
                 </div>
               </div>
-            </div>
 
-            {/* Decision Action Buttons */}
-            <div className="space-y-2 pt-2 animate-card-reveal stagger-4">
-              <button
-                onClick={() => {
-                  if (selectedAction === 'care') router.push('/care-plan');
-                  else if (selectedAction === 'alter') router.push('/menu-perawatan');
-                  else if (selectedAction === 'sell') router.push('/jual/trif');
-                  else router.push('/jual/upcycle');
-                }}
-                className="w-full bg-[#10284D] text-white py-4 rounded-full font-black text-xs uppercase tracking-wider shadow-lg hover:bg-[#163768] active:scale-[0.97] transition-all duration-150 flex items-center justify-center gap-2"
-              >
-                <span>
-                  Lanjutkan:{' '}
-                  {selectedAction === 'care'
-                    ? 'Perawatan Pakaian (Care Plan)'
-                    : selectedAction === 'alter'
-                    ? 'Pilih Mitra Permak (Tailor)'
-                    : selectedAction === 'sell'
-                    ? 'Jual di Thrift Marketplace'
-                    : 'Upcycle / Daur Ulang Tekstil'}
-                </span>
-                <span>→</span>
-              </button>
+              {/* AI recommendation */}
+              <div className="bg-navy text-white rounded-2xl p-3.5 shadow-card space-y-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-1.5 text-brand-yellow text-[11px] font-medium">
+                    <Icon name="LightBulbIcon" variant="solid" size={14} aria-hidden="true" />
+                    Rekomendasi AI
+                  </span>
+                  <span className="bg-emerald-500 text-white text-[9px] font-medium px-2 py-0.5 rounded-full">
+                    {assessmentResult.actionBadge}
+                  </span>
+                </div>
+                <h4 className="text-[13px] font-semibold">{assessmentResult.actionTitle}</h4>
+                <p className="text-[11.5px] text-white/90 leading-relaxed">{assessmentResult.actionReason}</p>
+                {assessmentResult.estimatedPriceRange && (
+                  <p className="text-[11px] text-cyan-200">
+                    Estimasi nilai: <span className="font-medium">{assessmentResult.estimatedPriceRange}</span>
+                  </p>
+                )}
+              </div>
 
-              <button
-                onClick={() => {
-                  setStage('camera');
-                  setAnimatedScore(0);
-                  setAssessmentResult(null);
-                }}
-                className="w-full bg-slate-100 text-slate-700 py-3 rounded-full font-bold text-xs hover:bg-slate-200 active:scale-[0.97] transition-all duration-150"
-              >
-                Scan Pakaian Lain
-              </button>
+              {/* 7 dimensions */}
+              <div className="bg-white rounded-2xl p-3 shadow-card">
+                <div className="flex items-center justify-between mb-1.5">
+                  <h4 className="text-[12px] font-semibold text-gray-900 flex items-center gap-1.5">
+                    <Icon name="BeakerIcon" size={15} className="text-navy" aria-hidden="true" />
+                    7 Dimensi Penilaian
+                  </h4>
+                  <span className="text-[10px] text-gray-500">Skala 1–5</span>
+                </div>
+                <ul className="divide-y divide-gray-100">
+                  {Object.values(assessmentResult.dimensions).map((dim) => {
+                    const isExpanded = expandedDimension === dim.id;
+                    const barColor =
+                      dim.score >= 4 ? 'bg-emerald-500' : dim.score === 3 ? 'bg-amber-400' : 'bg-rose-500';
+                    return (
+                      <li key={dim.id}>
+                        <button
+                          type="button"
+                          onClick={() => setExpandedDimension(isExpanded ? null : dim.id)}
+                          aria-expanded={isExpanded}
+                          className="w-full text-left py-2 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy rounded-lg"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-[12px] text-gray-900 flex-1 truncate">{dim.name}</span>
+                            <span className="flex gap-0.5" aria-hidden="true">
+                              {[1, 2, 3, 4, 5].map((n) => (
+                                <span key={n} className={`w-3 h-1.5 rounded-full ${n <= dim.score ? barColor : 'bg-gray-200'}`} />
+                              ))}
+                            </span>
+                            <span className="text-[11px] font-medium text-gray-700 w-7 text-right font-tabular">{dim.score}/5</span>
+                            <Icon
+                              name="ChevronDownIcon"
+                              size={14}
+                              className={`text-gray-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                              aria-hidden="true"
+                            />
+                          </div>
+                          {!isExpanded && (
+                            <p className="text-[10.5px] text-gray-500 mt-0.5 line-clamp-1">{dim.details}</p>
+                          )}
+                        </button>
+                        {isExpanded && (
+                          <div className="pb-2.5 space-y-1.5 animate-fade-in">
+                            <p className="text-[11px] text-gray-700 leading-relaxed">{dim.details}</p>
+                            {dim.findings && dim.findings.length > 0 && (
+                              <ul className="space-y-0.5">
+                                {dim.findings.map((f, i) => (
+                                  <li key={i} className="text-[10.5px] text-gray-600 flex gap-1.5">
+                                    <span className="text-gray-400">•</span>
+                                    <span>{f}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+
+              {/* Circular action choice */}
+              <div>
+                <h4 className="text-[12px] font-semibold text-gray-900 mb-1.5 px-0.5">Pilih tindakan</h4>
+                <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Pilih tindakan sirkular">
+                  {actions.map((a) => {
+                    const active = selectedAction === a.key;
+                    return (
+                      <button
+                        key={a.key}
+                        type="button"
+                        role="radio"
+                        aria-checked={active}
+                        onClick={() => setSelectedAction(a.key)}
+                        className={`relative text-left p-2.5 rounded-xl border bg-white transition-all duration-200 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy ${
+                          active ? 'border-navy ring-1 ring-navy shadow-card' : 'border-gray-200 hover:border-navy/40'
+                        }`}
+                      >
+                        {recommendedKey === a.key && (
+                          <span className="absolute -top-2 right-2 bg-emerald-600 text-white text-[8.5px] font-medium px-1.5 py-0.5 rounded-full">
+                            Saran AI
+                          </span>
+                        )}
+                        <span className="flex items-center gap-2">
+                          <span className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${a.tint}`} aria-hidden="true">
+                            <Icon name={a.icon} variant="solid" size={17} />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block text-[12px] font-medium text-gray-900">{a.title}</span>
+                            <span className="block text-[10px] text-gray-500 truncate">{a.desc}</span>
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="space-y-2 pt-1">
+                <button
+                  onClick={() => router.push(chosen.href)}
+                  className="w-full h-11 bg-navy text-white rounded-full text-[13px] font-medium shadow-card hover:bg-navy-deep active:scale-[0.97] transition-all flex items-center justify-center gap-1.5"
+                >
+                  {chosen.cta}
+                  <Icon name="ArrowRightIcon" size={15} aria-hidden="true" />
+                </button>
+                <button
+                  onClick={() => {
+                    setStage('camera');
+                    setAnimatedScore(0);
+                    setAssessmentResult(null);
+                  }}
+                  className="w-full h-10 bg-white/80 text-gray-700 rounded-full text-[12px] font-medium hover:bg-white active:scale-[0.97] transition-all"
+                >
+                  Scan pakaian lain
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
 
       {/* ========================================================================= */}

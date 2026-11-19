@@ -6,9 +6,11 @@ import {
   GarmentVisualProfile,
 } from './types';
 
-const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
-// DeepSeek multimodal vision chat model
-const DEEPSEEK_VISION_MODEL = process.env.DEEPSEEK_VISION_MODEL || 'deepseek-chat';
+const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
+// Primary model is configurable; the second entry is a stable fallback.
+const GEMINI_MODELS = Array.from(
+  new Set([process.env.GEMINI_MODEL || 'gemini-2.5-flash', 'gemini-2.5-flash-lite'])
+);
 
 /**
  * Error thrown when the AI assessment cannot be performed.
@@ -26,16 +28,11 @@ export class GarmentAssessmentError extends Error {
 }
 
 function getServerApiKey(): string {
-  return (
-    process.env.DEEPSEEK_API_KEY ||
-    process.env.CLOTHING_AI_API_KEY ||
-    process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY ||
-    'sk-9f8205f021df4072908bf9650e5a893d'
-  );
+  return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
 }
 
 /**
- * System prompt instructing DeepSeek Vision to assess the garment across:
+ * System prompt instructing Gemini Vision to assess the garment across:
  * - 7 Assessment Dimensions (1-5 score, severity, findings)
  * - Garment Condition Score (GCS)
  * - 5 Circular Action Categories (CIRCULATE, CARE, ALTER, UPCYCLE, RECOVERY)
@@ -85,9 +82,18 @@ Map the overall findings to exactly ONE primary action:
 - "UPCYCLE" (D. Upcycling Potential / Potensi Transformasi): Kerusakan tersebar atau bentuk asli tidak optimal, tapi material masih bisa diolah/rework/dijual kiloan.
 - "RECOVERY" (E. Material Recovery / Pemulihan Material): Kerusakan sangat berat, kain lapuk/rapuh luas, tidak ekonomis diperbaiki; disalurkan ke daur ulang serat industri.
 
-CRITICAL FOCUS & POSITIONING CHECK:
-Only set "isGarmentDetected": false if the image is completely pitch black, empty, blurry beyond any recognition, or definitely does not contain clothing/textile.
-If a garment, clothing item, fabric, or fashion piece is visible (even if slightly folded, hanging, worn, or in modest lighting), ALWAYS set "isGarmentDetected": true and perform the complete 7-dimension evaluation.
+GARMENT DETECTION (STRICT, CHECK THIS FIRST):
+Set "isGarmentDetected": false when ANY of these is true:
+- The main subject is a person (face, selfie, portrait, upper body) and the clothing is not the clear focus or fills less than about 40% of the frame.
+- The image shows no clothing or textile item (room, wall, furniture, screen, document, food, animal, etc.).
+- The image is too dark, overexposed, or blurry to judge fabric, stains, or seams.
+When false, write "focusGuidance" in Indonesian that names what you actually see (for example "Foto menampilkan wajah/potret orang, bukan pakaian") and tells the user how to retake: lay the garment flat or hang it, fill the frame, use bright even light.
+Set "isGarmentDetected": true ONLY when a garment is the clear main subject (laid flat, hanging, or worn with the garment fully visible and filling most of the frame).
+
+HONESTY RULES:
+- Base every score and finding only on what is visible in this photo. Never invent defects or praise you cannot see.
+- If an area or component is not visible (e.g. back side, zipper, buttons), say so in "details" and give score 3 for that dimension.
+- Scores must vary with the real condition; do not default to 5.
 
 OUTPUT FORMAT:
 Respond ONLY with a valid JSON object matching this exact schema:
@@ -176,7 +182,7 @@ Respond ONLY with a valid JSON object matching this exact schema:
 `;
 
 /**
- * Perform AI Garment Condition Assessment via DeepSeek Vision API.
+ * Perform AI Garment Condition Assessment via Google Gemini Vision.
  * Server-only: must be called from the API route so the key never reaches the browser.
  * Throws GarmentAssessmentError on failure (no silent fake results).
  */
@@ -187,7 +193,7 @@ export async function assessGarmentCondition(
   const activeKey = getServerApiKey();
   if (!activeKey) {
     throw new GarmentAssessmentError(
-      'Layanan AI belum dikonfigurasi (DEEPSEEK_API_KEY belum diatur di server).',
+      'Layanan AI belum dikonfigurasi (GEMINI_API_KEY belum diatur di server).',
       503
     );
   }
@@ -219,70 +225,73 @@ export async function assessGarmentCondition(
     }
   }
 
-  // Ensure image URL format
-  const imageUrl = imageBase64.startsWith('data:')
-    ? imageBase64
-    : imageBase64.startsWith('http')
-    ? imageBase64
-    : `data:image/jpeg;base64,${imageBase64}`;
+  const { mimeType, data: imageData } = await toInlineImage(imageBase64);
 
-  let response: Response | null = null;
-  try {
-    response = await fetch(DEEPSEEK_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${activeKey}`,
+  const buildBody = (model: string) => JSON.stringify({
+    systemInstruction: { parts: [{ text: ASSESSMENT_SYSTEM_PROMPT }] },
+    contents: [
+      {
+        role: 'user',
+        parts: [{ text: userTextPrompt }, { inline_data: { mime_type: mimeType, data: imageData } }],
       },
-      body: JSON.stringify({
-        model: DEEPSEEK_VISION_MODEL,
-        response_format: { type: 'json_object' },
-        messages: [
-          {
-            role: 'system',
-            content: ASSESSMENT_SYSTEM_PROMPT,
-          },
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: userTextPrompt,
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: imageUrl,
-                },
-              },
-            ],
-          },
-        ],
-        max_tokens: 4000,
-        temperature: 0.1,
-      }),
-      signal: AbortSignal.timeout(55_000),
-    });
-  } catch (error) {
-    console.warn('DeepSeek request failed/timed out, using intelligent visual profile assessment:', error);
-    return generateDynamicAssessment(imageBase64, userContext);
+    ],
+    generationConfig: {
+      responseMimeType: 'application/json',
+      temperature: 0.2,
+      maxOutputTokens: 8192,
+      // A small thinking budget keeps answers careful but fast (~10s) so we stay under Vercel's 60s limit.
+      ...(model.startsWith('gemini-2.5') ? { thinkingConfig: { thinkingBudget: model.includes('lite') ? 0 : 1024 } } : {}),
+    },
+  });
+
+  let rawContent = '';
+  let lastError = '';
+  for (const model of GEMINI_MODELS) {
+    let response: Response;
+    try {
+      response = await fetch(`${GEMINI_API_BASE}/${model}:generateContent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': activeKey },
+        body: buildBody(model),
+        signal: AbortSignal.timeout(28_000),
+      });
+    } catch (error) {
+      lastError = `network: ${String(error)}`;
+      continue;
+    }
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => '');
+      lastError = `${model} ${response.status}: ${errorText.slice(0, 300)}`;
+      // Bad key / bad request will not improve with another model.
+      if (response.status === 400 || response.status === 401 || response.status === 403) break;
+      continue;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = await response.json().catch(() => null);
+    const parts = data?.candidates?.[0]?.content?.parts;
+    rawContent = Array.isArray(parts)
+      ? parts
+          .filter((part: { text?: string; thought?: boolean }) => typeof part.text === 'string' && !part.thought)
+          .map((part: { text: string }) => part.text)
+          .join('')
+      : '';
+    if (rawContent) break;
+    lastError = `${model}: empty response (${data?.candidates?.[0]?.finishReason || data?.promptFeedback?.blockReason || 'unknown'})`;
   }
 
-  if (!response || !response.ok) {
-    const errorText = response ? await response.text().catch(() => '') : '';
-    console.warn(
-      `DeepSeek API returned error ${response?.status || 'network'} (${errorText}). Using intelligent visual profile assessment.`
+  if (!rawContent) {
+    console.error('Gemini vision request failed:', lastError);
+    throw new GarmentAssessmentError(
+      'Analisis AI gagal diproses. Periksa koneksi lalu coba lagi beberapa saat.',
+      502,
+      lastError
     );
-    // When DeepSeek has 402 Insufficient Balance or rate limit, generate an authentic,
-    // image-specific analysis based on the actual visual profile of the uploaded garment.
-    return generateDynamicAssessment(imageBase64, userContext);
   }
 
   try {
-    const data = await response.json();
-    const rawContent = data.choices?.[0]?.message?.content || '';
-
-    // Robust JSON extraction (strip codeblocks or surrounding conversational text)
+    // Robust JSON extraction (strip codeblocks or surrounding text)
     let cleanJson = rawContent.trim();
     const codeBlockMatch = cleanJson.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
     if (codeBlockMatch) {
@@ -377,16 +386,33 @@ export async function assessGarmentCondition(
       primaryAction: action,
       actionTitle: parsed.actionTitle || (action === 'CIRCULATE' ? 'Siap Edar' : 'Perlu Perawatan'),
       actionBadge: parsed.actionBadge || (action === 'CIRCULATE' ? 'Layak Jual' : 'Perawatan'),
-      actionReason: parsed.actionReason || 'Analisis kondisi pakaian berhasil dilakukan oleh DeepSeek AI.',
+      actionReason: parsed.actionReason || 'Analisis kondisi pakaian berhasil dilakukan oleh Wearwise AI.',
       recommendedService: parsed.recommendedService || 'Marketplace / Perawatan Klámbi',
       targetHref,
       estimatedPriceRange: parsed.estimatedPriceRange || 'Rp 50.000 – Rp 150.000',
       defectsSummary: Array.isArray(parsed.defectsSummary) ? parsed.defectsSummary : [],
     };
   } catch (error) {
-    console.warn('Failed to parse DeepSeek response, using intelligent visual profile assessment:', error);
-    return generateDynamicAssessment(imageBase64, userContext);
+    console.error('Failed to parse Gemini response:', error, rawContent.slice(0, 300));
+    throw new GarmentAssessmentError('Hasil analisis AI tidak dapat dibaca. Silakan coba lagi.', 502);
   }
+}
+
+/**
+ * Normalize the client image (data URL, raw base64, or http URL) into Gemini inline data.
+ */
+async function toInlineImage(image: string): Promise<{ mimeType: string; data: string }> {
+  if (image.startsWith('http')) {
+    const res = await fetch(image, { signal: AbortSignal.timeout(15_000) }).catch(() => null);
+    if (!res || !res.ok) {
+      throw new GarmentAssessmentError('Gambar contoh tidak dapat diunduh. Coba foto dari kamera atau galeri.', 400);
+    }
+    const buffer = Buffer.from(await res.arrayBuffer());
+    return { mimeType: res.headers.get('content-type') || 'image/jpeg', data: buffer.toString('base64') };
+  }
+  const match = image.match(/^data:(image\/[\w+.-]+);base64,([\s\S]*)$/);
+  if (match) return { mimeType: match[1], data: match[2] };
+  return { mimeType: 'image/jpeg', data: image };
 }
 
 /**
@@ -493,206 +519,6 @@ export function classifyVisualProfile(
   };
 }
 
-/**
- * Extract pseudo-visual profile from base64 string when canvas profile is not provided.
- */
-function extractVisualProfileFromBase64(imageBase64: string): GarmentVisualProfile {
-  const clean = imageBase64.replace(/^data:image\/\w+;base64,/, '');
-  let rSum = 0,
-    gSum = 0,
-    bSum = 0,
-    count = 0;
-  const step = Math.max(1, Math.floor(clean.length / 500));
-  for (let i = 0; i < clean.length - 3; i += step) {
-    const c1 = clean.charCodeAt(i);
-    const c2 = clean.charCodeAt(i + 1);
-    const c3 = clean.charCodeAt(i + 2);
-    rSum += (c1 * 7) % 256;
-    gSum += (c2 * 11) % 256;
-    bSum += (c3 * 13) % 256;
-    count++;
-  }
-  const r = Math.round(rSum / Math.max(1, count));
-  const g = Math.round(gSum / Math.max(1, count));
-  const b = Math.round(bSum / Math.max(1, count));
-  return classifyVisualProfile(r, g, b, 1.0);
-}
-
-/**
- * Generates an intelligent, image-specific dynamic garment assessment.
- * Adapts to actual colors, brightness, detected fabric, and user context.
- */
-export function generateDynamicAssessment(
-  imageBase64: string,
-  userContext?: UserContextInput
-): GarmentAssessmentResult {
-  const profile =
-    userContext?.visualProfile || extractVisualProfileFromBase64(imageBase64);
-
-  const garmentType = profile.garmentType || 'Pakaian Kasual';
-  const category = profile.category || 'Atasan';
-  const estimatedFabric = userContext?.knownFabric || profile.likelyFabric || 'Katun Organik';
-  const colorSummary = profile.colorName || 'Warna Alami';
-
-  const lum = profile.lumPct;
-  const contrast = profile.contrastPct;
-  const sat = profile.satPct;
-
-  const isOdour = userContext?.odour === 'strong';
-  const cleanScore = isOdour ? 3 : lum > 85 && contrast > 30 ? 4 : 5;
-  const cleanFindings =
-    cleanScore >= 5
-      ? ['Permukaan kain bersih dan bebas noda minyak/kimia', 'Warna kain jernih']
-      : cleanScore === 4
-      ? ['Terdapat noda mikro/debu ringan pada permukaan', 'Dapat dibersihkan dengan cuci standar']
-      : ['Noda membandel atau bau apek terdeteksi', 'Memerlukan deep cleaning / eco-detergent'];
-
-  const integrityScore = contrast > 50 ? 4 : 5;
-  const integrityFindings =
-    integrityScore >= 5
-      ? ['Kelim jahitan tepi utuh dan rapi', 'Tidak ada robekan atau benang terurai']
-      : ['Jahitan tepi sedikit longgar pada lipatan', 'Tidak ditemukan lubang tembus'];
-
-  const colorScore = sat < 15 && lum > 30 && lum < 70 ? 4 : 5;
-  const colorFindings =
-    colorScore >= 5
-      ? [`Pigmen ${colorSummary.toLowerCase()} merata dan kontras terjaga`, 'Tidak ada tanda kelunturan']
-      : ['Sedikit pemudaran warna wajar pada lipatan kain', 'Warna dasar masih stabil'];
-
-  const surfaceScore = contrast > 40 ? 4 : 5;
-  const surfaceFindings =
-    surfaceScore >= 5
-      ? ['Serat kain padat, halus, dan nyaman', 'Bebas pilling (gumpalan serat)']
-      : ['Terdapat sedikit pilling halus pada area gesekan', 'Tekstur kain masih lentur'];
-
-  const shapeScore = 5;
-  const shapeFindings = ['Siluet dan proporsi pakaian terjaga', 'Kerah, lengan, dan kelim simetris'];
-
-  const durabilityScore = 4;
-  const durabilityFindings = ['Daya tahan serat kain tinggi', 'Ketebalan material konsisten'];
-
-  const componentScore = 5;
-  const componentFindings = ['Komponen kancing/resleting/label terpasang rapi', 'Berfungsi dengan baik'];
-
-  const dimensions: GarmentAssessmentResult['dimensions'] = {
-    cleanliness: {
-      id: 'cleanliness',
-      name: 'Kebersihan',
-      score: cleanScore,
-      rating: cleanScore >= 5 ? 'Excellent' : cleanScore >= 4 ? 'Good' : 'Fair',
-      severity: cleanScore >= 5 ? 'none' : cleanScore >= 4 ? 'light' : 'moderate',
-      findings: cleanFindings,
-      details: cleanScore >= 5 ? 'Kain sangat bersih tanpa noda permanen.' : 'Perlu pencucian higienis.',
-    },
-    physicalIntegrity: {
-      id: 'physicalIntegrity',
-      name: 'Integritas Fisik',
-      score: integrityScore,
-      rating: integrityScore >= 5 ? 'Excellent' : 'Good',
-      severity: integrityScore >= 5 ? 'none' : 'minor',
-      findings: integrityFindings,
-      details: 'Struktur kain dan kelim jahitan terpelihara kokoh.',
-    },
-    colorCondition: {
-      id: 'colorCondition',
-      name: 'Kondisi Warna',
-      score: colorScore,
-      rating: colorScore >= 5 ? 'Excellent' : 'Good',
-      severity: colorScore >= 5 ? 'none' : 'light',
-      findings: colorFindings,
-      details: `Kondisi warna ${colorSummary} dalam keadaan baik dan seragam.`,
-    },
-    fabricSurface: {
-      id: 'fabricSurface',
-      name: 'Kualitas Permukaan Kain',
-      score: surfaceScore,
-      rating: surfaceScore >= 5 ? 'Excellent' : 'Good',
-      severity: surfaceScore >= 5 ? 'none' : 'light',
-      findings: surfaceFindings,
-      details: 'Permukaan kain halus dan nyaman untuk dipakai.',
-    },
-    shapeStructure: {
-      id: 'shapeStructure',
-      name: 'Bentuk & Struktur',
-      score: shapeScore,
-      rating: 'Excellent',
-      severity: 'none',
-      findings: shapeFindings,
-      details: 'Potongan asli pakaian terjaga tanpa melar atau menyusut.',
-    },
-    durability: {
-      id: 'durability',
-      name: 'Kekuatan Material',
-      score: durabilityScore,
-      rating: 'Good',
-      severity: 'none',
-      findings: durabilityFindings,
-      details: 'Serat kain masih kuat untuk pemakaian jangka panjang.',
-    },
-    componentCondition: {
-      id: 'componentCondition',
-      name: 'Kondisi Komponen',
-      score: componentScore,
-      rating: 'Excellent',
-      severity: 'none',
-      findings: componentFindings,
-      details: 'Semua komponen fungsional dalam kondisi lengkap.',
-    },
-  };
-
-  const computedGCS = calculateGCS(dimensions);
-  const grade =
-    computedGCS >= 90
-      ? 'Grade A+'
-      : computedGCS >= 80
-      ? 'Grade A'
-      : computedGCS >= 65
-      ? 'Grade B'
-      : 'Grade C';
-  const status = computedGCS >= 85 ? 'Sangat Baik' : computedGCS >= 70 ? 'Baik' : 'Cukup';
-
-  const action: CircularActionCategory =
-    computedGCS >= 80 ? 'CIRCULATE' : cleanScore < 4 ? 'CARE' : 'ALTER';
-  const targetHref =
-    action === 'CIRCULATE' ? '/jual/trif' : action === 'CARE' ? '/care-plan' : '/menu-perawatan';
-
-  return {
-    isGarmentDetected: true,
-    confidence: 0.94,
-    garmentType,
-    category,
-    estimatedFabric,
-    colorSummary,
-    dimensions,
-    gcsScore: computedGCS,
-    conditionGrade: grade,
-    conditionStatus: status,
-    primaryAction: action,
-    actionTitle:
-      action === 'CIRCULATE'
-        ? 'Layak Jual di Thrift Marketplace (Trif)'
-        : 'Perlu Perawatan / Pembersihan',
-    actionBadge: action === 'CIRCULATE' ? 'Ready to Circulate' : 'Care Required',
-    actionReason:
-      action === 'CIRCULATE'
-        ? `Kondisi pakaian sangat baik dengan skor GCS ${computedGCS}/100. Pakaian bersih, warna ${colorSummary.toLowerCase()} cerah, dan siap langsung diedarkan ke pembeli preloved.`
-        : `Pakaian memiliki skor GCS ${computedGCS}/100 dan memerlukan pembersihan/perawatan agar kualitas serat tetap terjaga.`,
-    recommendedService:
-      action === 'CIRCULATE' ? 'Klámbi Trift Marketplace' : 'Klámbi Care Laundry & Spa',
-    targetHref,
-    estimatedPriceRange:
-      category === 'Bawahan'
-        ? 'Rp 95.000 – Rp 160.000'
-        : category === 'Outerwear'
-        ? 'Rp 140.000 – Rp 230.000'
-        : 'Rp 65.000 – Rp 120.000',
-    defectsSummary:
-      cleanScore < 5
-        ? ['Perlu pencucian penyegaran sebelum dipasarkan']
-        : ['Kondisi fisik pakaian prima dan siap pakai'],
-  };
-}
-
 // Helper to sanitize dimensions and avoid any missing keys
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function sanitizeDimensions(rawDimensions: any): GarmentAssessmentResult['dimensions'] {
@@ -709,7 +535,7 @@ function sanitizeDimensions(rawDimensions: any): GarmentAssessmentResult['dimens
   const getDim = (id: keyof GarmentAssessmentResult['dimensions'], name: string) => {
     const d = rawDimensions?.[id];
     if (!d) return defaultDim(id, name);
-    const score = typeof d.score === 'number' && d.score >= 1 && d.score <= 5 ? d.score : 4;
+    const score = typeof d.score === 'number' ? Math.min(5, Math.max(1, Math.round(d.score))) : 3;
     return {
       id: d.id || id,
       name: d.name || name,
