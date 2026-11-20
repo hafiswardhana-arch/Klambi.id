@@ -9,6 +9,8 @@ import { checkRateLimit, resetRateLimit } from '@/lib/security/rate-limiter';
 import { createOtpChallenge, verifyOtpCode, isDeviceTrusted, trustDevice } from '@/lib/security/otp';
 import { generateTokenPair } from '@/lib/security/jwt';
 import { createSession, getDeviceFingerprint } from '@/lib/security/session';
+import { rememberRole, toAppRole } from '@/lib/supabase/useMe';
+import { ROLE_THEME } from '@/lib/roles';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,9 +36,9 @@ export default function LoginPage() {
   const [otpInput, setOtpInput] = useState('');
   const [activeChallengeId, setActiveChallengeId] = useState('');
   const [activeOtpCode, setActiveOtpCode] = useState('');
-  const [pendingUser, setPendingUser] = useState<{ username: string; name: string } | null>(null);
+  const [pendingUser, setPendingUser] = useState<{ username: string; name: string; role?: string } | null>(null);
 
-  const completeSuccessfulAuth = async (userToAuth: { username: string; name: string }) => {
+  const completeSuccessfulAuth = async (userToAuth: { username: string; name: string; role?: string }) => {
     resetRateLimit(userToAuth.username);
     const fp = getDeviceFingerprint();
     trustDevice(userToAuth.username, fp);
@@ -61,9 +63,16 @@ export default function LoginPage() {
       );
     }
 
-    toast.success('Login & Verifikasi 2FA berhasil! Selamat datang di Klámbi.id 🎉');
+    // Tiap jenis akun masuk ke halaman utamanya sendiri: customer → Beranda, mitra → Dasbor Mitra, admin → Dasbor Admin
+    const appRole = toAppRole(userToAuth.role);
+    rememberRole(appRole);
+    toast.success(
+      appRole === 'customer'
+        ? 'Login & Verifikasi 2FA berhasil! Selamat datang di Klámbi.id 🎉'
+        : `Login berhasil. Masuk sebagai ${ROLE_THEME[appRole].label}.`
+    );
     setTimeout(() => {
-      router.push('/');
+      router.push(ROLE_THEME[appRole].home);
     }, 500);
   };
 
@@ -89,7 +98,7 @@ export default function LoginPage() {
     (async () => {
       // 1) Real credentials check against Supabase (server-side). 2) If the database is
       // not configured (503) we fall back to the legacy demo check so the app keeps working.
-      let remoteUser: { username: string; name: string; avatar?: string } | null = null;
+      let remoteUser: { username: string; name: string; avatar?: string; role?: string } | null = null;
       let valid = false;
       let remoteError = '';
       try {
@@ -121,6 +130,7 @@ export default function LoginPage() {
         const userObj = {
           username: remoteUser?.username || username.trim(),
           name: remoteUser?.name || fullName || 'Muhammad Hafiz Maulana',
+          role: remoteUser?.role,
         };
 
         // 2. Security Check: 2FA OTP on login

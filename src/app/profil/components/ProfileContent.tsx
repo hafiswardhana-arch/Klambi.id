@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import Icon from '@/components/ui/AppIcon';
 import EscrowOrdersPanel from '@/components/escrow/EscrowOrdersPanel';
-import RoleShortcuts from '@/components/escrow/RoleShortcuts';
+import { signOut } from '@/components/roles/RoleAccount';
 import type { OrderStatus } from '@/components/escrow/FundFlow';
 import { useMe } from '@/lib/supabase/useMe';
 
@@ -385,7 +385,6 @@ export default function ProfileContent() {
 
       {/* Escrow nyata (Supabase): shortcut mitra/admin + pesanan yang masih berjalan.
           Otomatis tersembunyi bila belum login ke database / database belum dikonfigurasi. */}
-      <RoleShortcuts />
 
       {/* ========================================================================= */}
       {/* 3. BANNER KEAMANAN LOGIN BIOMETRIK                                       */}
@@ -950,8 +949,7 @@ export default function ProfileContent() {
       {isReal && (
         <button
           onClick={async () => {
-            try { await fetch('/api/auth/logout', { method: 'POST' }); } catch { /* tetap keluar */ }
-            try { sessionStorage.removeItem('klambi_auth'); localStorage.removeItem('klambi_user'); } catch { /* ignore */ }
+            await signOut();
             toast.success('Anda telah keluar.');
             router.push('/login');
           }}

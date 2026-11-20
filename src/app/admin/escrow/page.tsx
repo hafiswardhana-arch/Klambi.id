@@ -61,7 +61,7 @@ export default function AdminEscrowPage() {
   const heldNotDisputed = data?.held.filter((o) => o.status !== 'disputed') ?? [];
 
   return (
-    <AppLayout title="Escrow · Admin" showBack backHref="/profil">
+    <AppLayout title="Escrow · Admin">
       {!data && !error && <div className="h-40 animate-pulse rounded-2xl bg-white/70" aria-label="Memuat data escrow" />}
       {error && <p role="alert" className="rounded-2xl bg-white p-5 text-center text-sm text-slate-600 shadow-card">{error}</p>}
 
@@ -80,7 +80,7 @@ export default function AdminEscrowPage() {
           <div className="rounded-2xl bg-white p-4 shadow-card"><FundFlow neutral /></div>
 
           {/* Sengketa: butuh keputusan admin */}
-          <section aria-label="Sengketa" className="space-y-3">
+          <section id="sengketa" aria-label="Sengketa" className="scroll-mt-20 space-y-3">
             <h2 className="text-sm font-extrabold text-slate-900">Perlu Keputusan Admin ({data.disputes.length})</h2>
             {data.disputes.length === 0 && <p className="rounded-2xl bg-white p-4 text-center text-xs text-slate-500">Tidak ada sengketa.</p>}
             {data.disputes.map((o) => (

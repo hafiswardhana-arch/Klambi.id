@@ -5,6 +5,7 @@ import AppLayout from '@/components/AppLayout';
 import FundFlow from '@/components/escrow/FundFlow';
 import EscrowOrdersPanel from '@/components/escrow/EscrowOrdersPanel';
 import { fetchData } from '@/lib/supabase/client';
+import RoleGate from '@/components/roles/RoleGate';
 
 interface Summary {
   user: { name: string; role: string };
@@ -22,7 +23,8 @@ export default function MitraPesananPage() {
   }, [reloadKey]);
 
   return (
-    <AppLayout title="Pesanan Mitra" showBack backHref="/profil">
+    <AppLayout title="Pesanan Mitra" showBack backHref="/mitra">
+      <RoleGate allow="mitra">{() => (
       <div className="space-y-4 pb-4">
         <section className="space-y-3 rounded-2xl bg-navy p-4 text-white shadow-card" aria-label="Saldo mitra">
           <p className="text-xs text-white/70">{summary?.user.name ?? 'Mitra'}</p>
@@ -48,6 +50,7 @@ export default function MitraPesananPage() {
 
         <EscrowOrdersPanel as="mitra" onChanged={() => setReloadKey((k) => k + 1)} />
       </div>
+      )}</RoleGate>
     </AppLayout>
   );
 }

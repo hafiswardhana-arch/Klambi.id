@@ -80,6 +80,19 @@ hanya bisa dipanggil server (`service_role`), memeriksa peran pelaku, menolak tr
 | `admin` | `admin123` | Administrator / penahan dana escrow |
 | `vintage_jkt`, `sirkular_kemang`, `kindfoam`, `batik_solo` | `klambi123` | Mitra/penjual untuk pesanan escrow |
 
+### Perbedaan tampilan tiap jenis akun
+Jenis akun diambil dari kolom `users.role` (`user` = Customer, `seller` = Mitra, `admin` = Admin).
+Setelah login, tiap akun langsung masuk ke halaman utamanya sendiri dengan menu bawah yang berbeda:
+
+| Akun | Halaman utama | Menu bawah |
+|---|---|---|
+| Customer | `/` Beranda belanja | Beranda · Jasa · Market · Rawat · Notifikasi · Saya |
+| Mitra (label hijau "Mitra") | `/mitra` Dasbor Mitra: saldo, dana yang akan diterima, pesanan perlu diproses, pendapatan | Dasbor · Pesanan · Jual · Chat · Akun |
+| Admin (label ungu "Admin") | `/admin` Dasbor Admin: dana escrow ditahan, sengketa, jumlah customer/mitra, nilai transaksi | Dasbor · Escrow · Pengguna · Notifikasi · Akun |
+
+Halaman khusus mitra/admin menolak akun lain dengan pesan yang jelas, dan API-nya juga menolak di server
+(`/api/admin/*` hanya untuk admin). Daftar semua akun ada di `/admin/pengguna`.
+
 Pesanan contoh `hafiz`: 1 menunggu konfirmasi (tiba), 1 sedang dikirim, 1 belum dibayar, 2 selesai.
 `bagas` punya 1 pesanan **sengketa** (untuk dicoba admin) dan 1 pesanan yang menunggu diproses `rini`.
 

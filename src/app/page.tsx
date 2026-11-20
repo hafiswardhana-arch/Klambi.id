@@ -8,7 +8,8 @@ import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
 import { FadeIn, SlideUp, StaggerContainer, StaggerItem } from '@/components/motion';
 import { fetchData } from '@/lib/supabase/client';
-import { useMe } from '@/lib/supabase/useMe';
+import { useMe, toAppRole } from '@/lib/supabase/useMe';
+import { ROLE_THEME } from '@/lib/roles';
 
 interface ProductItem {
   id: string;
@@ -222,6 +223,11 @@ export default function BerandaPage() {
 
   // Data akun yang SAMA dengan halaman Profil (satu sumber: useMe) → angka Beranda & Profil selalu cocok
   const { me } = useMe();
+  // Beranda belanja khusus customer; akun mitra/admin langsung ke dasbornya
+  useEffect(() => {
+    const role = toAppRole(me?.user.role);
+    if (role !== 'customer') router.replace(ROLE_THEME[role].home);
+  }, [me, router]);
   useEffect(() => {
     if (!me) return;
     if (me.impact) setImpactTarget({ goal: me.impact.goalPct, kg: me.impact.kgSaved, rank: me.impact.rank, scan: me.impact.scanCount });

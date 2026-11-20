@@ -1,12 +1,12 @@
 import React from 'react';
 import AppLayout from '@/components/AppLayout';
-import ProfileContent from './components/ProfileContent';
+import ProfileSwitch from './components/ProfileSwitch';
 
 export default function ProfilPage() {
   return (
     <AppLayout title="Profil Saya">
       <div className="max-w-2xl mx-auto">
-        <ProfileContent />
+        <ProfileSwitch />
       </div>
     </AppLayout>
   );
