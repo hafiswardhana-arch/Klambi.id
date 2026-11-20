@@ -53,7 +53,7 @@ export function middleware(request: NextRequest) {
       request.headers.get('x-real-ip') ||
       '127.0.0.1';
 
-    const rateResult = checkApiRateLimit(clientIp, pathname);
+    const rateResult = checkApiRateLimit(clientIp, pathname, request.method);
 
     response.headers.set('X-RateLimit-Limit', rateResult.limit.toString());
     response.headers.set('X-RateLimit-Remaining', rateResult.remaining.toString());

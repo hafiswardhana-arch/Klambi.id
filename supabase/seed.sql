@@ -9,10 +9,13 @@
 --   dewi      Dewi Lestari            — pembeli aktif, Jakarta
 --   bagas     Bagas Pratama           — pengguna Eco, Yogyakarta
 --   sari      Sari Wulandari          — pemilik jasa permak, Surabaya
---   admin     Administrator           — role admin
+--   admin     Administrator           — role admin (panel escrow: /admin/escrow)
+--   Mitra/penjual untuk alur escrow (password klambi123): rini, sari,
+--   vintage_jkt (Denim House), sirkular_kemang (Sirkular Studio Kemang),
+--   kindfoam (Kindfoam Official), batik_solo (Batik Solo Heritage)
 -- =====================================================================
 
-delete from public.users where lower(username) in ('hafiz','rini','dewi','bagas','sari','admin');
+delete from public.users where lower(username) in ('hafiz','rini','dewi','bagas','sari','admin','vintage_jkt','sirkular_kemang','kindfoam','batik_solo');
 delete from public.products;
 delete from public.trift_listings;
 delete from public.service_partners;
@@ -208,5 +211,88 @@ with conv as (
 insert into public.chat_messages (conversation_id, sender, body, created_at)
 select conv.id, m.s, m.b, now() - interval '3 hours' + (m.o || ' minutes')::interval
 from conv, (values ('seller', 'Terima kasih kak, potongan celana sudah rapi chainstitch.', 0)) as m(s, b, o);
+
+
+-- =====================================================================
+-- ESCROW: mitra/penjual tambahan + data pesanan konsisten dengan rekening escrow
+-- (butuh supabase/escrow.sql sudah dijalankan)
+-- =====================================================================
+insert into public.users (username, email, full_name, phone, avatar, city, bio, role, level, is_verified, password_hash) values
+  ('vintage_jkt',     'vintage@klambi.id',  'Denim House (Vintage JKT)', '081234567810', '🏪', 'Jakarta Selatan', 'Toko denim vintage & preloved terkurasi.', 'seller', 'Penjual Terpercaya', true, extensions.crypt('klambi123', extensions.gen_salt('bf'))),
+  ('sirkular_kemang', 'sirkular@klambi.id', 'Sirkular Studio Kemang',    '081234567811', '♻️', 'Jakarta Selatan', 'Studio upcycle & patchwork artisan.',     'seller', 'Mitra Jasa',         true, extensions.crypt('klambi123', extensions.gen_salt('bf'))),
+  ('kindfoam',        'kindfoam@klambi.id', 'Kindfoam Official',         '081234567812', '🧼', 'Bandung',         'Deterjen lembaran ramah lingkungan.',      'seller', 'Brand Mitra',        true, extensions.crypt('klambi123', extensions.gen_salt('bf'))),
+  ('batik_solo',      'batik@klambi.id',    'Batik Solo Heritage',       '081234567813', '🧵', 'Surakarta',       'Batik tulis & kemeja heritage.',           'seller', 'Penjual Terpercaya', true, extensions.crypt('klambi123', extensions.gen_salt('bf')));
+
+insert into public.wallets (user_id, balance, escrow_held, eco_points, voucher_count)
+select u.id, v.bal, 0, 0, 0 from public.users u
+join (values ('vintage_jkt',1850000),('sirkular_kemang',960000),('kindfoam',4200000),('batik_solo',730000)) as v(un,bal) on lower(u.username)=v.un;
+insert into public.user_impact (user_id) select id from public.users where lower(username) in ('vintage_jkt','sirkular_kemang','kindfoam','batik_solo');
+
+-- Pesanan tambahan: satu menunggu diproses mitra (rini), satu sedang SENGKETA (untuk admin)
+insert into public.orders (order_number, buyer_id, seller_name, status, subtotal, shipping_cost, total, tracking_number, payment_method, created_at)
+select v.no, u.id, v.seller, v.status, v.sub, v.ship, v.sub + v.ship, v.trk, v.pay, now() - (v.ago || ' hours')::interval
+from public.users u join (values
+ ('bagas','ORD-KLM-2026-0903','Rini Anggraini','escrow_held',120000,14000,null,'GoPay',5),
+ ('bagas','ORD-KLM-2026-0905','@batik_solo_heritage','disputed',175000,16000,'JNE-KLM-660921','DANA',96)
+) as v(un,no,seller,status,sub,ship,trk,pay,ago) on lower(u.username)=v.un;
+insert into public.order_items (order_id, title, price, qty, size)
+select o.id, v.title, v.price, 1, v.size from public.orders o join (values
+ ('ORD-KLM-2026-0903','Celana Jeans Slim Fit Navy',120000,'32'),
+ ('ORD-KLM-2026-0905','Kemeja Batik Tulis Mega Mendung',175000,'M')
+) as v(no,title,price,size) on o.order_number = v.no;
+
+-- Hubungkan pesanan ke mitra, judul, jenis, biaya platform (5%)
+update public.orders o set mitra_id = u.id
+from (values
+  ('@vintage_jkt (Denim House)','vintage_jkt'),('Sirkular Studio Kemang','sirkular_kemang'),('Rini Anggraini','rini'),
+  ('Kindfoam Official','kindfoam'),('@batik_solo_heritage','batik_solo'),('Dewi Lestari','dewi')
+) as m(seller, un) join public.users u on lower(u.username) = m.un
+where o.seller_name = m.seller and o.mitra_id is null;
+
+update public.orders o set
+  title = (select oi.title from public.order_items oi where oi.order_id = o.id order by oi.id limit 1),
+  kind = case when o.seller_name = 'Kindfoam Official' then 'produk' else 'trift' end,
+  platform_fee = round(o.subtotal * 500 / 10000.0) + 2500,
+  total        = o.subtotal + o.shipping_cost + round(o.subtotal * 500 / 10000.0) + 2500,
+  paid_at      = case when o.status <> 'pending_payment' then o.created_at + interval '5 minutes' end,
+  shipped_at   = case when o.status in ('shipped','delivered','completed','disputed') then o.created_at + interval '1 day' end,
+  delivered_at = case when o.status = 'delivered' then now() - interval '10 minutes'
+                      when o.status in ('completed','disputed') then o.created_at + interval '2 days' end,
+  released_at  = case when o.status = 'completed' then o.created_at + interval '3 days' end
+where o.mitra_id is not null;
+
+update public.orders set auto_release_at = delivered_at + interval '48 hours' where status = 'delivered';
+update public.orders set dispute_reason = 'Ukuran tidak sesuai deskripsi (lebih kecil dari yang tertulis).' where status = 'disputed';
+
+-- Jejak audit (escrow_events)
+insert into public.escrow_events (order_id, from_status, to_status, actor_id, actor_role, note, created_at)
+select o.id, null, 'pending_payment', o.buyer_id, 'buyer', 'Pesanan dibuat', o.created_at from public.orders o where o.mitra_id is not null;
+insert into public.escrow_events (order_id, from_status, to_status, actor_id, actor_role, note, created_at)
+select o.id, 'pending_payment', 'escrow_held', o.buyer_id, 'buyer', 'Pembayaran diterima, dana ditahan admin', o.paid_at from public.orders o where o.paid_at is not null;
+insert into public.escrow_events (order_id, from_status, to_status, actor_id, actor_role, note, created_at)
+select o.id, 'escrow_held', 'shipped', o.mitra_id, 'mitra', 'Mitra memproses / mengirim pesanan', o.shipped_at from public.orders o where o.shipped_at is not null;
+insert into public.escrow_events (order_id, from_status, to_status, actor_id, actor_role, note, created_at)
+select o.id, 'shipped', 'delivered', o.mitra_id, 'mitra', 'Pesanan tiba di customer; menunggu konfirmasi (maks. 48 jam)', o.delivered_at from public.orders o where o.delivered_at is not null;
+insert into public.escrow_events (order_id, from_status, to_status, actor_id, actor_role, note, created_at)
+select o.id, 'delivered', 'completed', o.buyer_id, 'buyer', 'Customer mengonfirmasi penerimaan; dana dilepas ke mitra', o.released_at from public.orders o where o.status = 'completed';
+insert into public.escrow_events (order_id, from_status, to_status, actor_id, actor_role, note, created_at)
+select o.id, 'delivered', 'disputed', o.buyer_id, 'buyer', o.dispute_reason, o.delivered_at + interval '3 hours' from public.orders o where o.status = 'disputed';
+
+-- Buku besar: uang customer masuk escrow; yang selesai → dilepas ke mitra + fee
+insert into public.wallet_ledger (order_id, account, user_id, entry_type, amount, note, created_at)
+select o.id, 'platform_escrow', o.buyer_id, 'PAYMENT_IN', o.total, 'Dana customer ditahan di rekening escrow Klámbi', o.paid_at from public.orders o where o.paid_at is not null;
+insert into public.wallet_ledger (order_id, account, user_id, entry_type, amount, note, created_at)
+select o.id, 'platform_escrow', o.mitra_id, 'RELEASE_TO_MITRA', o.total - o.platform_fee, 'Dana dilepas admin ke saldo mitra', o.released_at from public.orders o where o.status = 'completed';
+insert into public.wallet_ledger (order_id, account, user_id, entry_type, amount, note, created_at)
+select o.id, 'platform_fee', null, 'PLATFORM_FEE', o.platform_fee, 'Biaya platform Klámbi', o.released_at from public.orders o where o.status = 'completed';
+
+-- Saldo tertahan & rekening escrow platform dihitung dari pesanan (selalu konsisten)
+update public.wallets w set escrow_held =
+    coalesce((select sum(o.total) from public.orders o where o.buyer_id = w.user_id and o.status in ('escrow_held','shipped','delivered','disputed')), 0)
+  + coalesce((select sum(o.total - o.platform_fee) from public.orders o where o.mitra_id = w.user_id and o.status in ('escrow_held','shipped','delivered','disputed')), 0);
+update public.platform_wallet set
+  escrow_held = coalesce((select sum(total) from public.orders where status in ('escrow_held','shipped','delivered','disputed')), 0),
+  fee_income  = coalesce((select sum(platform_fee) from public.orders where status = 'completed'), 0)
+where id = 'main';
 
 -- Selesai. Cek: select username, full_name, role from public.users;

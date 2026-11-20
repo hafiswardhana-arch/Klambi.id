@@ -151,7 +151,13 @@ export default function KeranjangPage() {
       toast.error('Pilih minimal 1 item untuk checkout');
       return;
     }
-    router.push(`/pembayaran?total=${totalSubtotal}`);
+    // Kirim info penjual agar dana escrow dikaitkan ke mitra yang benar
+    const first = selectedItems[0];
+    const title = selectedItems.length > 1 ? `${first.title} + ${selectedItems.length - 1} item lain` : first.title;
+    const kind = selectedItems.every((i) => !i.isClothing) ? 'produk' : 'trift';
+    router.push(
+      `/pembayaran?total=${totalSubtotal}&title=${encodeURIComponent(title)}&seller=${encodeURIComponent(first.storeName)}&kind=${kind}`
+    );
   };
 
   return (

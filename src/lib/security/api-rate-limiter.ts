@@ -34,6 +34,13 @@ export const RATE_LIMIT_TIERS: Record<string, ApiRateLimitTier> = {
     maxRequests: 5,
     windowMs: 60 * 60 * 1000, // 5 req / hour
   },
+  // Escrow order actions (pay / ship / confirm / dispute ...). Each action is authenticated and
+  // enforced atomically in Postgres, so this tier only guards against abuse/flooding.
+  escrowAction: {
+    name: 'Escrow Order Actions',
+    maxRequests: 30,
+    windowMs: 60 * 1000, // 30 req / minute
+  },
 };
 
 interface ClientWindow {
@@ -48,7 +55,8 @@ const apiRateStore = new Map<string, ClientWindow>();
  */
 export function checkApiRateLimit(
   clientIp: string,
-  pathname: string
+  pathname: string,
+  method: string = 'GET'
 ): { allowed: boolean; limit: number; remaining: number; resetTimeSec: number } {
   // Determine appropriate tier
   let tier = RATE_LIMIT_TIERS.global;
@@ -56,7 +64,10 @@ export function checkApiRateLimit(
     tier = RATE_LIMIT_TIERS.auth;
   } else if (pathname.includes('/wearwise-ai') || pathname.includes('/styliss-ai') || pathname.includes('/scan')) {
     tier = RATE_LIMIT_TIERS.aiScan;
-  } else if (pathname.includes('/pembayaran') || pathname.includes('/withdraw') || pathname.includes('/escrow')) {
+  } else if (pathname.startsWith('/api/escrow')) {
+    // Reads (order lists) use the global tier; state-changing calls get the escrow action tier.
+    if (method !== 'GET' && method !== 'HEAD') tier = RATE_LIMIT_TIERS.escrowAction;
+  } else if (pathname.includes('/pembayaran') || pathname.includes('/withdraw')) {
     tier = RATE_LIMIT_TIERS.financial;
   }
 

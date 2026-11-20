@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
 import Modal from '@/components/ui/Modal';
-import SignatureCircularMotion from '@/components/ui/SignatureCircularMotion';
 import {
   GarmentAssessmentResult,
   UserContextInput,
@@ -131,6 +130,16 @@ export default function WearwiseAIPage() {
 
   const [availableCameras, setAvailableCameras] = useState<MediaDeviceInfo[]>([]);
   const [activeDeviceId, setActiveDeviceId] = useState<string | null>(null);
+
+  // Kamera full-screen: kunci scroll halaman di belakangnya
+  useEffect(() => {
+    if (stage === 'result') return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [stage]);
 
   // Stop camera tracks helper
   const stopCameraTracks = useCallback(() => {
@@ -618,6 +627,7 @@ export default function WearwiseAIPage() {
   return (
     <AppLayout
       hideTopHeader
+      hideBottomNav={stage !== 'result'}
       mutedNav={stage !== 'result'}
       className="bg-gradient-to-b from-[#F1F1F1] via-[#C9C9C9] to-[#8A8A8A] bg-fixed"
     >
@@ -625,225 +635,251 @@ export default function WearwiseAIPage() {
       <canvas ref={canvasRef} className="hidden" />
 
       <div className="max-w-md md:max-w-2xl lg:max-w-3xl mx-auto pb-28 select-none font-sans">
-        {/* HEADER: back + menu floating buttons, centered title */}
-        <div className="flex items-center justify-between pt-1">
-          <button
-            type="button"
-            onClick={() => router.push('/')}
-            className="w-10 h-10 rounded-full bg-white/90 shadow-card flex items-center justify-center text-navy-deep active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
-            aria-label="Kembali ke beranda"
-          >
-            <Icon name="ArrowLeftIcon" size={20} strokeWidth={1.8} />
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowContextModal(true)}
-            className="w-10 h-10 rounded-full bg-white/90 shadow-card flex items-center justify-center text-navy-deep active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
-            aria-label="Tambah data fisik pakaian (bau & bahan)"
-          >
-            <Icon name="EllipsisVerticalIcon" size={22} strokeWidth={2.4} />
-          </button>
-        </div>
-
-        <h1 className="text-center text-[0.9375rem] font-semibold text-navy -mt-8 mb-3 pointer-events-none">Kenali Kondisi Pakaianmu</h1>
-
-        {/* STAGE 1 & 2: CAMERA + ANALYZING */}
-        {stage !== 'result' && (
-          <div className="animate-fade-in">
-            {/* Viewfinder frame (rounded top, chamfered bottom, mint border) */}
-            <div
-              className="relative mx-auto w-full h-[200px] bg-[#DDF2E3] p-[3px] rounded-t-[34px]"
-              style={{ clipPath: frameClipOuter }}
-            >
-              <div
-                className="relative w-full h-full overflow-hidden rounded-t-[31px] bg-slate-800"
-                style={{ clipPath: frameClipInner }}
+        {/* HEADER (hanya layar hasil — kamera memakai kontrol overlay sendiri) */}
+        {stage === 'result' && (
+          <>
+            <div className="flex items-center justify-between pt-1">
+              <button
+                type="button"
+                onClick={() => router.push('/')}
+                className="w-10 h-10 rounded-full bg-white/90 shadow-card flex items-center justify-center text-navy-deep active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                aria-label="Kembali ke beranda"
               >
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className={`w-full h-full object-cover ${facingMode === 'user' ? 'scale-x-[-1]' : ''} ${
-                    flash ? 'brightness-125 contrast-105' : ''
-                  } ${stage === 'camera' && cameraStatus === 'active' ? 'block' : 'hidden'}`}
-                />
+                <Icon name="ArrowLeftIcon" size={20} strokeWidth={1.8} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowContextModal(true)}
+                className="w-10 h-10 rounded-full bg-white/90 shadow-card flex items-center justify-center text-navy-deep active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+                aria-label="Tambah data fisik pakaian (bau & bahan)"
+              >
+                <Icon name="EllipsisVerticalIcon" size={22} strokeWidth={2.4} />
+              </button>
+            </div>
 
-                {!(stage === 'camera' && cameraStatus === 'active') && (
-                  <div className="absolute inset-0 bg-slate-200">
-                    <Image
-                      src={selectedImage || DEFAULT_JACKET_IMAGE}
-                      alt="Pakaian yang dipindai"
-                      fill
-                      unoptimized
-                      className="object-cover"
-                    />
-                    {stage === 'camera' && cameraStatus === 'requesting' && (
-                      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center text-white gap-2">
-                        <div className="w-8 h-8 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
-                        <span className="text-sm font-medium">Mengakses kamera...</span>
-                      </div>
-                    )}
-                    {stage === 'camera' && cameraStatus === 'error' && (
-                      <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center text-white gap-2 p-6 text-center">
-                        <Icon name="ExclamationTriangleIcon" size={30} className="text-amber-400" aria-hidden="true" />
-                        <span className="text-sm font-medium">{cameraError || 'Kamera tidak dapat diakses'}</span>
-                        <span className="text-xs text-white/75">Pilih foto dari galeri dengan tombol di bawah</span>
-                      </div>
+            <h1 className="text-center text-[0.9375rem] font-semibold text-navy -mt-8 mb-3 pointer-events-none">Kenali Kondisi Pakaianmu</h1>
+          </>
+        )}
+
+        {/* STAGE 1 & 2: KAMERA FULL-SCREEN + ANALISIS */}
+        {stage !== 'result' && (() => {
+          const isAnalyzing = stage === 'analyzing';
+          const cameraLive = stage === 'camera' && cameraStatus === 'active';
+          const activeStep = steps[Math.min(currentStepIndex, steps.length - 1)];
+          const overlayBtn =
+            'w-11 h-11 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center active:scale-90 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white';
+          const corner = 'absolute w-9 h-9 border-white/95 transition-colors duration-500';
+
+          return (
+            <section
+              aria-label="Kamera pemindai pakaian"
+              className="fixed inset-0 z-40 bg-black text-white overflow-hidden animate-fade-in h-[100dvh]"
+            >
+              {/* Live video / captured frame — memenuhi seluruh layar */}
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className={`absolute inset-0 w-full h-full object-cover ${facingMode === 'user' ? 'scale-x-[-1]' : ''} ${
+                  flash ? 'brightness-125 contrast-105' : ''
+                } ${cameraLive ? 'block' : 'hidden'}`}
+              />
+
+              {!cameraLive && (
+                <div className="absolute inset-0 bg-slate-800">
+                  <Image
+                    src={selectedImage || DEFAULT_JACKET_IMAGE}
+                    alt="Pakaian yang dipindai"
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                  {stage === 'camera' && cameraStatus === 'requesting' && (
+                    <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm flex flex-col items-center justify-center gap-2">
+                      <div className="w-8 h-8 border-[3px] border-white border-t-transparent rounded-full animate-spin motion-reduce:animate-none" />
+                      <span className="text-sm font-medium">Mengakses kamera...</span>
+                    </div>
+                  )}
+                  {stage === 'camera' && cameraStatus === 'error' && (
+                    <div className="absolute inset-0 bg-slate-900/85 backdrop-blur-sm flex flex-col items-center justify-center gap-2 p-8 text-center">
+                      <Icon name="ExclamationTriangleIcon" size={32} className="text-amber-400" aria-hidden="true" />
+                      <span className="text-sm font-medium">{cameraError || 'Kamera tidak dapat diakses'}</span>
+                      <span className="text-xs text-white/75">Pilih foto dari galeri dengan tombol di bawah</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Redupkan sedikit saat analisis supaya status mudah dibaca */}
+              <div
+                className={`absolute inset-0 bg-black transition-opacity duration-500 pointer-events-none ${
+                  isAnalyzing ? 'opacity-35' : 'opacity-0'
+                }`}
+                aria-hidden="true"
+              />
+
+              {/* Bingkai bidik: 4 sudut + laser */}
+              <div
+                className="pointer-events-none absolute inset-x-6 top-[17%] bottom-[28%] mx-auto max-w-xl"
+                aria-hidden="true"
+              >
+                <span className={`${corner} top-0 left-0 border-t-[3px] border-l-[3px] rounded-tl-2xl ${isAnalyzing ? 'border-brand-yellow' : ''}`} />
+                <span className={`${corner} top-0 right-0 border-t-[3px] border-r-[3px] rounded-tr-2xl ${isAnalyzing ? 'border-brand-yellow' : ''}`} />
+                <span className={`${corner} bottom-0 left-0 border-b-[3px] border-l-[3px] rounded-bl-2xl ${isAnalyzing ? 'border-brand-yellow' : ''}`} />
+                <span className={`${corner} bottom-0 right-0 border-b-[3px] border-r-[3px] rounded-br-2xl ${isAnalyzing ? 'border-brand-yellow' : ''}`} />
+                {(isScanLineActive || isAnalyzing) && !isCompletionPhase && (
+                  <div className="absolute inset-x-1 h-[3px] rounded-full bg-brand-yellow shadow-[0_0_14px_rgba(255,230,0,0.85)] animate-scan-laser motion-reduce:animate-none" />
+                )}
+              </div>
+
+              {/* TOP: kembali · petunjuk · ganti kamera / data fisik */}
+              <div className="absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-black/65 via-black/25 to-transparent px-4 pb-10 pt-[max(0.75rem,env(safe-area-inset-top))]">
+                <div className="mx-auto max-w-2xl">
+                  <div className="flex items-center justify-between">
+                    <button type="button" onClick={() => router.push('/')} className={overlayBtn} aria-label="Kembali ke beranda">
+                      <Icon name="ArrowLeftIcon" size={22} strokeWidth={1.8} />
+                    </button>
+                    <div className="flex items-center gap-2">
+                      {stage === 'camera' && hasMultipleCameras && (
+                        <button type="button" onClick={handleSwitchCamera} className={overlayBtn} aria-label="Ganti kamera depan/belakang">
+                          <Icon name="ArrowPathIcon" size={20} />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setShowContextModal(true)}
+                        className={overlayBtn}
+                        aria-label="Tambah data fisik pakaian (bau & bahan)"
+                      >
+                        <Icon name="EllipsisVerticalIcon" size={22} strokeWidth={2.4} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-2 flex flex-col items-center gap-1.5" aria-live="polite">
+                    <span className="max-w-full truncate rounded-full bg-black/45 px-3.5 py-1.5 text-xs font-medium backdrop-blur-sm">
+                      {isCompletionPhase
+                        ? 'Diagnosis selesai'
+                        : isAnalyzing
+                        ? 'Memindai pakaian…'
+                        : 'Bentangkan pakaian & fokuskan kamera'}
+                    </span>
+                    {(userContext.odour !== 'none' || userContext.knownFabric) && !isAnalyzing && (
+                      <button
+                        type="button"
+                        onClick={() => setShowContextModal(true)}
+                        className="flex max-w-full items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 text-[0.6875rem] font-medium text-navy-deep"
+                      >
+                        <Icon name="InformationCircleIcon" size={14} aria-hidden="true" />
+                        <span className="truncate">
+                          {userContext.knownFabric || 'Bahan umum'} • Bau:{' '}
+                          {userContext.odour === 'strong' ? 'Menyengat' : userContext.odour === 'musty' ? 'Apek' : 'Normal'}
+                        </span>
+                        <span className="font-semibold underline underline-offset-2">Ubah</span>
+                      </button>
                     )}
                   </div>
-                )}
-
-                {/* Scan line */}
-                {(isScanLineActive || stage === 'analyzing') && !isCompletionPhase && (
-                  <div
-                    className="absolute inset-x-0 h-[3px] bg-navy-deep shadow-[0_0_10px_rgba(11,42,82,0.55)] animate-scan-laser z-20 pointer-events-none"
-                    aria-hidden="true"
-                  />
-                )}
-
-                {/* Camera guidance + switch */}
-                {stage === 'camera' && cameraStatus === 'active' && (
-                  <span className="absolute top-4 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap bg-black/45 backdrop-blur-sm text-white text-[0.6875rem] font-medium px-3 py-1 rounded-full">
-                    Bentangkan pakaian & fokuskan kamera
-                  </span>
-                )}
-                {stage === 'camera' && hasMultipleCameras && (
-                  <button
-                    onClick={handleSwitchCamera}
-                    className="absolute top-3 right-4 z-20 w-10 h-10 rounded-full bg-black/45 backdrop-blur-sm text-white flex items-center justify-center active:scale-90 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                    aria-label="Ganti kamera depan/belakang"
-                  >
-                    <Icon name="ArrowPathIcon" size={18} />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Status label */}
-            <p className="text-center text-[0.9375rem] font-medium text-navy mt-1" aria-live="polite">
-              {isCompletionPhase
-                ? 'Diagnosis Selesai'
-                : stage === 'analyzing'
-                ? 'Scanning...'
-                : 'Siap Memindai'}
-            </p>
-
-            {/* User context tag */}
-            {(userContext.odour !== 'none' || userContext.knownFabric) && (
-              <div className="mt-3 mx-1 bg-white/80 backdrop-blur-sm rounded-2xl px-4 py-2 flex items-center justify-between text-xs text-navy-deep">
-                <span className="flex items-center gap-2 min-w-0">
-                  <Icon name="InformationCircleIcon" size={16} aria-hidden="true" />
-                  <span className="truncate">
-                    {userContext.knownFabric || 'Bahan umum'} • Bau:{' '}
-                    {userContext.odour === 'strong' ? 'Menyengat' : userContext.odour === 'musty' ? 'Apek' : 'Normal'}
-                  </span>
-                </span>
-                <button onClick={() => setShowContextModal(true)} className="font-semibold underline underline-offset-2 py-1">
-                  Ubah
-                </button>
-              </div>
-            )}
-
-            {/* Process card */}
-            <div className="mt-3 bg-white rounded-2xl px-3.5 pt-3 pb-2 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
-              <span className="inline-block bg-navy-deep text-white text-[0.6563rem] font-medium px-3 py-1 rounded-full tracking-wide">
-                PROSES ANALISIS
-              </span>
-
-              {isCompletionPhase ? (
-                <div className="py-4 flex flex-col items-center justify-center animate-checkmark-reveal">
-                  <SignatureCircularMotion size="md" showCheckmark={true} />
-                  <p className="text-sm font-semibold text-navy mt-3">Diagnosis kondisi pakaian selesai</p>
-                  <p className="text-xs text-gray-600 mt-0.5">Membuka skor & rekomendasi sirkular...</p>
                 </div>
-              ) : (
-                <ol className="mt-1.5">
-                  {steps.map((step) => {
-                    const isDone = step.isComplete;
-                    const isCurrent = currentStepIndex + 1 === step.id && stage === 'analyzing';
-                    return (
-                      <li key={step.id} className="flex items-center gap-2 min-h-[34px]">
-                        <span
-                          className={`w-7 h-7 flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
-                            isDone ? 'text-success-green' : isCurrent ? 'text-navy' : 'text-gray-400'
-                          }`}
-                          aria-hidden="true"
-                        >
-                          <Icon name={step.iconName} size={22} strokeWidth={1.5} />
+              </div>
+
+              {/* BOTTOM: tombol kamera ↔ status analisis (bergantian, tinggi tetap) */}
+              <div className="absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-14">
+                <div className="mx-auto flex min-h-[96px] max-w-sm items-center justify-center">
+                  {isAnalyzing || isCompletionPhase ? (
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className="w-full animate-scale-in rounded-2xl border border-white/15 bg-black/55 px-4 py-3.5 backdrop-blur-md"
+                    >
+                      {isCompletionPhase ? (
+                        <div className="flex items-center gap-3 animate-checkmark-reveal">
+                          <Icon name="CheckCircleIcon" variant="solid" size={32} className="text-success-green" aria-hidden="true" />
+                          <div>
+                            <p className="text-[0.9375rem] font-semibold">Diagnosis selesai</p>
+                            <p className="text-xs text-white/70">Membuka skor & rekomendasi…</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-3">
+                            <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-white/10">
+                              <Icon
+                                key={activeStep.id}
+                                name={activeStep.iconName}
+                                size={22}
+                                strokeWidth={1.6}
+                                className="animate-scale-in text-brand-yellow"
+                                aria-hidden="true"
+                              />
+                            </span>
+                            <div className="min-w-0 flex-1 overflow-hidden">
+                              <div className="h-6 overflow-hidden">
+                                <p key={activeStep.id} className="animate-slide-up truncate text-[0.9375rem] font-medium leading-6">
+                                  {activeStep.label}…
+                                </p>
+                              </div>
+                              <p className="text-xs text-white/65">
+                                Langkah {activeStep.id} dari {steps.length} · sekitar 10–20 detik
+                              </p>
+                            </div>
+                          </div>
+                          <div className="mt-3 flex gap-1.5" aria-hidden="true">
+                            {steps.map((s, i) => (
+                              <span
+                                key={s.id}
+                                className={`h-1 flex-1 rounded-full transition-colors duration-500 ${
+                                  s.isComplete
+                                    ? 'bg-success-green'
+                                    : i === currentStepIndex
+                                    ? 'bg-white/85 animate-pulse motion-reduce:animate-none'
+                                    : 'bg-white/20'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex w-full items-center justify-around">
+                      <label
+                        className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md ring-1 ring-white/30 transition-transform active:scale-90 focus-within:ring-2 focus-within:ring-white"
+                        aria-label="Pilih foto dari galeri"
+                      >
+                        <Icon name="PhotoIcon" variant="solid" size={24} aria-hidden="true" />
+                        <input type="file" accept="image/*" onChange={handleGalleryUpload} className="sr-only" />
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={handleCapture}
+                        className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white p-1.5 transition-transform active:scale-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/60"
+                        aria-label="Mulai scan pakaian"
+                      >
+                        <span className="flex h-full w-full items-center justify-center rounded-full bg-white text-navy-deep">
+                          <Icon name="QrCodeIcon" size={30} strokeWidth={1.6} aria-hidden="true" />
                         </span>
-                        <span
-                          className={`text-[0.7813rem] leading-snug transition-colors duration-300 ${
-                            isDone
-                              ? 'text-success-green'
-                              : isCurrent
-                              ? 'text-navy font-medium'
-                              : 'text-gray-400 line-through decoration-gray-400'
-                          }`}
-                        >
-                          {step.label}
-                        </span>
-                        {isDone ? (
-                          <Icon
-                            name="CheckCircleIcon"
-                            variant="solid"
-                            size={17}
-                            className="text-success-green flex-shrink-0 animate-scale-in"
-                            aria-label="Selesai"
-                          />
-                        ) : isCurrent ? (
-                          <span
-                            className="w-4 h-4 border-2 border-navy border-t-transparent rounded-full animate-spin flex-shrink-0"
-                            aria-label="Sedang diproses"
-                          />
-                        ) : null}
-                      </li>
-                    );
-                  })}
-                </ol>
-              )}
-            </div>
+                      </button>
 
-            <p className="text-center text-[0.6875rem] text-white mt-1.5 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
-              Analisis biasanya memakan waktu 10–20 detik
-            </p>
-
-            {/* Controls: gallery / shutter / flash */}
-            <div className="flex items-center justify-center gap-7 mt-4">
-              <label
-                className="w-12 h-12 rounded-full bg-navy-deep border-[3px] border-white text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform cursor-pointer focus-within:ring-2 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-navy"
-                aria-label="Pilih foto dari galeri"
-              >
-                <Icon name="PhotoIcon" variant="solid" size={22} aria-hidden="true" />
-                <input type="file" accept="image/*" onChange={handleGalleryUpload} className="sr-only" />
-              </label>
-
-              <button
-                onClick={handleCapture}
-                disabled={stage === 'analyzing'}
-                className="w-[72px] h-[72px] rounded-full bg-navy-deep border-4 border-white text-white flex items-center justify-center shadow-xl hover:scale-[1.03] active:scale-95 transition-transform disabled:opacity-90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/70"
-                aria-label="Mulai scan pakaian"
-              >
-                {stage === 'analyzing' ? (
-                  <span className="w-6 h-6 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Icon name="QrCodeIcon" size={34} strokeWidth={1.5} aria-hidden="true" />
-                )}
-              </button>
-
-              <button
-                onClick={handleToggleFlash}
-                className={`w-12 h-12 rounded-full border-[3px] border-white flex items-center justify-center shadow-lg active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
-                  flash ? 'bg-brand-yellow text-navy-deep' : 'bg-navy-deep text-white'
-                }`}
-                aria-label={flash ? 'Matikan flash' : 'Nyalakan flash'}
-                aria-pressed={flash}
-              >
-                <Icon name="BoltIcon" size={22} strokeWidth={1.6} aria-hidden="true" />
-              </button>
-            </div>
-          </div>
-        )}
+                      <button
+                        type="button"
+                        onClick={handleToggleFlash}
+                        className={`flex h-12 w-12 items-center justify-center rounded-full backdrop-blur-md ring-1 transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                          flash ? 'bg-brand-yellow text-navy-deep ring-brand-yellow' : 'bg-black/40 text-white ring-white/30'
+                        }`}
+                        aria-label={flash ? 'Matikan flash' : 'Nyalakan flash'}
+                        aria-pressed={flash}
+                      >
+                        <Icon name="BoltIcon" size={24} strokeWidth={1.6} aria-hidden="true" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* ========================================================================= */}
         {/* STAGE 3: RESULT SCREEN (7 DIMENSIONS + GCS SCORE + DECISION LAYER) */}

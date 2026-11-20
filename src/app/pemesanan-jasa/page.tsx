@@ -25,7 +25,7 @@ function PemesananJasaContent() {
   const grandTotal = priceBase + pickupFee;
 
   const handleProceedToPayment = () => {
-    router.push(`/pembayaran?total=${grandTotal}&title=${encodeURIComponent(providerName)}`);
+    router.push(`/pembayaran?total=${grandTotal}&title=${encodeURIComponent(providerName)}&kind=jasa&seller=${encodeURIComponent(providerName)}`);
   };
 
   return (

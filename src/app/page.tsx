@@ -713,8 +713,11 @@ export default function BerandaPage() {
 
                 <button
                   onClick={() => {
+                    const p = selectedProduct;
                     setSelectedProduct(null);
-                    router.push('/pembayaran');
+                    router.push(
+                      `/pembayaran?total=${p.priceNow}&title=${encodeURIComponent(p.name)}&seller=${encodeURIComponent(p.seller)}&ref=${encodeURIComponent(p.id)}&kind=trift`
+                    );
                   }}
                   className="bg-[#10284D] text-white py-3 rounded-2xl text-xs font-bold shadow-md hover:bg-[#152248] active:scale-95 transition-all text-center"
                 >
@@ -922,7 +925,9 @@ export default function BerandaPage() {
                 <button
                   onClick={() => {
                     setShowKindfoamModal(false);
-                    router.push('/pembayaran');
+                    router.push(
+                      `/pembayaran?total=${54000 * kindfoamPacks}&title=${encodeURIComponent(`Kindfoam Eco-Detergent × ${kindfoamPacks}`)}&seller=kindfoam&kind=produk`
+                    );
                   }}
                   className="bg-[#10284D] text-white py-3 rounded-2xl text-xs font-bold shadow-md hover:bg-[#152248] active:scale-95 transition-all text-center"
                 >

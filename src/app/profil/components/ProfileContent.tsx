@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import Icon from '@/components/ui/AppIcon';
+import EscrowOrdersPanel from '@/components/escrow/EscrowOrdersPanel';
+import RoleShortcuts from '@/components/escrow/RoleShortcuts';
 
 interface ProductRecommendation {
   id: string;
@@ -325,6 +327,11 @@ export default function ProfileContent() {
           <Icon name="ChevronRightIcon" size={16} />
         </div>
       </div>
+
+      {/* Escrow nyata (Supabase): shortcut mitra/admin + pesanan yang masih berjalan.
+          Otomatis tersembunyi bila belum login ke database / database belum dikonfigurasi. */}
+      <RoleShortcuts />
+      <EscrowOrdersPanel as="buyer" hideWhenEmpty onlyActive />
 
       {/* ========================================================================= */}
       {/* 3. BANNER KEAMANAN LOGIN BIOMETRIK                                       */}

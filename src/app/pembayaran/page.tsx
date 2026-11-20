@@ -10,12 +10,17 @@ import { acquireIdempotencyLock, completeIdempotency } from '@/lib/security/idem
 import { recordTransactionAudit } from '@/lib/security/audit-logger';
 import { validateStateTransition } from '@/lib/security/escrow-state-machine';
 import { SlideUp, StaggerContainer, StaggerItem, AnimatedButton } from '@/components/motion';
+import FundFlow from '@/components/escrow/FundFlow';
 
 function PembayaranContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawTotal = Number(searchParams.get('total')) || 320000;
   const title = searchParams.get('title') || 'Pesanan Layanan Sirkular Klámbi';
+  const seller = searchParams.get('seller') || '';
+  const refId = searchParams.get('ref') || '';
+  const kindParam = searchParams.get('kind');
+  const kind = kindParam === 'jasa' || kindParam === 'produk' ? kindParam : 'trift';
 
   // Server-side Authoritative Price Calculation (Anti-Tampering)
   const serverPricing = calculateServerPrice([
@@ -32,6 +37,7 @@ function PembayaranContent() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const paymentOptions = [
+    { id: 'wallet', name: 'Saldo Klámbi', icon: '👛', desc: 'Dipotong langsung dari saldo dompetmu' },
     { id: 'gopay', name: 'GoPay', icon: '⚡', desc: 'Instan via aplikasi Gojek' },
     { id: 'shopeepay', name: 'ShopeePay', icon: '🛍️', desc: 'Instan via aplikasi Shopee' },
     { id: 'bni_va', name: 'Transfer Bank BNI VA', icon: '🏦', desc: 'Virtual Account BNI' },
@@ -39,7 +45,33 @@ function PembayaranContent() {
     { id: 'mandiri_va', name: 'Mandiri Livin Virtual Account', icon: '🏛️', desc: 'Virtual Account Mandiri' },
   ];
 
-  const handlePayNow = () => {
+  /**
+   * Real escrow payment: creates the order and moves the money INTO Klámbi's escrow account
+   * (held by admin). Returns 'done' | 'failed' | 'unavailable' (not logged in / DB not configured
+   * → the caller falls back to the legacy local simulation).
+   */
+  const payViaEscrowApi = async (): Promise<'done' | 'failed' | 'unavailable'> => {
+    try {
+      const method = paymentOptions.find((o) => o.id === selectedMethod)?.name || 'GoPay';
+      const res = await fetch('/api/escrow/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, kind, amount: rawTotal, method, seller, refId: refId || undefined, payNow: true }),
+      });
+      if (res.status === 503 || res.status === 401) return 'unavailable';
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json?.success) {
+        toast.error(json?.error || 'Pembayaran gagal diproses.');
+        return 'failed';
+      }
+      return 'done';
+    } catch {
+      toast.error('Tidak dapat terhubung ke server. Periksa koneksi internet Anda.');
+      return 'failed';
+    }
+  };
+
+  const handlePayNow = async () => {
     // 1. Validate State Transition (CREATED -> PAID)
     const transitionCheck = validateStateTransition('CREATED', 'PAID', 'user');
     if (!transitionCheck.isValid) {
@@ -66,6 +98,23 @@ function PembayaranContent() {
     }
 
     setIsProcessing(true);
+    const remote = await payViaEscrowApi();
+    if (remote === 'failed') {
+      setIsProcessing(false);
+      completeIdempotency(idempotencyKey, { status: 'FAILED' }, false);
+      return;
+    }
+    if (remote === 'done') {
+      setIsProcessing(false);
+      completeIdempotency(idempotencyKey, { status: 'PAID' }, true);
+      toast.success(
+        `Pembayaran Rp ${totalAmount.toLocaleString('id-ID')} berhasil! Dana ditahan admin Klámbi sampai kamu menerima pesanan.`
+      );
+      router.push('/profil');
+      return;
+    }
+
+    // Fallback (demo tanpa database): simulasi lokal seperti sebelumnya
     const txId = `tx_escrow_${Date.now()}`;
 
     setTimeout(() => {
@@ -102,8 +151,11 @@ function PembayaranContent() {
             <Icon name="ShieldCheckIcon" size={18} />
             <span>Garansi Rekening Bersama (Escrow Klámbi)</span>
           </div>
+          <div className="rounded-2xl bg-white p-3 text-slate-800">
+            <FundFlow />
+          </div>
           <p className="text-xs text-white/90 leading-relaxed">
-            Dana Anda ditahan dengan aman oleh sistem Klámbi dan <b>baru akan dicairkan ke penjual/mitra</b> setelah Anda menerima barang/layanan dan menekan tombol konfirmasi di profil.
+            Pembayaranmu masuk ke <b>rekening escrow Klámbi (ditahan admin)</b>, bukan langsung ke mitra. Dana <b>baru dicairkan ke penjual/mitra</b> setelah kamu menerima barang/layanan dan menekan konfirmasi di profil. Ada masalah? Laporkan, dan admin yang memutuskan.
           </p>
         </div>
       </SlideUp>
