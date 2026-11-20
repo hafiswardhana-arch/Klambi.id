@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
-import FundFlow, { STATUS_LABEL, STATUS_TONE } from '@/components/escrow/FundFlow';
+import FundFlow, { STATUS_TONE, payeeOf, statusLabel } from '@/components/escrow/FundFlow';
 import { escrowAction, EscrowOrder } from '@/components/escrow/EscrowOrdersPanel';
 
 interface Overview {
@@ -19,7 +19,7 @@ interface Overview {
 const rp = (n: number) => `Rp ${Number(n).toLocaleString('id-ID')}`;
 const LEDGER_LABEL: Record<string, string> = {
   PAYMENT_IN: 'Dana masuk escrow',
-  RELEASE_TO_MITRA: 'Dilepas ke mitra',
+  RELEASE_TO_MITRA: 'Dilepas ke penjual/mitra',
   PLATFORM_FEE: 'Biaya platform',
   REFUND_TO_BUYER: 'Refund ke customer',
   WALLET_DEBIT: 'Potong Saldo Klámbi',
@@ -49,13 +49,13 @@ export default function AdminEscrowPage() {
 
   const resolve = async (o: EscrowOrder, decision: 'release' | 'refund') => {
     const text = decision === 'release'
-      ? `Lepas ${rp(o.mitraPayout)} ke mitra ${o.mitra?.name}? Tidak bisa dibatalkan.`
-      : `Kembalikan ${rp(o.total)} ke customer ${o.buyer?.name}? Tidak bisa dibatalkan.`;
+      ? `Lepas ${rp(o.mitraPayout)} ke ${payeeOf(o.kind)} ${o.mitra?.name}? Tidak bisa dibatalkan.`
+      : `Kembalikan ${rp(o.total)} ke pembeli ${o.buyer?.name}? Tidak bisa dibatalkan.`;
     if (!window.confirm(text)) return;
     setBusy(o.id);
     const ok = await escrowAction(o.id, 'resolve', { decision });
     setBusy(null);
-    if (ok) { toast.success(decision === 'release' ? 'Dana dilepas ke mitra.' : 'Dana dikembalikan ke customer.'); load(); }
+    if (ok) { toast.success(decision === 'release' ? `Dana dilepas ke ${payeeOf(o.kind)}.` : 'Dana dikembalikan ke pembeli.'); load(); }
   };
 
   const heldNotDisputed = data?.held.filter((o) => o.status !== 'disputed') ?? [];
@@ -68,7 +68,7 @@ export default function AdminEscrowPage() {
       {data && (
         <div className="space-y-4 pb-4">
           <section aria-label="Rekening escrow Klámbi" className="rounded-2xl bg-navy p-4 text-white shadow-card">
-            <p className="text-xs text-white/70">Dana customer yang sedang ditahan admin</p>
+            <p className="text-xs text-white/70">Dana pembeli yang sedang ditahan admin (perantara)</p>
             <p className="mt-0.5 text-2xl font-extrabold text-brand-yellow">{rp(data.escrowHeld)}</p>
             <div className="mt-3 grid grid-cols-3 gap-2 text-center">
               <div className="rounded-xl bg-white/10 p-2"><p className="text-sm font-bold">{data.held.length}</p><p className="text-[0.625rem] text-white/70">Pesanan ditahan</p></div>
@@ -96,11 +96,11 @@ export default function AdminEscrowPage() {
                 <div className="flex flex-wrap gap-2">
                   <button disabled={busy === o.id} onClick={() => resolve(o, 'refund')}
                     className="min-h-[44px] flex-1 rounded-xl border border-rose-300 bg-white px-4 text-[0.8125rem] font-semibold text-rose-700 active:scale-[0.98] disabled:opacity-50">
-                    Kembalikan ke Customer
+                    Kembalikan ke Pembeli
                   </button>
                   <button disabled={busy === o.id} onClick={() => resolve(o, 'release')}
                     className="min-h-[44px] flex-1 rounded-xl bg-navy px-4 text-[0.8125rem] font-semibold text-white active:scale-[0.98] disabled:opacity-50">
-                    Lepas ke Mitra
+                    Lepas ke {o.kind === 'jasa' ? 'Mitra' : 'Penjual'}
                   </button>
                 </div>
               </article>
@@ -114,7 +114,7 @@ export default function AdminEscrowPage() {
                 <div className="min-w-0">
                   <p className="truncate text-[0.8125rem] font-semibold text-slate-900">{o.title}</p>
                   <p className="text-[0.6875rem] text-slate-500">{o.orderNumber} · {o.buyer?.name} → {o.mitra?.name}</p>
-                  <span className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold ${STATUS_TONE[o.status]}`}>{STATUS_LABEL[o.status]}</span>
+                  <span className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold ${STATUS_TONE[o.status]}`}>{statusLabel(o.status, o.kind)}</span>
                 </div>
                 <p className="flex-shrink-0 text-[0.8125rem] font-bold text-slate-800">{rp(o.total)}</p>
               </div>

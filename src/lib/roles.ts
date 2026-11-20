@@ -26,7 +26,10 @@ export interface RoleTheme {
 
 /**
  * One place that decides how each account type sees the app.
- * Customer: shop, care, scan. Mitra: run the shop / service and get paid. Admin: hold funds, judge disputes, oversee users.
+ * - Customer: buys AND sells (thrift/preloved), and books services from mitra.
+ * - Mitra: a service provider (laundry, penatu/dry clean, permak, re-colour, upcycle) that receives service orders.
+ * - Admin: the escrow intermediary — holds the buyer's money and releases it to the seller/mitra only after
+ *   the item is received or the service is finished; judges disputes; oversees users.
  * All three keep the same brand (navy bar, Poppins, warm background); only the accent and the menus change.
  */
 export const ROLE_THEME: Record<AppRole, RoleTheme> = {
@@ -50,11 +53,11 @@ export const ROLE_THEME: Record<AppRole, RoleTheme> = {
   mitra: {
     label: 'Mitra',
     home: '/mitra',
-    icon: 'BuildingStorefrontIcon',
+    icon: 'WrenchScrewdriverIcon',
     nav: [
       { name: 'Dasbor', href: '/mitra', icon: 'Squares2X2Icon', exact: true },
       { name: 'Pesanan', href: '/mitra/pesanan', icon: 'ClipboardDocumentListIcon' },
-      { name: 'Jual', href: '/jual', icon: 'PlusCircleIcon' },
+      { name: 'Layanan', href: '/mitra/layanan', icon: 'WrenchScrewdriverIcon' },
       { name: 'Chat', href: '/chat', icon: 'ChatBubbleLeftRightIcon' },
       { name: 'Akun', href: '/profil', icon: 'UserCircleIcon' },
     ],

@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ reso
 
   switch (resource) {
     case 'summary': {
-      const [u, w, i, c, n, ord, inc] = await Promise.all([
+      const [u, w, i, c, n, ord, sold, svc] = await Promise.all([
         db
           .from('users')
           .select('id, username, email, full_name, avatar, city, role, level, is_verified')
@@ -33,11 +33,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ reso
         db.from('cart_items').select('id', { count: 'exact', head: true }).eq('user_id', uid),
         db.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', uid).eq('unread', true),
         db.from('orders').select('status, buyer_rating, total').eq('buyer_id', uid),
-        db.from('orders').select('status').eq('mitra_id', uid).in('status', ['escrow_held', 'shipped']),
+        // Pesanan yang uangnya untuk akun ini: barang yang dijual (customer) atau layanan (mitra)
+        db.from('orders').select('status, total, platform_fee').eq('mitra_id', uid),
+        db.from('service_partners').select('*').eq('owner_id', uid),
       ]);
       const mine = ord.data || [];
       const countBy = (f: (o: { status: string; buyer_rating: number | null }) => boolean) => mine.filter(f).length;
+      const sales = (sold.data || []) as { status: string; total: number; platform_fee: number | null }[];
+      const payout = (o: { total: number; platform_fee: number | null }) => Number(o.total) - Number(o.platform_fee ?? 0);
+      const HELD = ['escrow_held', 'shipped', 'delivered', 'disputed'];
       if (!u.data) return NextResponse.json({ success: false }, { status: 401 });
+      const s = svc.data?.[0] as any;
       return NextResponse.json({
         success: true,
         data: {
@@ -66,7 +72,28 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ reso
             completed: countBy((o) => o.status === 'completed'),
             total: mine.length,
           },
-          incomingForMitra: inc.data?.length ?? 0,
+          // Uang pembeli yang sedang ditahan admin untuk pesanan yang SAYA beli
+          buyerHeld: mine.filter((o) => HELD.includes(o.status)).reduce((t, o) => t + Number(o.total), 0),
+          // Sisi penjual/mitra: pesanan yang dananya untuk saya, dicairkan admin setelah selesai
+          sales: {
+            toProcess: sales.filter((o) => o.status === 'escrow_held').length,
+            inProgress: sales.filter((o) => o.status === 'shipped').length,
+            waiting: sales.filter((o) => o.status === 'delivered').length,
+            disputed: sales.filter((o) => o.status === 'disputed').length,
+            completed: sales.filter((o) => o.status === 'completed').length,
+            total: sales.length,
+            incoming: sales.filter((o) => HELD.includes(o.status)).reduce((t, o) => t + payout(o), 0),
+            earned: sales.filter((o) => o.status === 'completed').reduce((t, o) => t + payout(o), 0),
+          },
+          incomingForMitra: sales.filter((o) => o.status === 'escrow_held' || o.status === 'shipped').length,
+          // Layanan milik mitra (laundry, penatu, permak, …)
+          service: s
+            ? {
+                id: s.id, name: s.name, category: s.category, categoryLabel: s.category_label, address: s.address,
+                services: s.services ?? [], openHours: s.open_hours, minOrder: s.min_order, estimatedPrice: s.estimated_price,
+                rating: Number(s.rating), reviewsCount: s.reviews_count, isVerified: s.is_verified, badge: s.badge,
+              }
+            : null,
         },
       });
     }

@@ -47,14 +47,37 @@ export function rpcErrorResponse(error: { code?: string; message: string }) {
 }
 
 /**
- * Find the mitra (seller) user from free text such as "@vintage_jkt (Denim House)",
- * "Sirkular Studio Kemang" or a plain username. Returns null when nothing matches.
+ * Find who receives the money for an order:
+ *  - jasa (service)  → the MITRA that owns the service (service_partners.owner_id), e.g. a laundry or tailor;
+ *  - trift / produk  → the SELLER of the item, who is a normal customer account (customers can buy and sell).
+ * The hint is free text such as "@vintage_jkt (Denim House)", a service name, or a plain username.
+ * Admin accounts never receive order money — admin only holds it. Returns null when nothing matches.
  */
 export async function resolveMitra(db: SupabaseClient, hint?: string | null, kind?: string) {
-  const { data: sellers, error } = await db.from('users').select('id, username, full_name').in('role', ['seller', 'admin']);
-  if (error) throw new Error(error.message); // mis. "permission denied" → jangan dikira "mitra tidak ada"
-  const list = (sellers || []).filter((u: any) => u.username !== 'admin');
   const text = (hint || '').trim().toLowerCase();
+
+  if (kind === 'jasa') {
+    const { data: partners, error: pe } = await db.from('service_partners').select('id, name, owner_id');
+    if (pe) throw new Error(pe.message);
+    const owned = (partners || []).filter((p: any) => p.owner_id);
+    const hit = text
+      ? owned.find((p: any) => p.id.toLowerCase() === text || (p.name as string).toLowerCase() === text) ||
+        owned.find((p: any) => text.includes((p.name as string).toLowerCase()) || (p.name as string).toLowerCase().includes(text))
+      : null;
+    const ownerId = (hit as any)?.owner_id;
+    if (ownerId) {
+      const { data: u, error } = await db.from('users').select('id, username, full_name').eq('id', ownerId).maybeSingle();
+      if (error) throw new Error(error.message);
+      if (u) return { ...(u as any), full_name: (hit as any).name } as { id: string; username: string; full_name: string };
+    }
+  }
+
+  const { data: users, error } = await db
+    .from('users')
+    .select('id, username, full_name, role')
+    .in('role', kind === 'jasa' ? ['seller'] : ['user', 'seller']);
+  if (error) throw new Error(error.message); // mis. "permission denied" → jangan dikira "penjual tidak ada"
+  const list = users || [];
   if (text) {
     const token = (text.match(/[a-z0-9_.]+/) || [''])[0];
     const hit =

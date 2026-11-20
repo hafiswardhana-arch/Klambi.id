@@ -19,17 +19,16 @@ interface MenuLink { href: string; icon: string; label: string; hint: string }
 
 const MENU: Record<'mitra' | 'admin', MenuLink[]> = {
   mitra: [
-    { href: '/mitra', icon: 'Squares2X2Icon', label: 'Dasbor Mitra', hint: 'Ringkasan penjualan & dana' },
-    { href: '/mitra/pesanan', icon: 'ClipboardDocumentListIcon', label: 'Pesanan Masuk', hint: 'Proses, kirim, tandai tiba' },
-    { href: '/jual', icon: 'PlusCircleIcon', label: 'Jual / Tambah Produk', hint: 'Unggah barang preloved atau upcycle' },
-    { href: '/chat', icon: 'ChatBubbleLeftRightIcon', label: 'Chat Pembeli', hint: 'Balas pertanyaan customer' },
+    { href: '/mitra', icon: 'Squares2X2Icon', label: 'Dasbor Mitra', hint: 'Ringkasan layanan & dana' },
+    { href: '/mitra/pesanan', icon: 'ClipboardDocumentListIcon', label: 'Pesanan Layanan', hint: 'Kerjakan, tandai selesai' },
+    { href: '/mitra/layanan', icon: 'WrenchScrewdriverIcon', label: 'Layanan Saya', hint: 'Daftar layanan, harga, jam buka' },
+    { href: '/chat', icon: 'ChatBubbleLeftRightIcon', label: 'Chat Pelanggan', hint: 'Balas pertanyaan pelanggan' },
     { href: '/notifikasi', icon: 'BellAlertIcon', label: 'Notifikasi', hint: 'Pesanan & pencairan dana' },
-    { href: '/trift-marketplace', icon: 'BuildingStorefrontIcon', label: 'Lihat Marketplace', hint: 'Tampilan toko dari sisi pembeli' },
   ],
   admin: [
     { href: '/admin', icon: 'ChartBarIcon', label: 'Dasbor Admin', hint: 'Ringkasan platform' },
     { href: '/admin/escrow', icon: 'ShieldCheckIcon', label: 'Rekening Escrow', hint: 'Dana ditahan, sengketa, buku besar' },
-    { href: '/admin/pengguna', icon: 'UsersIcon', label: 'Kelola Pengguna', hint: 'Customer, mitra, admin' },
+    { href: '/admin/pengguna', icon: 'UsersIcon', label: 'Kelola Pengguna', hint: 'Customer (beli & jual), mitra layanan, admin' },
     { href: '/notifikasi', icon: 'BellAlertIcon', label: 'Notifikasi', hint: 'Aktivitas terbaru' },
   ],
 };
@@ -68,13 +67,13 @@ export default function RoleAccount({ me }: { me: MeSummary }) {
             </div>
             <div className="rounded-xl bg-white/10 p-3">
               <p className="text-[0.6875rem] text-white/70">Akan diterima</p>
-              <p className="text-base font-extrabold text-brand-yellow">{rupiah(me.wallet.escrowHeld)}</p>
+              <p className="text-base font-extrabold text-brand-yellow">{rupiah(me.sales.incoming)}</p>
             </div>
           </div>
         )}
         {role === 'admin' && (
           <p className="mt-4 rounded-xl bg-white/10 p-3 text-xs leading-relaxed text-white/85">
-            Akun admin memegang rekening escrow Klámbi: menahan dana customer, melepasnya ke mitra, dan memutuskan sengketa.
+            Admin adalah perantara dana: menahan pembayaran pembeli, lalu mencairkannya ke penjual atau mitra setelah barang diterima atau layanan selesai. Admin juga memutuskan sengketa.
           </p>
         )}
       </section>

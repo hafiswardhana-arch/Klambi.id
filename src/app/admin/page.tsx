@@ -57,12 +57,12 @@ function AdminDashboard({ me }: { me: MeSummary }) {
 
       {esc && esc.disputes.length > 0 && (
         <ActionBanner href="/admin/escrow" icon="ScaleIcon" tone="rose"
-          title={`${esc.disputes.length} sengketa menunggu keputusan`} text="Putuskan: lepas ke mitra atau kembalikan ke customer." />
+          title={`${esc.disputes.length} sengketa menunggu keputusan`} text="Putuskan: lepas ke penjual/mitra atau kembalikan ke pembeli." />
       )}
 
       <section aria-label="Statistik platform" className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatTile icon="UserGroupIcon" label="Customer" value={n(usr?.counts.customer)} tone="bg-sky-50 text-sky-700" href="/admin/pengguna?peran=customer" />
-        <StatTile icon="BuildingStorefrontIcon" label="Mitra" value={n(usr?.counts.mitra)} tone="bg-emerald-50 text-emerald-700" href="/admin/pengguna?peran=mitra" />
+        <StatTile icon="UserGroupIcon" label="Customer" hint="Beli & jual barang" value={n(usr?.counts.customer)} tone="bg-sky-50 text-sky-700" href="/admin/pengguna?peran=customer" />
+        <StatTile icon="BuildingStorefrontIcon" label="Mitra layanan" hint="Laundry, penatu, permak" value={n(usr?.counts.mitra)} tone="bg-emerald-50 text-emerald-700" href="/admin/pengguna?peran=mitra" />
         <StatTile icon="ArrowPathIcon" label="Transaksi berjalan" value={n(usr?.orders.active)} hint={usr ? `${usr.orders.total} total pesanan` : undefined} tone="bg-amber-50 text-amber-700" href="/admin/escrow" />
         <StatTile icon="BanknotesIcon" label="Nilai transaksi selesai" value={usr ? rpShort(usr.orders.gmv) : '–'} hint={usr ? `${usr.orders.completed} pesanan` : undefined} tone={theme.tile} />
       </section>
@@ -84,7 +84,7 @@ function AdminDashboard({ me }: { me: MeSummary }) {
           <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-card">
             {activity.map((o) => (
               <OrderRow key={o.id} href="/admin/escrow" title={o.title} status={o.status}
-                sub={`${o.buyer?.name ?? 'Customer'} → ${o.mitra?.name ?? 'Mitra'}`} amount={o.total} />
+                kind={o.kind} sub={`${o.buyer?.name ?? 'Pembeli'} → ${o.mitra?.name ?? (o.kind === 'jasa' ? 'Mitra' : 'Penjual')}`} amount={o.total} />
             ))}
           </div>
         )}
@@ -92,7 +92,7 @@ function AdminDashboard({ me }: { me: MeSummary }) {
 
       {topMitra.length > 0 && (
         <section aria-label="Mitra teratas" className="space-y-2">
-          <SectionTitle action={{ href: '/admin/pengguna?peran=mitra', label: 'Semua mitra' }}>Mitra Teratas</SectionTitle>
+          <SectionTitle action={{ href: '/admin/pengguna?peran=mitra', label: 'Semua mitra' }}>Mitra Layanan Teratas</SectionTitle>
           <ol className="divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-card">
             {topMitra.map((u, i) => (
               <li key={u.id} className="flex items-center gap-3 p-3">
@@ -100,7 +100,7 @@ function AdminDashboard({ me }: { me: MeSummary }) {
                 <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-lg" aria-hidden="true">{u.avatar}</span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[0.8125rem] font-semibold text-slate-900">{u.name}</span>
-                  <span className="block text-[0.6875rem] text-slate-500">{u.mitraOrders} pesanan · {u.city ?? '—'}</span>
+                  <span className="block text-[0.6875rem] text-slate-500">{u.mitraOrders} pesanan layanan · {u.city ?? '—'}</span>
                 </span>
                 <span className="text-[0.8125rem] font-bold text-slate-800 tabular-nums">{rpShort(u.mitraRevenue)}</span>
               </li>

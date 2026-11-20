@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Icon from '@/components/ui/AppIcon';
-import { STATUS_LABEL, STATUS_TONE, type OrderStatus } from '@/components/escrow/FundFlow';
+import { STATUS_TONE, statusLabel, type OrderStatus } from '@/components/escrow/FundFlow';
 
 /** Number tile for role dashboards. Becomes a link when `href` is given. */
 export function StatTile({
@@ -82,13 +82,13 @@ export const rpShort = (n: number) =>
     : n >= 1_000 ? `Rp ${Math.round(n / 1_000).toLocaleString('id-ID')} rb` : rp(n);
 
 /** One compact order row: title, who, status pill, amount. */
-export function OrderRow({ title, sub, status, amount, href }: { title: string; sub: string; status: OrderStatus; amount: number; href?: string }) {
+export function OrderRow({ title, sub, status, amount, href, kind }: { title: string; sub: string; status: OrderStatus; amount: number; href?: string; kind?: string }) {
   const inner = (
     <>
       <div className="min-w-0 flex-1">
         <p className="truncate text-[0.8125rem] font-semibold text-slate-900">{title}</p>
         <p className="truncate text-[0.6875rem] text-slate-500">{sub}</p>
-        <span className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold ${STATUS_TONE[status]}`}>{STATUS_LABEL[status]}</span>
+        <span className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold ${STATUS_TONE[status]}`}>{statusLabel(status, kind)}</span>
       </div>
       <p className="flex-shrink-0 text-[0.8125rem] font-bold text-slate-800 tabular-nums">{rp(amount)}</p>
     </>

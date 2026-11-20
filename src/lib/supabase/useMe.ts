@@ -10,6 +10,17 @@ export interface MeSummary {
   unreadNotifications: number;
   orderCounts: { unpaid: number; escrow: number; shipping: number; toReview: number; disputed: number; completed: number; total: number };
   incomingForMitra: number;
+  /** Money I paid that admin is still holding (orders I bought). */
+  buyerHeld: number;
+  /** Orders whose money is for me: items I sold (customer) or services I did (mitra). */
+  sales: { toProcess: number; inProgress: number; waiting: number; disputed: number; completed: number; total: number; incoming: number; earned: number };
+  /** The service a mitra runs (laundry, penatu, permak, …). Null for customers. */
+  service: MitraService | null;
+}
+
+export interface MitraService {
+  id: string; name: string; category: string; categoryLabel: string; address: string; services: string[];
+  openHours: string; minOrder: string; estimatedPrice: number; rating: number; reviewsCount: number; isVerified: boolean; badge: string | null;
 }
 
 /** 'ready' = real data · 'guest' = no session (401) · 'demo' = database not configured (503) · 'error' = server problem */

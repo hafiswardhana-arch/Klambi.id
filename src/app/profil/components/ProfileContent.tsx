@@ -105,7 +105,9 @@ export default function ProfileContent() {
   const isReal = meStatus === 'ready' && !!me;
   const oc = me?.orderCounts;
   const userTier = isReal && me?.user.level ? me.user.level : 'Kontributor Gold 🥇';
-  const escrowHeld = isReal ? me!.wallet?.escrowHeld ?? 0 : 320000;
+  // Uang yang SAYA bayar dan masih ditahan admin (bukan hasil penjualan)
+  const escrowHeld = isReal ? me!.buyerHeld ?? 0 : 320000;
+  const sales = isReal ? me!.sales : null;
   const doneCount = isReal ? oc?.completed ?? 0 : 12;
   const scanCount = isReal ? me!.impact?.scanCount ?? 0 : 18;
   const kgSaved = isReal ? me!.impact?.kgSaved ?? 0 : 12.5;
@@ -583,6 +585,53 @@ export default function ProfileContent() {
             onlyActive={!ordersFilter}
             emptyText={ordersFilter ? 'Tidak ada pesanan pada status ini.' : 'Belum ada pesanan yang berjalan.'}
           />
+        </div>
+      )}
+
+      {/* Penjualan Saya — customer juga bisa menjual; dana dari pembeli ditahan admin sampai barang diterima */}
+      {sales && (
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <span className="text-base font-bold text-slate-800">Penjualan Saya</span>
+            <button
+              onClick={() => router.push('/penjualan')}
+              className="text-xs font-medium text-emerald-600 hover:text-emerald-700 flex items-center gap-0.5 min-h-[44px]"
+            >
+              Lihat Penjualan
+              <Icon name="ChevronRightIcon" size={14} />
+            </button>
+          </div>
+          <div className="grid grid-cols-4 gap-1 text-center">
+            {[
+              { n: sales.toProcess, label: 'Perlu Dikirim', icon: '📦', tone: 'bg-amber-50' },
+              { n: sales.inProgress, label: 'Dikirim', icon: '🚚', tone: 'bg-sky-50' },
+              { n: sales.waiting, label: 'Tunggu Pembeli', icon: '⏳', tone: 'bg-violet-50' },
+              { n: sales.completed, label: 'Terjual', icon: '✅', tone: 'bg-emerald-50' },
+            ].map((x) => (
+              <button
+                key={x.label}
+                onClick={() => router.push('/penjualan')}
+                className="flex flex-col items-center gap-1 rounded-xl py-2 hover:bg-slate-50 active:scale-95 transition-all"
+              >
+                <span className={`w-10 h-10 rounded-full ${x.tone} flex items-center justify-center text-lg`} aria-hidden="true">{x.icon}</span>
+                <span className="text-sm font-extrabold text-slate-900 tabular-nums">{x.n}</span>
+                <span className="text-[0.625rem] font-medium leading-tight text-slate-600">{x.label}</span>
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center justify-between gap-3 rounded-xl bg-emerald-50/60 border border-emerald-200/60 p-3">
+            <p className="text-[0.6875rem] leading-relaxed text-emerald-900">
+              {sales.incoming > 0
+                ? <>Rp {sales.incoming.toLocaleString('id-ID')} hasil penjualan <b>ditahan admin</b>, cair ke Saldo Klámbi setelah pembeli menerima barang.</>
+                : <>Jual barang preloved-mu. Uang pembeli ditahan admin dan cair ke saldomu setelah barang diterima.</>}
+            </p>
+            <button
+              onClick={() => router.push('/jual')}
+              className="min-h-[44px] flex-shrink-0 rounded-xl bg-[#10284D] px-4 text-xs font-bold text-white active:scale-95"
+            >
+              Jual Barang
+            </button>
+          </div>
         </div>
       )}
 

@@ -35,17 +35,37 @@ export const STATUS_TONE: Record<OrderStatus, string> = {
   cancelled: 'bg-slate-100 text-slate-500 border-slate-200',
 };
 
-/** 0 = at customer, 1 = held by Klámbi (admin), 2 = released to mitra */
+export type OrderKind = 'trift' | 'produk' | 'jasa';
+
+/** Who receives the money: a service partner (jasa) or the person/store selling the item. */
+export const payeeOf = (kind?: OrderKind | string | null) => (kind === 'jasa' ? 'mitra' : 'penjual');
+
+/** Status wording that fits the order: services are "dikerjakan", goods are "dikirim". */
+export function statusLabel(status: OrderStatus, kind?: OrderKind | string | null) {
+  if (kind === 'jasa') {
+    if (status === 'shipped') return 'Sedang Dikerjakan Mitra';
+    if (status === 'delivered') return 'Layanan Selesai · Tunggu Konfirmasi';
+  } else if (kind) {
+    if (status === 'shipped') return 'Sedang Dikirim';
+  }
+  return STATUS_LABEL[status];
+}
+
+/** 0 = at customer, 1 = held by Klámbi (admin), 2 = released to the seller / mitra */
 export function moneyLocation(status: OrderStatus): 0 | 1 | 2 {
   if (status === 'completed') return 2;
   if (status === 'escrow_held' || status === 'shipped' || status === 'delivered' || status === 'disputed') return 1;
   return 0;
 }
 
-const NODES = [
-  { label: 'Customer', sub: 'Pembayar', icon: 'UserIcon' },
-  { label: 'Klámbi', sub: 'Penahan dana', icon: 'ShieldCheckIcon' },
-  { label: 'Mitra', sub: 'Penerima', icon: 'BuildingStorefrontIcon' },
+const nodesFor = (kind?: OrderKind | string | null) => [
+  { label: 'Pembeli', sub: 'Pembayar', icon: 'UserIcon' },
+  { label: 'Admin Klámbi', sub: 'Penahan dana', icon: 'ShieldCheckIcon' },
+  kind === 'jasa'
+    ? { label: 'Mitra', sub: 'Penyedia layanan', icon: 'WrenchScrewdriverIcon' }
+    : kind
+      ? { label: 'Penjual', sub: 'Penerima', icon: 'BuildingStorefrontIcon' }
+      : { label: 'Penjual / Mitra', sub: 'Penerima', icon: 'BuildingStorefrontIcon' },
 ];
 
 interface FundFlowProps {
@@ -54,19 +74,22 @@ interface FundFlowProps {
   className?: string;
   /** Neutral wording for mitra/admin screens (default wording speaks to the customer). */
   neutral?: boolean;
+  /** jasa = service by a mitra; trift/produk = goods from a seller. */
+  kind?: OrderKind | string | null;
 }
 
 /**
  * Customer ──▶ Klámbi (admin holds) ──▶ Mitra
  * Shows where the money is right now, or (without `status`) explains the rule.
  */
-export default function FundFlow({ status, className = '', neutral = false }: FundFlowProps) {
+export default function FundFlow({ status, className = '', neutral = false, kind }: FundFlowProps) {
+  const NODES = nodesFor(kind);
   const loc = status ? moneyLocation(status) : null;
   const back = status === 'refunded' || status === 'cancelled';
 
   return (
     <div className={className}>
-      <ol className="flex items-start" aria-label="Alur dana: customer, Klámbi admin, mitra">
+      <ol className="flex items-start" aria-label="Alur dana: pembeli, admin Klámbi, penjual atau mitra">
         {NODES.map((n, i) => {
           const hasMoney = loc === i && !back ? true : back && i === 0;
           const passed = loc !== null && loc > i;
@@ -110,8 +133,8 @@ export default function FundFlow({ status, className = '', neutral = false }: Fu
       {status === undefined ? (
         <p className="mt-2 text-center text-[0.6875rem] leading-relaxed text-slate-600">
           {neutral
-            ? <>Dana customer <b>ditahan admin Klámbi</b> dulu. Baru dicairkan ke mitra setelah customer menerima barang dan tidak ada masalah.</>
-            : <>Uangmu <b>ditahan admin Klámbi</b> dulu. Baru dicairkan ke mitra setelah kamu menerima barang dan tidak ada masalah.</>}
+            ? <>Dana pembeli <b>ditahan admin Klámbi</b> dulu. Baru dicairkan ke penjual/mitra setelah barang diterima atau layanan selesai, dan tidak ada masalah.</>
+            : <>Uangmu <b>ditahan admin Klámbi</b> dulu. Baru dicairkan ke penjual/mitra setelah barang kamu terima atau layanan selesai, dan tidak ada masalah.</>}
         </p>
       ) : back ? (
         <p className="mt-2 text-center text-[0.6875rem] text-slate-600">

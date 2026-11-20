@@ -6,7 +6,7 @@ import Icon from '@/components/ui/AppIcon';
 import Modal from '@/components/ui/Modal';
 import ConfirmOrderModal, { PendingOrder } from '@/app/profil/components/ConfirmOrderModal';
 import { DATA_CHANGED_EVENT, notifyDataChanged } from '@/lib/supabase/useMe';
-import FundFlow, { OrderStatus, STATUS_LABEL, STATUS_TONE } from './FundFlow';
+import FundFlow, { OrderStatus, STATUS_LABEL, STATUS_TONE, payeeOf, statusLabel } from './FundFlow';
 
 export interface EscrowOrder {
   id: string;
@@ -34,7 +34,7 @@ export interface EscrowOrder {
 const rp = (n: number) => `Rp ${Number(n).toLocaleString('id-ID')}`;
 const when = (iso: string) =>
   new Date(iso).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-const ROLE_LABEL: Record<string, string> = { buyer: 'Customer', mitra: 'Mitra', admin: 'Admin Klámbi', system: 'Sistem' };
+const ROLE_LABEL: Record<string, string> = { buyer: 'Pembeli', mitra: 'Penjual / Mitra', admin: 'Admin Klámbi', system: 'Sistem' };
 
 function hoursLeft(iso: string | null): string | null {
   if (!iso) return null;
@@ -66,9 +66,11 @@ export async function escrowAction(orderId: string, action: string, body: Record
 
 // Langkah ringkas yang dilihat customer/mitra
 const STEPS = ['Dibayar', 'Diproses', 'Tiba', 'Selesai'];
+const STEPS_JASA = ['Dibayar', 'Dikerjakan', 'Jadi', 'Selesai'];
 const STEP_INDEX: Partial<Record<OrderStatus, number>> = { escrow_held: 0, shipped: 1, delivered: 2, completed: 3 };
 
-function Progress({ status }: { status: OrderStatus }) {
+function Progress({ status, kind }: { status: OrderStatus; kind?: string }) {
+  const steps = kind === 'jasa' ? STEPS_JASA : STEPS;
   if (status === 'disputed') {
     return <p className="flex items-center gap-1.5 text-xs font-medium text-rose-700"><Icon name="ExclamationTriangleIcon" size={14} aria-hidden="true" />Dalam peninjauan admin</p>;
   }
@@ -76,7 +78,7 @@ function Progress({ status }: { status: OrderStatus }) {
   if (idx === undefined) return null;
   return (
     <ol className="grid grid-cols-4 gap-1.5" aria-label="Tahapan pesanan">
-      {STEPS.map((s, i) => (
+      {steps.map((s, i) => (
         <li key={s} aria-current={i === idx ? 'step' : undefined}>
           <span className={`block h-1 rounded-full ${i <= idx ? 'bg-navy' : 'bg-slate-200'}`} />
           <span className={`mt-1 block text-[0.6875rem] ${i === idx ? 'font-semibold text-navy' : i < idx ? 'text-slate-600' : 'text-slate-400'}`}>{s}</span>
@@ -87,7 +89,7 @@ function Progress({ status }: { status: OrderStatus }) {
 }
 
 interface Props {
-  /** buyer = pesanan saya; mitra = pesanan masuk ke toko/jasa kita */
+  /** buyer = yang saya beli/pesan; mitra = pesanan masuk ke saya (barang yang saya jual, atau layanan mitra) */
   as: 'buyer' | 'mitra';
   /** Hide the whole panel when there is nothing to show. */
   hideWhenEmpty?: boolean;
@@ -200,12 +202,12 @@ export default function EscrowOrdersPanel({
 
             <div className="flex items-center justify-between gap-2">
               <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[0.6875rem] font-semibold ${STATUS_TONE[o.status]}`}>
-                {STATUS_LABEL[o.status]}
+                {statusLabel(o.status, o.kind)}
               </span>
               <span className="text-[0.6875rem] text-slate-400">{when(o.createdAt)}</span>
             </div>
 
-            <Progress status={o.status} />
+            <Progress status={o.status} kind={o.kind} />
 
             {o.status === 'disputed' && o.disputeReason && (
               <p className="rounded-lg bg-rose-50 px-3 py-2 text-xs leading-relaxed text-rose-800">
@@ -213,18 +215,20 @@ export default function EscrowOrdersPanel({
               </p>
             )}
             {o.status === 'pending_payment' && as === 'buyer' && (
-              <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-900">Selesaikan pembayaran agar pesanan diteruskan ke mitra.</p>
+              <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-900">Selesaikan pembayaran agar pesanan diteruskan ke {payeeOf(o.kind)}.</p>
             )}
             {o.status === 'escrow_held' && (
               <p className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
-                {as === 'buyer' ? 'Dana aman di rekening escrow Klámbi. Menunggu mitra memproses pesananmu.' : 'Dana customer sudah ditahan admin. Silakan proses pesanan.'}
+                {as === 'buyer'
+                  ? `Dana aman di rekening escrow Klámbi. Menunggu ${o.kind === 'jasa' ? 'mitra mengerjakan layananmu' : 'penjual mengirim barang'}.`
+                  : `Dana pembeli sudah ditahan admin. Silakan ${o.kind === 'jasa' ? 'kerjakan layanannya' : 'kirim barangnya'}. Dana cair ke saldomu setelah pembeli konfirmasi.`}
               </p>
             )}
             {countdown && (
               <p className="rounded-lg bg-emerald-50 px-3 py-2 text-xs leading-relaxed text-emerald-900">
                 {as === 'buyer'
-                  ? <>Periksa barangmu. Tanpa konfirmasi/laporan, dana otomatis dicairkan ke mitra <b>{countdown}</b>.</>
-                  : <>Menunggu konfirmasi customer. Otomatis cair <b>{countdown}</b> bila tidak ada laporan.</>}
+                  ? <>Periksa {o.kind === 'jasa' ? 'hasil layanannya' : 'barangmu'}. Tanpa konfirmasi/laporan, dana otomatis dicairkan ke {payeeOf(o.kind)} <b>{countdown}</b>.</>
+                  : <>Menunggu konfirmasi pembeli. Otomatis cair <b>{countdown}</b> bila tidak ada laporan.</>}
               </p>
             )}
             {o.trackingNumber && ['shipped', 'delivered', 'completed'].includes(o.status) && (
@@ -242,18 +246,18 @@ export default function EscrowOrdersPanel({
               )}
               {as === 'buyer' && (o.status === 'shipped' || o.status === 'delivered') && (
                 <>
-                  <button disabled={busy} onClick={() => setConfirming(o)} className={primary}>Konfirmasi Diterima</button>
+                  <button disabled={busy} onClick={() => setConfirming(o)} className={primary}>{o.kind === 'jasa' ? 'Konfirmasi Selesai' : 'Konfirmasi Diterima'}</button>
                   <button disabled={busy} onClick={() => { setReason(''); setDisputing(o); }} className={danger}>Laporkan Masalah</button>
                 </>
               )}
               {as === 'mitra' && o.status === 'escrow_held' && (
                 <>
-                  <button disabled={busy} onClick={() => run(o, 'ship', {}, 'Pesanan diproses. Dana tetap ditahan sampai customer menerima.')} className={primary}>
-                    {busy ? 'Memproses…' : 'Proses & Kirim'}
+                  <button disabled={busy} onClick={() => run(o, 'ship', {}, o.kind === 'jasa' ? 'Layanan mulai dikerjakan. Dana tetap ditahan sampai pembeli konfirmasi.' : 'Barang dikirim. Dana tetap ditahan sampai pembeli menerima.')} className={primary}>
+                    {busy ? 'Memproses…' : o.kind === 'jasa' ? 'Mulai Kerjakan' : 'Proses & Kirim'}
                   </button>
                   <button
                     disabled={busy}
-                    onClick={() => { if (window.confirm('Tolak pesanan ini? Dana akan dikembalikan 100% ke customer.')) run(o, 'decline', {}, 'Pesanan ditolak. Dana dikembalikan ke customer.'); }}
+                    onClick={() => { if (window.confirm('Tolak pesanan ini? Dana akan dikembalikan 100% ke pembeli.')) run(o, 'decline', {}, 'Pesanan ditolak. Dana dikembalikan ke pembeli.'); }}
                     className={danger}
                   >
                     Tolak
@@ -262,7 +266,7 @@ export default function EscrowOrdersPanel({
               )}
               {as === 'mitra' && o.status === 'shipped' && (
                 <>
-                  <button disabled={busy} onClick={() => run(o, 'deliver', {}, 'Ditandai tiba. Menunggu konfirmasi customer.')} className={primary}>Tandai Sudah Tiba</button>
+                  <button disabled={busy} onClick={() => run(o, 'deliver', {}, o.kind === 'jasa' ? 'Ditandai selesai. Menunggu konfirmasi pembeli.' : 'Ditandai tiba. Menunggu konfirmasi pembeli.')} className={primary}>{o.kind === 'jasa' ? 'Tandai Selesai Dikerjakan' : 'Tandai Sudah Tiba'}</button>
                   <button disabled={busy} onClick={() => { setReason(''); setDisputing(o); }} className={danger}>Laporkan Masalah</button>
                 </>
               )}
@@ -273,7 +277,7 @@ export default function EscrowOrdersPanel({
 
             {open && (
               <div className="space-y-4 border-t border-slate-100 pt-4">
-                <FundFlow status={o.status} neutral={as === 'mitra'} />
+                <FundFlow status={o.status} neutral={as === 'mitra'} kind={o.kind} />
                 <dl className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 rounded-lg bg-slate-50 p-3 text-xs">
                   <dt className="text-slate-500">Harga</dt><dd className="text-right tabular-nums">{rp(o.subtotal)}</dd>
                   {o.shippingCost > 0 && (<><dt className="text-slate-500">Ongkir</dt><dd className="text-right tabular-nums">{rp(o.shippingCost)}</dd></>)}
@@ -310,7 +314,7 @@ export default function EscrowOrdersPanel({
             module: confirming.kind === 'jasa' ? 'perawatan' : 'trift',
             moduleLabel: confirming.kind === 'jasa' ? 'Jasa Perawatan' : confirming.kind === 'produk' ? 'Produk' : 'Thrift',
             title: confirming.title,
-            partnerOrSeller: confirming.mitra?.name || confirming.sellerName || 'Mitra',
+            partnerOrSeller: confirming.mitra?.name || confirming.sellerName || (confirming.kind === 'jasa' ? 'Mitra' : 'Penjual'),
             amount: confirming.total,
             trackingNumber: confirming.trackingNumber || undefined,
           } satisfies PendingOrder}
@@ -318,7 +322,7 @@ export default function EscrowOrdersPanel({
           onConfirm={async (id, rating, review) => {
             const target = confirming;
             setConfirming(null);
-            await run(target, 'confirm', { rating, review }, 'Terima kasih! Dana sudah dicairkan admin ke mitra.');
+            await run(target, 'confirm', { rating, review }, `Terima kasih! Dana sudah dicairkan admin ke ${payeeOf(target.kind)}.`);
           }}
         />
       )}
@@ -326,7 +330,7 @@ export default function EscrowOrdersPanel({
       <Modal isOpen={!!disputing} onClose={() => setDisputing(null)} title="Laporkan Masalah" size="md">
         <div className="space-y-3 text-sm">
           <p className="text-xs leading-relaxed text-slate-600">
-            Dana <b>tidak akan dicairkan</b> ke mitra selama laporan ditinjau. Admin Klámbi memutuskan: dana dilepas ke mitra atau dikembalikan ke customer.
+            Dana <b>tidak akan dicairkan</b> ke {payeeOf(disputing?.kind)} selama laporan ditinjau. Admin Klámbi memutuskan: dana dilepas ke {payeeOf(disputing?.kind)} atau dikembalikan ke pembeli.
           </p>
           <label className="block text-xs font-semibold text-slate-800" htmlFor="dispute-reason">Apa masalahnya?</label>
           <textarea

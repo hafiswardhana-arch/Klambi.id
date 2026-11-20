@@ -102,8 +102,8 @@ function UsersList() {
                     <p className="truncate text-[0.6875rem] text-slate-500">@{u.username}{u.city ? ` · ${u.city}` : ''}</p>
                     <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                       <span className={`rounded-full px-2 py-0.5 text-[0.625rem] font-bold ring-1 ${t.chip}`}>{t.label}</span>
-                      {r === 'mitra' && <span className="text-[0.6875rem] text-slate-500">{u.mitraOrders} pesanan masuk · {rpShort(u.mitraRevenue)}</span>}
-                      {r === 'customer' && <span className="text-[0.6875rem] text-slate-500">{u.buyerOrders} pesanan</span>}
+                      {r === 'mitra' && <span className="text-[0.6875rem] text-slate-500">{u.mitraOrders} pesanan layanan · {rpShort(u.mitraRevenue)}</span>}
+                      {r === 'customer' && <span className="text-[0.6875rem] text-slate-500">{u.buyerOrders} beli · {u.mitraOrders} jual{u.mitraRevenue > 0 ? ` · ${rpShort(u.mitraRevenue)}` : ''}</span>}
                       {u.disputes > 0 && <span className="rounded-full bg-rose-50 px-2 py-0.5 text-[0.625rem] font-semibold text-rose-700">{u.disputes} sengketa</span>}
                     </div>
                   </div>

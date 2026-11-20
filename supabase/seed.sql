@@ -4,18 +4,16 @@
 -- lama dihapus dulu lalu diisi ulang (tidak menyentuh akun yang kamu daftarkan sendiri).
 --
 -- AKUN DEMO (semua password: klambi123, kecuali admin → admin123)
---   hafiz     Muhammad Hafiz Maulana  — akun utama, data paling lengkap
---   rini      Rini Anggraini          — penjual thrift, Bandung
---   dewi      Dewi Lestari            — pembeli aktif, Jakarta
---   bagas     Bagas Pratama           — pengguna Eco, Yogyakarta
---   sari      Sari Wulandari          — pemilik jasa permak, Surabaya
---   admin     Administrator           — role admin (panel escrow: /admin/escrow)
---   Mitra/penjual untuk alur escrow (password klambi123): rini, sari,
---   vintage_jkt (Denim House), sirkular_kemang (Sirkular Studio Kemang),
---   kindfoam (Kindfoam Official), batik_solo (Batik Solo Heritage)
+-- Peran akun yang benar diatur oleh supabase/roles.sql (jalankan sesudah file ini):
+--   CUSTOMER (beli + jual): hafiz, dewi, bagas, rini (penjual thrift),
+--                           vintage_jkt, batik_solo, kindfoam (toko/penjual barang)
+--   MITRA LAYANAN         : sari (Taylor Studio, permak), cleancare (laundry),
+--                           penatu_prima (penatu/dry clean), jahit_kilat (permak),
+--                           color_restorer (re-colour), sirkular_kemang (upcycle)
+--   ADMIN                 : admin — perantara dana escrow (/admin)
 -- =====================================================================
 
-delete from public.users where lower(username) in ('hafiz','rini','dewi','bagas','sari','admin','vintage_jkt','sirkular_kemang','kindfoam','batik_solo');
+delete from public.users where lower(username) in ('hafiz','rini','dewi','bagas','sari','admin','vintage_jkt','sirkular_kemang','kindfoam','batik_solo','cleancare','penatu_prima','jahit_kilat','color_restorer');
 delete from public.products;
 delete from public.trift_listings;
 delete from public.service_partners;
