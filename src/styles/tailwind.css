@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #F4F6FA;
+  --background: #F4F4F2;
   --foreground: #1A1D3B;
   --primary: #1A2B5C;
   --primary-foreground: #FFFFFF;
@@ -15,11 +15,11 @@
   --muted-foreground: #6B7280;
   --card: #FFFFFF;
   --card-foreground: #1A1D3B;
-  --border: #E3E8EF;
+  --border: #E2E5ED;
   --input: #F0F2F8;
   --ring: #3A7BF7;
   --radius: 16px;
-  --font-sans: var(--font-plus-jakarta-sans), var(--font-poppins), sans-serif;
+  --font-sans: var(--font-poppins), var(--font-plus-jakarta-sans), sans-serif;
 
   /* Klambi.id brand tokens (from mockups) */
   --navy: #0E3567;

@@ -72,7 +72,7 @@ module.exports = {
         '2xl': 'calc(var(--radius) + 8px)',
       },
       fontFamily: {
-        sans: ['var(--font-plus-jakarta-sans)', 'var(--font-poppins)', 'sans-serif'],
+        sans: ['var(--font-poppins)', 'var(--font-plus-jakarta-sans)', 'sans-serif'],
       },
       boxShadow: {
         card: '0 1px 3px rgba(26,43,92,0.08), 0 1px 2px rgba(26,43,92,0.04)',
