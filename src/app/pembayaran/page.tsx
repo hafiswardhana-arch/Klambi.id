@@ -50,7 +50,7 @@ function PembayaranContent() {
    * (held by admin). Returns 'done' | 'failed' | 'unavailable' (not logged in / DB not configured
    * → the caller falls back to the legacy local simulation).
    */
-  const payViaEscrowApi = async (): Promise<'done' | 'failed' | 'unavailable'> => {
+  const payViaEscrowApi = async (): Promise<'done' | 'failed' | 'unavailable' | 'login'> => {
     try {
       const method = paymentOptions.find((o) => o.id === selectedMethod)?.name || 'GoPay';
       const res = await fetch('/api/escrow/orders', {
@@ -58,7 +58,8 @@ function PembayaranContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, kind, amount: rawTotal, method, seller, refId: refId || undefined, payNow: true }),
       });
-      if (res.status === 503 || res.status === 401) return 'unavailable';
+      if (res.status === 503) return 'unavailable'; // database tidak dikonfigurasi → mode demo
+      if (res.status === 401) return 'login'; // database aktif tapi belum login → JANGAN pura-pura sukses
       const json = await res.json().catch(() => null);
       if (!res.ok || !json?.success) {
         toast.error(json?.error || 'Pembayaran gagal diproses.');
@@ -99,6 +100,14 @@ function PembayaranContent() {
 
     setIsProcessing(true);
     const remote = await payViaEscrowApi();
+    if (remote === 'login') {
+      setIsProcessing(false);
+      completeIdempotency(idempotencyKey, { status: 'FAILED' }, false);
+      toast.error('Sesi login berakhir. Silakan login ulang agar pembayaran tercatat di akun Anda.');
+      sessionStorage.removeItem('klambi_auth');
+      router.push('/login');
+      return;
+    }
     if (remote === 'failed') {
       setIsProcessing(false);
       completeIdempotency(idempotencyKey, { status: 'FAILED' }, false);
@@ -110,6 +119,8 @@ function PembayaranContent() {
       toast.success(
         `Pembayaran Rp ${totalAmount.toLocaleString('id-ID')} berhasil! Dana ditahan admin Klámbi sampai kamu menerima pesanan.`
       );
+      // Beri tahu halaman lain (Beranda/Profil) agar memuat ulang data terbaru
+      try { window.dispatchEvent(new Event('klambi:data-changed')); } catch { /* ignore */ }
       router.push('/profil');
       return;
     }

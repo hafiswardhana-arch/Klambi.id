@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ reso
 
   switch (resource) {
     case 'summary': {
-      const [u, w, i, c, n] = await Promise.all([
+      const [u, w, i, c, n, ord, inc] = await Promise.all([
         db
           .from('users')
           .select('id, username, email, full_name, avatar, city, role, level, is_verified')
@@ -32,7 +32,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ reso
         db.from('user_impact').select('*').eq('user_id', uid).maybeSingle(),
         db.from('cart_items').select('id', { count: 'exact', head: true }).eq('user_id', uid),
         db.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', uid).eq('unread', true),
+        db.from('orders').select('status, buyer_rating, total').eq('buyer_id', uid),
+        db.from('orders').select('status').eq('mitra_id', uid).in('status', ['escrow_held', 'shipped']),
       ]);
+      const mine = ord.data || [];
+      const countBy = (f: (o: { status: string; buyer_rating: number | null }) => boolean) => mine.filter(f).length;
       if (!u.data) return NextResponse.json({ success: false }, { status: 401 });
       return NextResponse.json({
         success: true,
@@ -52,6 +56,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ reso
           },
           cartCount: c.count ?? 0,
           unreadNotifications: n.count ?? 0,
+          // Penghitung "Transaksi Saya" — dihitung dari pesanan sungguhan
+          orderCounts: {
+            unpaid: countBy((o) => o.status === 'pending_payment'),
+            escrow: countBy((o) => o.status === 'escrow_held'),
+            shipping: countBy((o) => o.status === 'shipped' || o.status === 'delivered'),
+            toReview: countBy((o) => o.status === 'completed' && o.buyer_rating === null),
+            disputed: countBy((o) => o.status === 'disputed'),
+            completed: countBy((o) => o.status === 'completed'),
+            total: mine.length,
+          },
+          incomingForMitra: inc.data?.length ?? 0,
         },
       });
     }

@@ -53,7 +53,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'Nominal pesanan tidak valid.' }, { status: 400 });
   }
 
-  const mitra = await resolveMitra(ctx.db, sellerHint, kind);
+  let mitra: Awaited<ReturnType<typeof resolveMitra>>;
+  try {
+    mitra = await resolveMitra(ctx.db, sellerHint, kind);
+  } catch (e: any) {
+    console.error('escrow/orders resolveMitra:', e.message);
+    return NextResponse.json(
+      { success: false, error: 'Database belum siap (hak akses tabel). Jalankan supabase/grants.sql di Supabase.' },
+      { status: 502 }
+    );
+  }
   if (!mitra) return NextResponse.json({ success: false, error: 'Mitra/penjual tidak ditemukan.' }, { status: 404 });
 
   const { data, error } = await ctx.db.rpc('escrow_create_order', {

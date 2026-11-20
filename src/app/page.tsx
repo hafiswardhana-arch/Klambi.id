@@ -8,6 +8,7 @@ import AppLayout from '@/components/AppLayout';
 import Icon from '@/components/ui/AppIcon';
 import { FadeIn, SlideUp, StaggerContainer, StaggerItem } from '@/components/motion';
 import { fetchData } from '@/lib/supabase/client';
+import { rupiah, useMe } from '@/lib/supabase/useMe';
 
 interface ProductItem {
   id: string;
@@ -217,15 +218,15 @@ export default function BerandaPage() {
     fetchData<ProductItem[]>('/api/catalog/products').then((rows) => {
       if (rows && rows.length) setProducts(rows);
     });
-    fetchData<{
-      impact?: { goalPct: number; kgSaved: number; rank: number; scanCount: number } | null;
-      cartCount?: number;
-    }>('/api/me/summary').then((s) => {
-      if (!s) return;
-      if (s.impact) setImpactTarget({ goal: s.impact.goalPct, kg: s.impact.kgSaved, rank: s.impact.rank, scan: s.impact.scanCount });
-      if (typeof s.cartCount === 'number') setCartCount(s.cartCount);
-    });
   }, []);
+
+  // Data akun yang SAMA dengan halaman Profil (satu sumber: useMe) → angka Beranda & Profil selalu cocok
+  const { me } = useMe();
+  useEffect(() => {
+    if (!me) return;
+    if (me.impact) setImpactTarget({ goal: me.impact.goalPct, kg: me.impact.kgSaved, rank: me.impact.rank, scan: me.impact.scanCount });
+    setCartCount(me.cartCount);
+  }, [me]);
 
   // Count-up animation state for Impact Tracker
   const [countProgress, setCountProgress] = useState(0);
@@ -291,16 +292,17 @@ export default function BerandaPage() {
   }, [impactTarget]);
 
   const greeting = getGreeting();
-  const [userName, setUserName] = useState('Muhammad Hafiz Maulana');
+  const [storedName, setStoredName] = useState('Muhammad Hafiz Maulana');
   useEffect(() => {
     try {
       const raw = localStorage.getItem('klambi_user');
       const parsed = raw ? JSON.parse(raw) : null;
-      if (parsed?.name) setUserName(String(parsed.name));
+      if (parsed?.name) setStoredName(String(parsed.name));
     } catch {
       // keep default
     }
   }, []);
+  const userName = me?.user.name ?? storedName;
   const initials = userName
     .split(/\s+/)
     .filter(Boolean)
@@ -357,28 +359,31 @@ export default function BerandaPage() {
           <button
             type="button"
             onClick={() => setShowProfileModal(true)}
-            className="w-full text-left bg-white rounded-2xl shadow-card px-3.5 py-3 flex items-center gap-3 hover:shadow-card-hover active:scale-[0.98] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+            className="w-full cursor-pointer text-left bg-white rounded-xl border border-slate-200 px-4 py-3 flex items-center gap-3 hover:border-slate-300 active:scale-[0.99] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
           >
             <span
-              className="w-11 h-11 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center flex-shrink-0 text-navy-deep text-[0.875rem] font-bold ring-2 ring-amber-100"
+              className="w-11 h-11 rounded-full bg-navy flex items-center justify-center flex-shrink-0 text-white text-[0.875rem] font-semibold"
               aria-hidden="true"
             >
               {initials}
             </span>
             <span className="flex-1 min-w-0">
-              <span className="block text-[0.875rem] font-semibold text-gray-900 leading-tight truncate">
-                {greeting}, {userName}
+              <span className="block text-[0.9375rem] font-semibold text-slate-900 leading-tight truncate">
+                {greeting}, {userName.split(' ')[0]}
               </span>
-              <span className="block text-[0.75rem] text-gray-700 mt-0.5 truncate">
-                Kenali Kondisinya, Tentukan Langkahnya!
+              <span className="block text-[0.75rem] text-slate-500 mt-0.5 truncate">
+                {me?.wallet
+                  ? `Saldo Klámbi ${rupiah(me.wallet.balance)}`
+                  : 'Kenali kondisinya, tentukan langkahnya'}
               </span>
             </span>
+            <Icon name="ChevronRightIcon" size={16} className="flex-shrink-0 text-slate-400" aria-hidden="true" />
           </button>
         </FadeIn>
 
         {/* 2. PROMO BANNER CAROUSEL */}
         <section aria-label="Promo" className="animate-card-reveal stagger-1">
-          <div className="relative overflow-hidden rounded-[20px] shadow-card">
+          <div className="relative overflow-hidden rounded-xl">
             <div
               className="flex transition-transform duration-500"
               style={{ transform: `translateX(-${activeSlide * 100}%)` }}
@@ -386,14 +391,12 @@ export default function BerandaPage() {
               {promoSlides.map((slide) => (
                 <div
                   key={slide.id}
-                  className="w-full flex-shrink-0 bg-gradient-to-br from-[#0A3274] via-[#1559B0] to-[#4BA3E8] p-3.5 min-h-[148px] flex text-white relative overflow-hidden"
+                  className="w-full flex-shrink-0 bg-gradient-to-br from-[#0B2A52] to-[#1559B0] p-5 min-h-[156px] flex text-white relative overflow-hidden"
                 >
-                  {/* soft bubbles */}
-                  <span className="absolute right-6 top-4 w-8 h-8 rounded-full border border-white/40 bg-white/10" aria-hidden="true" />
-                  <span className="absolute right-[42%] bottom-6 w-4 h-4 rounded-full border border-white/40 bg-white/10" aria-hidden="true" />
-                  <span className="absolute -right-6 -bottom-10 w-40 h-24 rounded-full bg-white/25 blur-xl" aria-hidden="true" />
+                  <span className="absolute -right-10 -top-10 w-44 h-44 rounded-full border border-white/10" aria-hidden="true" />
+                  <span className="absolute -right-4 -bottom-16 w-44 h-44 rounded-full bg-white/5" aria-hidden="true" />
 
-                  <div className="relative z-10 flex flex-col justify-between w-[62%] min-w-0">
+                  <div className="relative z-10 flex flex-col justify-between w-[68%] min-w-0">
                     <div>
                       <span className="inline-flex items-center gap-1 bg-white/15 text-white text-[0.5625rem] font-semibold px-2 py-0.5 rounded-md uppercase tracking-wider">
                         {slide.badge}
@@ -415,16 +418,10 @@ export default function BerandaPage() {
                     </button>
                   </div>
 
-                  {/* product visual */}
                   <div className="relative z-10 flex-1 flex items-center justify-center" aria-hidden="true">
-                    <div className="relative w-full h-full">
-                      <div className="absolute right-0 top-3 w-[62px] h-[50px] rounded-lg bg-gradient-to-br from-pink-100 to-pink-300 shadow-lg rotate-6 border-2 border-white/80 flex items-center justify-center">
-                        <span className="text-[0.6875rem] font-bold text-[#E2558A]">{slide.isKindfoam ? 'kindfoam' : 'klámbi'}</span>
-                      </div>
-                      <div className="absolute left-0 bottom-3 w-[66px] h-[54px] rounded-lg bg-gradient-to-br from-sky-50 to-sky-200 shadow-lg -rotate-6 border-2 border-white/80 flex items-center justify-center">
-                        <span className="text-[0.6875rem] font-bold text-[#1A6FD1]">{slide.isKindfoam ? 'kindfoam' : 'klámbi'}</span>
-                      </div>
-                    </div>
+                    <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
+                      <Icon name={slide.isKindfoam ? 'SparklesIcon' : 'ArrowPathRoundedSquareIcon'} size={30} className="text-white/90" />
+                    </span>
                   </div>
                 </div>
               ))}
@@ -454,7 +451,7 @@ export default function BerandaPage() {
         <button
           type="button"
           onClick={() => setShowImpactModal(true)}
-          className="w-full bg-white rounded-2xl shadow-card px-2 py-3 hover:shadow-card-hover active:scale-[0.98] transition-all duration-150 animate-card-reveal stagger-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
+          className="w-full cursor-pointer bg-white rounded-xl border border-slate-200 px-2 py-3 hover:border-slate-300 active:scale-[0.99] transition-all duration-150 animate-card-reveal stagger-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy"
           aria-label="Lihat detail dampak lingkungan"
         >
           <div className="grid grid-cols-[1.15fr_1fr_1fr_1fr] items-center">

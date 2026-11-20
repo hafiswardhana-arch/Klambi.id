@@ -18,9 +18,16 @@ Dashboard → project kamu → **Project Settings → API**:
 Supabase Dashboard → **SQL Editor → New query**. Jalankan **berurutan**, masing-masing satu query baru:
 1. `supabase/schema.sql` → tabel, RLS, login/register.
 2. `supabase/escrow.sql` → sistem escrow (rekening penahan dana, buku besar, fungsi transaksi).
-3. `supabase/seed.sql` → data dummy.
+3. `supabase/grants.sql` → **hak akses tabel untuk server (WAJIB, lihat catatan di bawah)**.
+4. `supabase/seed.sql` → data dummy.
 
+Jalan pintas: `supabase/setup_all.sql` = keempat file di atas dalam satu file. Tempel sekali, Run.
 Semuanya aman dijalankan ulang. Cek di **Table Editor**: tabel `users` berisi 10 akun.
+
+> **Kalau website tetap menampilkan data demo / pembelian tidak tercatat:** hampir pasti kamu belum menjalankan
+> `grants.sql`. Project Supabase baru tidak otomatis memberi hak akses tabel ke Data API, sehingga server
+> mendapat `permission denied for table ...` (kode 42501) dan halaman diam-diam kembali ke data demo.
+> Jalankan `supabase/grants.sql` di SQL Editor, lalu muat ulang website. Setelah itu, **login ulang** dengan akun demo.
 
 ## 3. Isi env
 **Lokal** — di `.env.local`:

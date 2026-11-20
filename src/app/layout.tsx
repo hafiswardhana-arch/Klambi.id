@@ -42,7 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className={`${poppins.variable} ${plusJakartaSans.variable}`}>
-      <body className={poppins.className}>
+      <body className={plusJakartaSans.className}>
         {children}
         <Toaster
           position="top-center"

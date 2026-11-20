@@ -51,7 +51,8 @@ export function rpcErrorResponse(error: { code?: string; message: string }) {
  * "Sirkular Studio Kemang" or a plain username. Returns null when nothing matches.
  */
 export async function resolveMitra(db: SupabaseClient, hint?: string | null, kind?: string) {
-  const { data: sellers } = await db.from('users').select('id, username, full_name').in('role', ['seller', 'admin']);
+  const { data: sellers, error } = await db.from('users').select('id, username, full_name').in('role', ['seller', 'admin']);
+  if (error) throw new Error(error.message); // mis. "permission denied" → jangan dikira "mitra tidak ada"
   const list = (sellers || []).filter((u: any) => u.username !== 'admin');
   const text = (hint || '').trim().toLowerCase();
   if (text) {
